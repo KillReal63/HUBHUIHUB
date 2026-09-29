@@ -1,3 +1,4 @@
+from contextlib import closing
 import copy
 import importlib
 import json
@@ -74,11 +75,20 @@ class Integration(unittest.TestCase):
                 for category in ['unknown', None, [], 1]:
                     invalid=copy.deepcopy(data);invalid['meds'][0]['category']=category
                     self.assertEqual(request('state',{'state':invalid,'version':request('state')[1]['version']})[0],400)
+                data['skipped']={'2026-09-18|test-id|09:00':'2026-09-18T06:00:00Z'}
+                data['fixed']={'2026-09-18|test-id|09:00':'2026-09-18T09:00'}
+                data['meds'][0]['shifts']=[{'from':'2026-09-19T09:00','minutes':60,'at':'2026-09-18T06:01:00Z'}]
+                version=request('state')[1]['version']
+                self.assertEqual(request('state',{'state':data,'version':version})[0],200)
+                outdated=copy.deepcopy(data);outdated.pop('skipped');outdated.pop('fixed')
+                self.assertEqual(request('state',{'state':outdated,'version':version+1})[0],409)
+                outdated=copy.deepcopy(data);outdated['meds'][0].pop('shifts')
+                self.assertEqual(request('state',{'state':outdated,'version':version+1})[0],409)
                 server.initialize()
                 self.assertEqual(request('state')[1]['state'],data)
                 subprocess.run([sys.executable,str(Path(__file__).with_name('backup.py'))],check=True)
                 backup=next((Path(directory)/'backups').glob('*.sqlite3'))
-                with sqlite3.connect(backup) as c:
+                with closing(sqlite3.connect(backup)) as c:
                     self.assertEqual(c.execute('PRAGMA integrity_check').fetchone()[0],'ok')
                     self.assertEqual(json.loads(c.execute('SELECT body FROM state').fetchone()[0]),data)
                 self.assertEqual(request('logout',{})[0],200)

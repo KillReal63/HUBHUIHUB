@@ -53,20 +53,38 @@ def valid_date(value):
     dt.date.fromisoformat(value)
     return value
 
+def valid_moment(value):
+    if not isinstance(value,str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d',value):raise ValueError('Некорректная дата и время')
+    dt.datetime.fromisoformat(value)
+
+def valid_stamp(value):
+    if not isinstance(value,str) or len(value)>40:raise ValueError('Некорректная отметка')
+    stamp=dt.datetime.fromisoformat(value.replace('Z','+00:00'))
+    if stamp.tzinfo is None:raise ValueError('Не указан часовой пояс отметки')
+
 def validate_state(value):
-    if not isinstance(value, dict) or set(value) != {'meds','taken'}:
+    if not isinstance(value, dict) or set(value)-{'skipped','fixed'} != {'meds','taken'}:
         raise ValueError('Некорректные данные')
     meds, taken = value['meds'], value['taken']
     if not isinstance(meds, list) or len(meds)>500 or not isinstance(taken, dict) or len(taken)>50000:
         raise ValueError('Слишком много записей')
     ids = set()
     for m in meds:
-        if not isinstance(m, dict) or set(m) - {'cycle','category','meal','durationDays'} != {'id','name','dose','start','end','days','times','note'}:
+        if not isinstance(m, dict) or set(m) - {'cycle','category','meal','durationDays','shifts'} != {'id','name','dose','start','end','days','times','note'}:
             raise ValueError('Некорректное лекарство')
         if 'meal' in m and (not isinstance(m['meal'], str) or m['meal'] not in ('before','after','any','fasting')):
             raise ValueError('Некорректное отношение к еде')
         if 'category' in m and (not isinstance(m['category'], str) or m['category'] not in ('pill','ointment','supplement','action','spray','drops','injection')):
             raise ValueError('Некорректная категория')
+        shifts=m.get('shifts',[])
+        if not isinstance(shifts,list) or len(shifts)>200:raise ValueError('Слишком много переносов')
+        total=0
+        for shift in shifts:
+            if not isinstance(shift,dict) or set(shift)!={'from','minutes','at'}:raise ValueError('Некорректный перенос')
+            valid_moment(shift['from'])
+            if type(shift['minutes']) is not int or not 1<=shift['minutes']<=525600:raise ValueError('Некорректный перенос')
+            total+=shift['minutes'];valid_stamp(shift['at'])
+        if total>5256000:raise ValueError('Слишком большой сдвиг курса')
         if 'cycle' in m:
             cycle = m['cycle']
             if not isinstance(cycle, dict) or set(cycle) != {'on','off'} or any(type(n) is not int or not 1 <= n <= 365 for n in cycle.values()):
@@ -98,6 +116,17 @@ def validate_state(value):
         valid_date(key[:10])
         if not isinstance(stamp,str) or len(stamp)>40: raise ValueError('Некорректная отметка')
         dt.datetime.fromisoformat(stamp.replace('Z','+00:00'))
+    skipped=value.get('skipped',{});fixed=value.get('fixed',{})
+    for mapping in (skipped,fixed):
+        if not isinstance(mapping,dict) or len(mapping)>50000:raise ValueError('Слишком много отметок')
+        for key in mapping:
+            if not isinstance(key,str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}\|[a-zA-Z0-9-]{1,80}\|([01]\d|2[0-3]):[0-5]\d',key):raise ValueError('Некорректная отметка')
+            valid_date(key[:10])
+    if set(skipped)&set(taken):raise ValueError('Приём одновременно принят и пропущен')
+    for stamp in skipped.values():valid_stamp(stamp)
+    for key,moment in fixed.items():
+        valid_moment(moment)
+        if key not in taken and key not in skipped:raise ValueError('Нет отметки для даты приёма')
     return value
 
 class API(BaseHTTPRequestHandler):
@@ -190,6 +219,10 @@ class API(BaseHTTPRequestHandler):
                     data=validate_state(body.get('state'))
                     version=body.get('version')
                     if type(version)!=int or version<0: raise ValueError('Некорректная версия')
+                    previous=json.loads(c.execute('SELECT body FROM state WHERE id=1').fetchone()[0])
+                    old_meds={m['id']:m for m in previous['meds']}
+                    if any(previous.get(field) and field not in data for field in ('skipped','fixed')) or any(old_meds.get(m['id'],{}).get('shifts') and 'shifts' not in m for m in data['meds']):
+                        return self.reply(409,{'error':'Обнови страницу: в расписании есть переносы, которые эта версия не поддерживает.'})
                     result=c.execute('UPDATE state SET body=?,version=version+1 WHERE id=1 AND version=?',(json.dumps(data,ensure_ascii=False),version))
                     if result.rowcount!=1: return self.reply(409,{'error':'Данные изменились на другом устройстве. Расписание обновлено; повтори изменение.'})
                     c.commit()

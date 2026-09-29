@@ -262,3 +262,77 @@ html[data-icons=solid] #focus-styles .nav-icon { stroke-width:2.2; }
 #focus-styles .appearance-content #theme-status { margin-bottom:0; }
 #focus-styles .reminder-heading { display:flex; align-items:center; gap:10px; }
 #focus-styles .reminder-clock { width:24px; height:24px; flex:none; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+
+
+/* Readable type scales without zooming or widening the layout. */
+html { --text-scale:1; }
+html[data-text-size=large] { --text-scale:1.15; }
+html[data-text-size=largest] { --text-scale:1.3; }
+#focus-styles .md-icon-button { display:grid; place-items:center; flex:none; width:44px; height:44px; padding:10px; }
+#focus-styles .settings-icon { display:block; width:24px; height:24px; flex:none; }
+#focus-styles .text-size-choices { display:grid; gap:8px; }
+#focus-styles .text-size-choices label { display:flex; align-items:center; gap:10px; margin:0; padding:12px; border:1px solid var(--line); border-radius:12px; }
+#focus-styles .text-size-choices input { width:18px; height:18px; margin:0; flex:none; accent-color:var(--accent); }
+#focus-styles .text-size-choices label:has(:checked) { border-color:var(--accent); background:var(--soft); }
+#focus-styles .md-phone.focus { font-size:calc(16px * var(--text-scale)); }
+#focus-styles .md-phone.focus .view-title { font-size:calc(30px * var(--text-scale)); }
+#focus-styles .md-phone.focus .section-head h2,#focus-styles .md-phone.focus .note h2 { font-size:calc(21px * var(--text-scale)); }
+#focus-styles .md-phone.focus .dose h3,#focus-styles .md-phone.focus .med strong,#focus-styles .md-phone.focus legend,#focus-styles .md-phone.focus .theme-choice b,#focus-styles .md-phone.focus .icon-choice b { font-size:calc(16px * var(--text-scale)); }
+#focus-styles .md-phone.focus label,#focus-styles .md-phone.focus .md-focus-main p,#focus-styles .md-phone.focus .md-focus-next strong { font-size:calc(15px * var(--text-scale)); }
+#focus-styles .md-phone.focus input,#focus-styles .md-phone.focus select,#focus-styles .md-phone.focus #form textarea,#focus-styles .md-phone.focus .md-primary,#focus-styles .md-phone.focus .secondary,#focus-styles .md-phone.focus .med-actions button,#focus-styles .md-phone.focus form button[type=submit] { font-size:calc(16px * var(--text-scale)); }
+#focus-styles .md-phone.focus .dose p,#focus-styles .md-phone.focus .med p,#focus-styles .md-phone.focus .small,#focus-styles .md-phone.focus .status,#focus-styles .md-phone.focus .note p,#focus-styles .md-phone.focus .md-text-button,#focus-styles .md-phone.focus .dose button { font-size:calc(14px * var(--text-scale)); }
+#focus-styles .md-phone.focus footer,#focus-styles .md-phone.focus .theme-choice small,#focus-styles .md-phone.focus .icon-choice small,#focus-styles .md-phone.focus #times-hint,#focus-styles .md-phone.focus #schedule-hint,#focus-styles .md-phone.focus .md-focus-next small { font-size:calc(13px * var(--text-scale)); }
+#focus-styles .md-phone.focus .md-focus-main h2 { font-size:calc(29px * var(--text-scale)); }
+#focus-styles .md-phone.focus .time { font-size:calc(18px * var(--text-scale)); }
+#focus-styles .md-phone.focus .md-nav button { font-size:calc(10px * var(--text-scale)); overflow-wrap:anywhere; }
+#focus-styles .md-phone.focus .choice-row label { font-size:calc(15px * var(--text-scale)); }
+#focus-styles .focus .md-focus-head #date { font-size:calc(21px * var(--text-scale)); }
+html[data-text-size=largest] #focus-styles .meal-options { grid-template-columns:1fr; }
+html[data-text-size=largest] #focus-styles .md-focus-next { grid-template-columns:1fr; }
+html[data-text-size=largest] #focus-styles .md-focus-next > div:last-child { text-align:left; }
+
+#focus-styles .dose-actions { grid-column:2; display:flex; flex-wrap:wrap; gap:8px; }
+#focus-styles .skip-choices { display:grid; gap:8px; }
+#focus-styles .skip-choices label { display:flex; align-items:center; gap:12px; margin:0; padding:12px; border:1px solid var(--line); border-radius:12px; }
+#focus-styles .skip-choices label:has(:checked) { border-color:var(--accent); background:var(--soft); }
+#focus-styles .skip-choices input { width:18px; height:18px; margin:0; flex:none; accent-color:var(--accent); }
+#focus-styles #skip-editor .section-head { margin-top:0; }
+#focus-styles #skip-title:focus { outline:none; }
+#focus-styles #skip-description { margin-bottom:20px; overflow-wrap:anywhere; }
+#focus-styles #skip-preview { margin:16px 0; line-height:1.5; }
+#focus-styles #skip-error { color:var(--ink); font-weight:650; margin:12px 0; }
+#focus-styles #skip-editor input[type=datetime-local] { display:block; box-sizing:border-box; max-width:100%; min-height:50px; }
+#focus-styles #summary .is-skipped { opacity:.7; }
+#focus-styles #summary .is-skipped .progress-time { text-decoration:line-through; }
+
+#focus-styles .md-phone.focus .md-nav button { font-size:min(calc(10px * var(--text-scale)),2.85vw); padding-left:1px; padding-right:1px; white-space:nowrap; overflow-wrap:normal; }
+
+#focus-styles #skip-submit { position:sticky; bottom:0; box-shadow:0 -8px 12px var(--paper); }
+
+
+/* Schedule and history: full-width text, a clear header and a stable action row. */
+#focus-styles .md-phone.focus [data-panel=schedule] > .view-title,
+#focus-styles .md-phone.focus [data-panel=history] > .view-title { margin:8px 0 22px; line-height:1.15; }
+#focus-styles .schedule-date { display:block; margin:0 0 24px; }
+#focus-styles .schedule-date label { margin:0 0 8px; color:var(--muted); }
+#focus-styles .schedule-date input { max-width:none; width:100%; margin:0; min-height:50px; }
+#focus-styles #schedule,#focus-styles #history-list { display:grid; gap:14px; }
+#focus-styles #schedule .dose,#focus-styles #history-list .dose { display:flex; flex-direction:column; align-items:stretch; gap:14px; margin:0; padding:18px; border:1px solid var(--line); border-radius:20px; background:var(--soft); opacity:1; }
+#focus-styles .dose-top,#focus-styles .history-top { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; }
+#focus-styles #schedule .time { padding:0; font-size:calc(23px * var(--text-scale)); font-weight:600; line-height:1.1; letter-spacing:-.03em; }
+#focus-styles .dose-status,#focus-styles .history-status { font-size:calc(12px * var(--text-scale)); line-height:1.35; color:var(--accent); padding:5px 9px; border:1px solid var(--line); border-radius:9px; }
+#focus-styles .history-top time { font-size:calc(12px * var(--text-scale)); color:var(--muted); white-space:nowrap; }
+#focus-styles #schedule .dose-info,#focus-styles #history-list .dose-info { flex:none; min-width:0; width:100%; }
+#focus-styles .md-phone.focus #schedule h3,#focus-styles .md-phone.focus #history-list h3 { margin:0; font-size:calc(18px * var(--text-scale)); line-height:1.35; font-weight:600; }
+#focus-styles #schedule h3 { display:flex; align-items:flex-start; gap:10px; }
+#focus-styles #schedule h3 .category-icon { flex:none; margin:1px 0 0; width:24px; height:25px; }
+#focus-styles #schedule .dose-info p { margin:7px 0 0 34px; line-height:1.5; }
+#focus-styles #schedule .dose-actions { display:flex; gap:10px; flex-wrap:wrap; padding-top:12px; border-top:1px solid var(--line); }
+#focus-styles .md-phone.focus #schedule .dose-actions button { flex:1 1 100px; margin:0; border-radius:12px; min-height:44px; font-size:calc(14px * var(--text-scale)); }
+#focus-styles #schedule .dose-actions button[data-take]:not([aria-label^="Отменить"]) { background:var(--button-fill); color:var(--on-action); }
+#focus-styles #history-list .dose > button { align-self:flex-start; margin:0; padding:7px 0; border:0; border-radius:6px; background:transparent; min-height:40px; color:var(--muted); text-decoration:underline; text-underline-offset:4px; }
+#focus-styles #history-list .history-planned { margin:8px 0 0; line-height:1.5; }
+#focus-styles .md-phone.focus #history-list .history-recorded { margin:4px 0 0; font-size:calc(12px * var(--text-scale)); }
+#focus-styles .history-transfer { display:grid; gap:6px; margin-top:12px; }
+#focus-styles .history-transfer p { margin:0; display:grid; grid-template-columns:42px minmax(0,1fr); gap:8px; line-height:1.5; }
+#focus-styles .history-transfer p span { color:var(--muted); font-size:.85em; }

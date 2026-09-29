@@ -9,3 +9,11 @@
  document.addEventListener('DOMContentLoaded',()=>{apply();document.querySelector('#theme-options')?.addEventListener('change',event=>{if(event.target.name!=='theme')return;mode=event.target.value;if(mode!=='auto'&&!names[mode])return;try{localStorage.setItem(key,mode)}catch{window.toast?.('Не удалось запомнить тему в браузере')}apply()})});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)apply()});window.addEventListener('focus',apply);window.addEventListener('storage',event=>{if(event.key===key){mode=event.newValue==='auto'||names[event.newValue]?event.newValue:'auto';apply()}});setInterval(apply,15000);apply();
 })();
+
+(function(){
+ const key='vovremya-text-size',sizes=['normal','large','largest'];
+ let size='normal';try{const saved=localStorage.getItem(key);if(sizes.includes(saved))size=saved}catch{}
+ function apply(){document.documentElement.dataset.textSize=size;document.querySelectorAll('[name=textSize]').forEach(el=>el.checked=el.value===size)}
+ apply();document.addEventListener('DOMContentLoaded',()=>{apply();document.querySelector('#text-size-options')?.addEventListener('change',event=>{if(!sizes.includes(event.target.value))return;size=event.target.value;try{localStorage.setItem(key,size)}catch{}apply()})});
+ window.addEventListener('storage',event=>{if(event.key===key){size=sizes.includes(event.newValue)?event.newValue:'normal';apply()}});
+})();

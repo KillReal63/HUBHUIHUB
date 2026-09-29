@@ -1,4 +1,5 @@
 """Web Push subscriptions and durable, bounded reminder delivery."""
+from schedule_logic import schedule_entries
 import base64
 from contextlib import contextmanager
 import datetime as dt
@@ -116,19 +117,13 @@ def api(c,path,body):
 def due(state,zone,created,now):
     local=dt.datetime.fromtimestamp(now,ZoneInfo(zone))
     date=local.date().isoformat()
-    for med in state['meds']:
-        if med['start']>date or (med['end'] and med['end']<date):continue
-        if 'cycle' in med:
-            cycle=med['cycle']
-            elapsed=(local.date()-dt.date.fromisoformat(med['start'])).days
-            if elapsed % (cycle['on']+cycle['off']) >= cycle['on']:continue
-        elif (local.weekday()+1)%7 not in med['days']:continue
-        for clock in med['times']:
-            hour,minute=map(int,clock.split(':'))
-            scheduled=local.replace(hour=hour,minute=minute,second=0,microsecond=0).timestamp()
-            key=f"{date}|{med['id']}|{clock}"
-            if created<=scheduled and 0<=now-scheduled<300 and key not in state['taken']:
-                yield key,scheduled
+    for key,moment in schedule_entries(state,date):
+        if key in state['taken'] or key in state.get('skipped',{}):continue
+        hour,minute=map(int,moment[11:].split(':'))
+        scheduled=local.replace(hour=hour,minute=minute,second=0,microsecond=0).timestamp()
+        if created<=scheduled and 0<=now-scheduled<300:
+            yield key,scheduled
+
 
 def run_once(now=None,sender=dispatch):
     now=time.time() if now is None else now
@@ -139,18 +134,21 @@ def run_once(now=None,sender=dispatch):
         for sid,body,zone,created in subscriptions:
             state=json.loads(c.execute('SELECT body FROM state WHERE id=1').fetchone()[0])
             for key,scheduled in due(state,zone,created,now):
-                c.execute('INSERT OR IGNORE INTO push_deliveries VALUES(?,?,?,0,0,?)',(sid,key,'pending',now))
-                claimed=c.execute("UPDATE push_deliveries SET attempts=attempts+1,next_try=? WHERE subscription=? AND dose=? AND status='pending' AND attempts<3 AND next_try<=?",(now+45,sid,key,now))
+                base_date,_,clock=key.split('|')
+                moment=dt.datetime.fromtimestamp(scheduled,ZoneInfo(zone)).isoformat(timespec='minutes')[:16]
+                delivery_key=key if moment==base_date+'T'+clock else key+'@'+moment
+                c.execute('INSERT OR IGNORE INTO push_deliveries VALUES(?,?,?,0,0,?)',(sid,delivery_key,'pending',now))
+                claimed=c.execute("UPDATE push_deliveries SET attempts=attempts+1,next_try=? WHERE subscription=? AND dose=? AND status='pending' AND attempts<3 AND next_try<=?",(now+45,sid,delivery_key,now))
                 c.commit()
                 if not claimed.rowcount:continue
                 # Fresh read avoids sending a reminder for an already marked dose.
                 latest=json.loads(c.execute('SELECT body FROM state WHERE id=1').fetchone()[0])
-                if key not in dict(due(latest,zone,created,now)):
+                if dict(due(latest,zone,created,now)).get(key)!=scheduled:
                     result='cancelled'
                 else:
-                    result=sender(json.loads(body),{'title':'Время приёма','body':'Пора проверить лекарства в расписании. Открой «Вовремя».','tag':key},ttl=max(1,int(300-(now-scheduled))))
+                    result=sender(json.loads(body),{'title':'Время приёма','body':'Пора проверить лекарства в расписании. Открой «Вовремя».','tag':delivery_key},ttl=max(1,int(300-(now-scheduled))))
                 if result=='expired':c.execute('DELETE FROM push_subscriptions WHERE id=?',(sid,))
-                c.execute('UPDATE push_deliveries SET status=? WHERE subscription=? AND dose=?',('pending' if result=='retry' else result,sid,key))
+                c.execute('UPDATE push_deliveries SET status=? WHERE subscription=? AND dose=?',('pending' if result=='retry' else result,sid,delivery_key))
                 c.commit()
 
 def worker():
