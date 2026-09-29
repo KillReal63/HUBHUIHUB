@@ -336,3 +336,9 @@ html[data-text-size=largest] #focus-styles .md-focus-next > div:last-child { tex
 #focus-styles .history-transfer { display:grid; gap:6px; margin-top:12px; }
 #focus-styles .history-transfer p { margin:0; display:grid; grid-template-columns:42px minmax(0,1fr); gap:8px; line-height:1.5; }
 #focus-styles .history-transfer p span { color:var(--muted); font-size:.85em; }
+
+/* Keep skipping as a visible, full-width alternative to marking a dose taken. */
+#focus-styles .md-phone.focus .md-focus-secondary { display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:12px; }
+#focus-styles .md-phone.focus .md-focus-secondary [data-skip] { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:50px; padding:12px 18px; border:1.5px solid var(--accent); border-radius:16px; background:var(--soft); color:var(--ink); font-size:calc(16px * var(--text-scale)); font-weight:600; text-decoration:none; }
+#focus-styles .md-phone.focus .md-focus-secondary [data-skip]:hover { background:var(--paper); }
+#focus-styles .md-phone.focus .md-focus-secondary [data-view] { align-self:center; min-height:44px; margin:0; }
