@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Vovremya SQLite backup
+[Service]
+Type=oneshot
+User=vovremya
+Group=vovremya
+ExecStart=/usr/bin/python3 /opt/vovremya/backup.py
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/vovremya

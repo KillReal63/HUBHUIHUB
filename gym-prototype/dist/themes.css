@@ -1,0 +1,64 @@
+/* The switcher is independent of program state and never rerenders a draft. */
+.style-picker{max-width:1080px;margin:22px auto 0;padding:0 36px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}.style-label{font-size:14px;color:var(--muted)}.style-options{display:flex;gap:8px;flex-wrap:wrap}.style-option{display:flex;gap:8px;align-items:center;background:transparent;color:inherit;border:1px solid var(--line);font-size:14px;font-weight:500;padding:8px 12px;min-height:40px;border-radius:8px}.style-option[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.swatch{width:16px;height:16px;flex-shrink:0;border-radius:50%;border:1px solid #81908a}.swatch-original{background:linear-gradient(135deg,#121817 50%,#d3fc78 50%)}.swatch-logbook{background:linear-gradient(135deg,#fff 50%,#174bcc 50%)}.swatch-studio{background:linear-gradient(135deg,#b4d1fb 50%,#255bc3 50%)}.swatch-sport{background:linear-gradient(135deg,#18202d 50%,#ffab66 50%)}
+/* Shared token coverage for all themed states, including forms and dialogs. */
+:root[data-theme=logbook]{--muted:#53617a;--accent:#174bcc;--panel:#fff;--line:#cbd4e2;--ink:#152746;--soft:#ecf1fa;--selected:#eaf0ff;--button-ink:#fff;--danger-bg:#ffeded;--danger-ink:#a32222;background:#f6f8fc;color:var(--ink);color-scheme:light;font-family:Calibri,"Segoe UI",sans-serif}
+:root[data-theme=studio]{--muted:#536984;--accent:#255bc3;--panel:#fff;--line:#c6d6ed;--ink:#203951;--soft:#e3edfc;--selected:#dceaff;--button-ink:#fff;--danger-bg:#ffeded;--danger-ink:#a32222;background:#edf4ff;color:var(--ink);color-scheme:light;font-family:"Trebuchet MS","Segoe UI",sans-serif}
+:root[data-theme=sport]{--muted:#afbdcf;--accent:#ffab66;--panel:#202c3c;--line:#465366;--ink:#f0f4fa;--soft:#2d3c50;--selected:#3d302a;--button-ink:#1d2634;--danger-bg:#492c35;--danger-ink:#ffc2be;background:#18202d;color:var(--ink);color-scheme:dark;font-family:"Segoe UI",sans-serif}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(.brand span,.field,legend){color:var(--ink)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(button,.button){color:var(--button-ink)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(.secondary,.icon-button,.badge){background:var(--soft);color:var(--ink);border-color:var(--line)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(.day,.style-option){color:var(--ink)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) nav{background:var(--soft)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(.day.active,.group-choice:has(input:checked)){background:var(--selected);border-color:var(--accent)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) :is(input:not([type=checkbox]),textarea,select){background:var(--panel);color:var(--ink);border-color:var(--line)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) .group-choice{border-color:var(--line)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) .danger{background:var(--danger-bg);color:var(--danger-ink)}
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) .progress{background:var(--soft)}
+/* Дневник: a ruled training log, compact tabs and a clear blue margin. */
+[data-theme=logbook] header{border-bottom:3px solid var(--ink)}
+[data-theme=logbook] .brand{letter-spacing:5px}
+[data-theme=logbook] h1{font-family:Cambria,Georgia,serif;font-weight:700;letter-spacing:-1px;font-size:clamp(36px,5vw,52px)}
+[data-theme=logbook] nav{background:transparent!important;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
+[data-theme=logbook] nav a{border-radius:0;padding:12px 28px}
+[data-theme=logbook] :is(.panel,.day,dialog){border-radius:3px}
+[data-theme=logbook] .days{gap:0;border:1px solid var(--line)}
+[data-theme=logbook] .day{border:0;border-right:1px solid var(--line);min-height:112px;border-bottom:4px solid transparent}
+[data-theme=logbook] .day.active{border-bottom-color:var(--accent)}
+[data-theme=logbook] .day small{font-family:Consolas,monospace;margin-bottom:10px}
+[data-theme=logbook] .panel{border-top:4px solid var(--accent)}
+[data-theme=logbook] .exercise{padding:22px 0}
+[data-theme=logbook] .number{font-family:Consolas,monospace;border-right:2px solid var(--line);padding-right:16px}
+[data-theme=logbook] .badge{background:transparent!important;padding:2px 0;margin-right:8px}
+[data-theme=logbook] .count{font-family:Consolas,monospace}
+/* Студия: airy capsule controls and individual exercise cards. */
+[data-theme=studio] header{border-bottom:0}
+[data-theme=studio] .brand{letter-spacing:1px}
+[data-theme=studio] h1{font-weight:600;letter-spacing:-2px}
+[data-theme=studio] :is(nav,nav a,button,.button){border-radius:24px}
+[data-theme=studio] .day{border-radius:24px;min-height:150px;padding:24px}
+[data-theme=studio] .day.active{box-shadow:inset 0 0 0 1px var(--accent)}
+[data-theme=studio] .panel{border:0;border-radius:30px;background:transparent;padding:0}
+[data-theme=studio] .panel-head{padding:12px 6px}
+[data-theme=studio] .exercise{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:12px;gap:18px}
+[data-theme=studio] .number{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--soft);color:var(--accent)}
+[data-theme=studio] .edit-row{background:var(--panel);border:1px solid var(--line);border-radius:20px;margin:12px 0;padding:20px}
+[data-theme=studio] .progress{height:5px;margin:10px 0 22px;background:#d0def3!important}
+[data-theme=studio] .editor{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px}
+/* Атлет: a workout console with a day rail on wide screens. */
+[data-theme=sport] h1{font-family:"Arial Narrow",Impact,"Segoe UI",sans-serif;text-transform:uppercase;font-weight:900;font-stretch:condensed;letter-spacing:-1px}
+[data-theme=sport] :is(.day,.panel,dialog,button,.button,nav,nav a){border-radius:5px}
+[data-theme=sport] header{border-bottom:1px solid var(--line)}
+[data-theme=sport] .brand{font-style:italic}
+[data-theme=sport] .day.active{border-left:5px solid var(--accent);padding-left:16px}
+[data-theme=sport] .number{font-family:Consolas,monospace;color:var(--accent);font-size:18px;font-style:italic}
+[data-theme=sport] .exercise{padding:19px 0}
+[data-theme=sport] .panel{border-top:3px solid var(--accent)}
+[data-theme=sport] .count{font-family:Consolas,monospace;font-weight:800}
+[data-theme=sport] .badge{border-radius:3px}
+@media(min-width:900px){[data-theme=sport] #app{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px}[data-theme=sport] .heading{grid-column:1/-1;margin-bottom:4px}[data-theme=sport] .days{display:flex;flex-direction:column;margin:0;align-self:start}[data-theme=sport] .day{min-height:132px}[data-theme=sport] #app>.panel{grid-column:2;grid-row:2}[data-theme=sport] #app>.footer{grid-column:2;margin:0}[data-theme=sport] #app>.helper{grid-column:1/-1;margin-top:0!important}}
+@media(max-width:640px){.style-picker{padding:0 18px;gap:10px;margin-top:18px}.style-options{gap:6px}.style-option{font-size:13px;padding:8px 10px}.style-label{width:100%}[data-theme=studio] .day{min-width:205px;padding:20px;min-height:140px}[data-theme=studio] .exercise{padding:18px 14px;gap:12px}[data-theme=studio] .number{width:28px;height:28px;font-size:12px}[data-theme=studio] .editor{padding:18px}[data-theme=logbook] .number{padding-right:10px}}
+@media(prefers-reduced-motion:reduce){.progress>span{transition:none}}
+
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) #notice{color:var(--button-ink)}
+
+:root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) nav a[aria-current=page]{color:var(--button-ink)}

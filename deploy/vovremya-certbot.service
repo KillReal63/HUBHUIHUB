@@ -1,0 +1,8 @@
+[Unit]
+Description=Renew Vovremya HTTPS certificate
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/vovremya-certbot/bin/certbot renew --quiet

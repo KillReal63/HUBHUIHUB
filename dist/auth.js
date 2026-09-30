@@ -1,0 +1,10 @@
+let setupRequired=false;
+function lock(){authenticated=false;state={meds:[],taken:{},notified:{}};lastSaved={meds:[],taken:{}};render();$('main').hidden=true;$('#editor').close();$('#skip-editor').close();$('#auth').hidden=false;$('#logout').hidden=true}
+function migrationAvailable(){try{return JSON.parse(localStorage.getItem(KEY))?.meds?.length>0&&localStorage.getItem('vovremya-imported')!=='yes'}catch{return false}}
+async function unlock(){await load();authenticated=true;$('#auth').hidden=true;$('main').hidden=false;$('#logout').hidden=false;$('#import-box').hidden=!migrationAvailable();window.pushRefresh?.()}
+function hubLogin(){location.replace('/?next='+encodeURIComponent(location.pathname+location.search+location.hash))}
+async function boot(){try{const status=await api('session');if(status.authenticated)await unlock();else hubLogin()}catch(e){lock();$('#auth-error').textContent=e.message||'Не удалось связаться с сервером. Обнови страницу.'}}
+$('#logout').onclick=async()=>{if(busy)return;try{await api('logout',{});hubLogin()}catch{toast('Не удалось выйти. Проверь подключение.')}};
+$('#import-local').onclick=async()=>{if(busy||!authenticated)return;try{const old=JSON.parse(localStorage.getItem(KEY));if(!old?.meds?.length)return;const existing=new Set(state.meds.map(m=>m.id));state.meds.push(...old.meds.filter(m=>!existing.has(m.id)));state.taken={...old.taken,...state.taken};if(await save()){try{localStorage.setItem('vovremya-imported','yes')}catch{}$('#import-box').hidden=true;toast('Записи перенесены на сервер. Локальная копия сохранена.')}}catch{state={...structuredClone(lastSaved),notified:state.notified};render();toast('Не удалось перенести данные. Локальная копия не изменена.')}};
+async function refresh(){if(!authenticated||busy||$('#editor').open||$('#skip-editor').open||document.hidden)return;try{await load();tick()}catch(e){if(e.status===401){lock();hubLogin()}}}
+setInterval(refresh,30000);document.addEventListener('visibilitychange',refresh);window.addEventListener('focus',refresh);boot();
