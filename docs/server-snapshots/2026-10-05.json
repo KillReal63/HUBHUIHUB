@@ -1,0 +1,300 @@
+{
+  "captured_at_utc": "2026-10-05T06:40:37.835573+00:00",
+  "server": "144.31.166.231",
+  "files": [
+    {
+      "path": "site/app.js",
+      "source": "/var/www/vovremya/app.js",
+      "size": 19870,
+      "sha256": "543b8909d435c3ad638f0531950489c6cd4a2ed303fe8bab163191167125523d"
+    },
+    {
+      "path": "site/auth.js",
+      "source": "/var/www/vovremya/auth.js",
+      "size": 2217,
+      "sha256": "c9f3293e2b5f0a0c5c285c5be7d72eeeb749b1d4e3ae763603fa56dbb4e8aaf5"
+    },
+    {
+      "path": "site/focus-ui.js",
+      "source": "/var/www/vovremya/focus-ui.js",
+      "size": 6596,
+      "sha256": "f923721532204dfccd4117653e606a4b1d8e4068185e8bd623e44807406528cb"
+    },
+    {
+      "path": "site/focus.css",
+      "source": "/var/www/vovremya/focus.css",
+      "size": 26631,
+      "sha256": "3721779e7fc4dc2c9461be5e483461c4ae2847cbd8da721c113321982980f60f"
+    },
+    {
+      "path": "site/hub/hub.css",
+      "source": "/var/www/vovremya/hub/hub.css",
+      "size": 2914,
+      "sha256": "b8b0dc594978dd24d364cfbbba1274b94e8707dbe2b9fa74112490742848a6c4"
+    },
+    {
+      "path": "site/hub/hub.js",
+      "source": "/var/www/vovremya/hub/hub.js",
+      "size": 3262,
+      "sha256": "7278aded4a5c464d029430eb04f1b3ba7272aa05ed2977c94cf123f9e1c8f379"
+    },
+    {
+      "path": "site/hub/index.html",
+      "source": "/var/www/vovremya/hub/index.html",
+      "size": 3022,
+      "sha256": "512110876bf969be86ca9279664e3ffca6beab4d31f9b63bee62c8620453d496"
+    },
+    {
+      "path": "site/icon-180.png",
+      "source": "/var/www/vovremya/icon-180.png",
+      "size": 1608,
+      "sha256": "b8994889e9356080ca76dd20f459be4205aecb63f2e914465dce3b1e2b5fc2f5"
+    },
+    {
+      "path": "site/icon-192.png",
+      "source": "/var/www/vovremya/icon-192.png",
+      "size": 1704,
+      "sha256": "304817b54390a45ab061c80ef8d64fcaec1531653768e753e9be4f7c4b7c3435"
+    },
+    {
+      "path": "site/icon-512.png",
+      "source": "/var/www/vovremya/icon-512.png",
+      "size": 5275,
+      "sha256": "4fd6bacbea133f0cfb5d82ae6371e823d55f5fe05692551f0414cb9497c67ec7"
+    },
+    {
+      "path": "site/index.html",
+      "source": "/var/www/vovremya/index.html",
+      "size": 14701,
+      "sha256": "437aca345ac0818396c7907f1100bd96764caaffe32d2b64a9905d0c929997a6"
+    },
+    {
+      "path": "site/manifest.webmanifest",
+      "source": "/var/www/vovremya/manifest.webmanifest",
+      "size": 465,
+      "sha256": "b90d128c69a3c306868802abaf2e4ce90f417cd1ac4d7b45610a6b31944c715f"
+    },
+    {
+      "path": "site/postpone.js",
+      "source": "/var/www/vovremya/postpone.js",
+      "size": 4548,
+      "sha256": "3bf14f495b32fc038b12e10c1e1deeac89cf7323ad604292f2966ea61bd319e9"
+    },
+    {
+      "path": "site/product.css",
+      "source": "/var/www/vovremya/product.css",
+      "size": 34829,
+      "sha256": "d8729bba971a10b8e0cdc9afd52b590f503b3aa16cb05f4cee91fc27689c4005"
+    },
+    {
+      "path": "site/push.js",
+      "source": "/var/www/vovremya/push.js",
+      "size": 5960,
+      "sha256": "053cd7591625e7cf86c905f6ed7c71d59c45ab644be5f2cfc0211c800e4b2668"
+    },
+    {
+      "path": "site/schedule.js",
+      "source": "/var/www/vovremya/schedule.js",
+      "size": 2724,
+      "sha256": "460a63748ec7a0a40e3cd2a270574c85af31b002d946fa060d08efca16d0d270"
+    },
+    {
+      "path": "site/style.css",
+      "source": "/var/www/vovremya/style.css",
+      "size": 5351,
+      "sha256": "142c2a4c93a3cc76765069008a8b07f62158537798f7a612bce509502fbc07af"
+    },
+    {
+      "path": "site/sw.js",
+      "source": "/var/www/vovremya/sw.js",
+      "size": 1650,
+      "sha256": "7688973dd03df972c9d67e7e7e93a4b7eb325a525b334f3893c3c132c67074ba"
+    },
+    {
+      "path": "site/tasks/index.html",
+      "source": "/var/www/vovremya/tasks/index.html",
+      "size": 6808,
+      "sha256": "a06d0b61b3172548499b5e1d41c968d9796cfbd99dbdba30b32fa214a61e757e"
+    },
+    {
+      "path": "site/tasks/schedule.js",
+      "source": "/var/www/vovremya/tasks/schedule.js",
+      "size": 1158,
+      "sha256": "006ac271c7d84e55b7cdd9496fb029d8a9ccbdc8c19806672acfd1593ff368a1"
+    },
+    {
+      "path": "site/tasks/tasks.css",
+      "source": "/var/www/vovremya/tasks/tasks.css",
+      "size": 3895,
+      "sha256": "4ed543ad116aeff4b912a57fb7c8c518c455c3d34a4222203379f0e4a9708e85"
+    },
+    {
+      "path": "site/tasks/tasks.js",
+      "source": "/var/www/vovremya/tasks/tasks.js",
+      "size": 9953,
+      "sha256": "a356aa6585c46633bdb04b4b9f133a4f5cc011139a8ed68ddf8806760e0be193"
+    },
+    {
+      "path": "site/tasks/themes.css",
+      "source": "/var/www/vovremya/tasks/themes.css",
+      "size": 2912,
+      "sha256": "54e208a590b210729aeff3e6c29a3fdc253894fea25bde55afd9377f23613934"
+    },
+    {
+      "path": "site/tasks/themes.js",
+      "source": "/var/www/vovremya/tasks/themes.js",
+      "size": 1500,
+      "sha256": "d93927acd3edcef88c01ac085dcbf56df7406b81e68c05f8b06540c75d0a3e27"
+    },
+    {
+      "path": "site/themes.js",
+      "source": "/var/www/vovremya/themes.js",
+      "size": 2523,
+      "sha256": "2ed3e061c7de35ab20d62cdf407cfe989b420d30df3c37deec8bfbdecedb7873"
+    },
+    {
+      "path": "gym/app.js",
+      "source": "/var/www/gym/app.js",
+      "size": 18599,
+      "sha256": "b234ef6b01b8960f276461d3c367a6abaaed6e27bb057662fd8c81477550abcc"
+    },
+    {
+      "path": "gym/catalog/LICENSE.txt",
+      "source": "/var/www/gym/catalog/LICENSE.txt",
+      "size": 1211,
+      "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e"
+    },
+    {
+      "path": "gym/catalog/NOTICE.txt",
+      "source": "/var/www/gym/catalog/NOTICE.txt",
+      "size": 2135,
+      "sha256": "bf735978f86f239cc7c253ef026705532c7692489419b39f1ac91c7d8c4088c3"
+    },
+    {
+      "path": "gym/catalog/exercises.json",
+      "source": "/var/www/gym/catalog/exercises.json",
+      "size": 869643,
+      "sha256": "1430135a8b12014e7ecaa26bb50a7a43cd5d2d54ebafe655f57ef5b7d31874d2"
+    },
+    {
+      "path": "gym/catalog/ru.json",
+      "source": "/var/www/gym/catalog/ru.json",
+      "size": 1096936,
+      "sha256": "750912c46a826744773837d5bc392ccd783aca4435f785129a99d0093288238e"
+    },
+    {
+      "path": "gym/catalog.css",
+      "source": "/var/www/gym/catalog.css",
+      "size": 3245,
+      "sha256": "b1ca0781035bf1cf66e1a5def46c20fd7ad3043b3f6fda3ed6fb4959b18bba2d"
+    },
+    {
+      "path": "gym/catalog.js",
+      "source": "/var/www/gym/catalog.js",
+      "size": 20521,
+      "sha256": "ce340763ea1a1cd67a2a807427b997a4f155229dac217a335aa179c106622f92"
+    },
+    {
+      "path": "gym/index.html",
+      "source": "/var/www/gym/index.html",
+      "size": 1843,
+      "sha256": "c7e37369af576cf8eda3fcf86b75fb0cbc653c9536505b0f19815e20a62a8576"
+    },
+    {
+      "path": "gym/style.css",
+      "source": "/var/www/gym/style.css",
+      "size": 5960,
+      "sha256": "d9c235caccca5f038bbe4cc09282ed29ca536838acf74b27a30a59cd0ed17a14"
+    },
+    {
+      "path": "gym/themes.css",
+      "source": "/var/www/gym/themes.css",
+      "size": 7941,
+      "sha256": "b6923f5c3b5aad8b626176f9a7615836c4c03f02222145cee768b63b92f13728"
+    },
+    {
+      "path": "gym/themes.js",
+      "source": "/var/www/gym/themes.js",
+      "size": 1655,
+      "sha256": "00a3dc1561901669d3a075ce75311b302ec8113d50452a5101276cea06e4a5fb"
+    },
+    {
+      "path": "backend/backup.py",
+      "source": "/opt/vovremya/backup.py",
+      "size": 841,
+      "sha256": "924797bbcc1b54167122b3f931e19e96587f0d1acc3e1da57bd8ff1c651d409b"
+    },
+    {
+      "path": "backend/push_system.py",
+      "source": "/opt/vovremya/push_system.py",
+      "size": 9302,
+      "sha256": "de97d694d3cd60b731c00eefa04cbc088c201ae43c3ebb1baf1620bf418c23e5"
+    },
+    {
+      "path": "backend/schedule_logic.py",
+      "source": "/opt/vovremya/schedule_logic.py",
+      "size": 2078,
+      "sha256": "166185ced759d15127c03baac7359da97843ca19fdf5a2074bc2ea8a8e85153d"
+    },
+    {
+      "path": "backend/send_test.py",
+      "source": "/opt/vovremya/send_test.py",
+      "size": 583,
+      "sha256": "3cd88f5cf9f2dfdecc40b2963b86d6220e25c8563a0a3d249771b8d6d4aeb69b"
+    },
+    {
+      "path": "backend/server.py",
+      "source": "/opt/vovremya/server.py",
+      "size": 16140,
+      "sha256": "676ec65bf7136f4c1ae226b28f2f2202e2a33bbde0646f264bf34d7e6f3a6406"
+    },
+    {
+      "path": "backend/tasks.py",
+      "source": "/opt/vovremya/tasks.py",
+      "size": 6681,
+      "sha256": "006502bd3101d2becfa158009433b9063d2bdc5abe06b290899af790bd1ec528"
+    },
+    {
+      "path": "nginx/default",
+      "source": "/etc/nginx/sites-enabled/default",
+      "size": 2412,
+      "sha256": "ce0901350a021608139b5639cf4ccd7717bef8c3a9e4f79031eb46386b67b03f"
+    },
+    {
+      "path": "nginx/vovremya",
+      "source": "/etc/nginx/sites-enabled/vovremya",
+      "size": 3236,
+      "sha256": "2e253a8a5716500d4271af4731d72c1e1b79ce9d82d29d9169e2034293914a5d"
+    },
+    {
+      "path": "systemd/vovremya-api.service",
+      "source": "/etc/systemd/system/vovremya-api.service",
+      "size": 453,
+      "sha256": "043d14bf26867268df3c4c0cceb26d7fac21e1d54738b3315d373387cadb4f0a"
+    },
+    {
+      "path": "systemd/vovremya-backup.service",
+      "source": "/etc/systemd/system/vovremya-backup.service",
+      "size": 254,
+      "sha256": "b1c829dbf3f27d6a2110e9b20fb3da701b71fde731e233c93a6464909a564a3f"
+    },
+    {
+      "path": "systemd/vovremya-backup.timer",
+      "source": "/etc/systemd/system/vovremya-backup.timer",
+      "size": 124,
+      "sha256": "62ede22a382cdf111e2bb5454e89999d861832b2f7f90531c93221571337ae30"
+    },
+    {
+      "path": "systemd/vovremya-certbot.service",
+      "source": "/etc/systemd/system/vovremya-certbot.service",
+      "size": 190,
+      "sha256": "bd3bb04b68dd17269ae51b97d6cfb641f9d8c687251dbe3638d13438e331ae43"
+    },
+    {
+      "path": "systemd/vovremya-certbot.timer",
+      "source": "/etc/systemd/system/vovremya-certbot.timer",
+      "size": 178,
+      "sha256": "733d8285cbca53b198797d74041b43a13b88bcc47718b7bd4339442af42d8337"
+    }
+  ]
+}

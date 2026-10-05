@@ -1,0 +1,210 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;650;700;750;800&family=Lora:wght@400;500;600&display=swap');
+#med-directions{position:relative;padding:90px 0 12px;font-family:Manrope,-apple-system,BlinkMacSystemFont,sans-serif;color:#202720;color-scheme:light}
+#med-directions *{box-sizing:border-box}
+#med-directions button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#med-directions .md-switch{position:absolute;z-index:8;top:8px;right:0;left:0;max-width:390px;margin:auto;background:#252924;color:#fff;padding:5px;border-radius:16px;display:flex;box-shadow:0 6px 20px #15200d18}
+#med-directions .md-switch button{flex:1;min-height:44px;padding:5px 2px;border:0;border-radius:11px;background:transparent;color:#c6ccc4;font-size:12px;font-weight:650}
+#med-directions .md-switch button[aria-pressed=true]{background:#fff;color:#202720}
+#med-directions .md-switch button span{display:block;font-size:11px;letter-spacing:.05em;opacity:.65;margin-bottom:2px}
+#med-directions .md-phone{--paper:#f6f7f9;--ink:#202638;--muted:#626b7c;--line:#dfe3eb;--accent:#3659d9;--soft:#e9eefc;position:relative;margin:auto;width:100%;max-width:390px;min-height:756px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:30px;overflow:clip;box-shadow:0 16px 48px #14201d0b;font-size:14px;line-height:1.5;isolation:isolate}
+#med-directions .md-phone.ritual{--paper:#f7f5ed;--ink:#253e33;--muted:#647164;--line:#daddcf;--accent:#294d3c;--soft:#e8ecdb}
+#med-directions .md-phone.cassette{--paper:#edeae3;--ink:#253d39;--muted:#626d65;--line:#d4d5ca;--accent:#294940;--soft:#dde4d4}
+#med-directions .md-phone.focus{--paper:#202823;--ink:#f1f3e9;--muted:#aab8ac;--line:#425048;--accent:#d4ed98;--soft:#354239;color-scheme:dark}
+#med-directions .md-top{padding:23px 22px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#med-directions .md-brand{font-size:14px;letter-spacing:-.02em;font-weight:800;display:flex;align-items:center;gap:7px}
+#med-directions .md-brand i{width:17px;height:17px}
+#med-directions .md-top-actions{display:flex;gap:5px}
+#med-directions .md-icon-button{border:0;background:transparent;color:var(--ink);width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+#med-directions .md-icon-button:hover{background:var(--soft)}
+#med-directions .md-icon-button svg{width:20px;height:20px}
+#med-directions .md-content{padding:13px 22px 26px;min-height:606px}
+#med-directions h2,#med-directions h3,#med-directions p{margin:0}
+#med-directions .md-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:21px}
+#med-directions h2{font-size:32px;line-height:1.2;font-weight:750;letter-spacing:-.04em}
+#med-directions .md-sub{color:var(--muted);font-size:12px}
+#med-directions .md-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:25px}
+#med-directions .md-day{text-align:center;padding:8px 0 9px;color:var(--muted);border-radius:13px;font-size:11px;line-height:1.8}
+#med-directions .md-day b{display:block;font-size:15px;color:var(--ink);font-weight:650}
+#med-directions .md-day.active{background:var(--accent);color:#e9edff}
+#med-directions .md-day.active b{color:#fff}
+#med-directions .md-day em{display:block;width:3px;height:3px;border-radius:50%;background:currentColor;margin:4px auto 0}
+#med-directions .md-section-label{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px;font-size:12px;color:var(--muted);font-weight:600}
+#med-directions .md-section-label strong{color:var(--ink);font-weight:700;font-size:13px}
+#med-directions .md-hero{background:#fff;border-radius:21px;padding:19px;margin-bottom:24px}
+#med-directions .md-hero-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px}
+#med-directions .md-time{font-size:13px;font-weight:650;font-variant-numeric:tabular-nums}
+#med-directions .md-now{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:11px;font-weight:700}
+#med-directions .md-now:before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+#med-directions .md-med-main{display:flex;align-items:center;gap:15px;margin-bottom:19px}
+#med-directions .md-med-main h3{font-size:23px;font-weight:750;letter-spacing:-.03em;line-height:1.3;margin-bottom:3px}
+#med-directions .md-pill-box{width:56px;height:64px;display:grid;place-items:center;background:var(--soft);border-radius:17px;flex:none}
+#med-directions .md-pill{position:relative;display:inline-block;width:20px;height:40px;border:1.5px solid #6f82c7;border-radius:16px;transform:rotate(32deg);background:linear-gradient(to bottom,#afbfef 49%,#fff 50%);box-shadow:inset 3px 0 3px #ffffff55,2px 3px 4px #25366713}
+#med-directions .md-pill.gold{border-color:#bc8b39;background:linear-gradient(to bottom,#e9bb63 49%,#f8e4b4 50%)}
+#med-directions .md-pill.green{border-color:#7d8c73;background:linear-gradient(to bottom,#a5b797 49%,#e6ebda 50%)}
+#med-directions .md-pill.round{height:24px;width:24px;transform:rotate(25deg);background:#fafafa;border-color:#adb4b2;border-radius:50%}
+#med-directions .md-pill.round:after{content:'';position:absolute;left:3px;right:3px;top:10px;height:1px;background:#bac1ba}
+#med-directions .md-primary{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;min-height:49px;border:0;border-radius:13px;background:var(--accent);color:#fff;font-size:14px;font-weight:700}
+#med-directions .md-primary svg{width:17px;height:17px}
+#med-directions .md-primary:hover{filter:brightness(.94)}
+#med-directions .md-text-button{min-height:44px;border:0;background:transparent;color:var(--muted);font-size:12px;padding:8px}
+#med-directions .md-hero-footer svg{width:12px;height:12px;vertical-align:middle}
+#med-directions .md-hero-footer{display:flex;justify-content:space-between;align-items:center;margin:5px -7px -10px}
+#med-directions .md-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+#med-directions .md-row:last-child{border-bottom:0}
+#med-directions .md-row .md-pill-box{width:42px;height:46px;border-radius:12px;background:var(--soft)}
+#med-directions .md-row .md-pill{width:13px;height:27px}
+#med-directions .md-row .md-pill.round{height:21px;width:21px}
+#med-directions .md-row .md-pill.round:after{top:8px}
+#med-directions .md-row-copy{flex:1;min-width:0}
+#med-directions .md-row-copy b{font-size:14px;font-weight:650;display:block}
+#med-directions .md-row-copy small{font-size:11px;color:var(--muted)}
+#med-directions .md-row-end{text-align:right;font-size:12px;font-weight:600;color:var(--muted)}
+#med-directions .md-row-end svg{width:17px;height:17px}
+#med-directions .md-row-end small{display:block;font-size:11px;font-weight:400}
+#med-directions .md-nav{display:flex;align-items:center;justify-content:space-around;gap:4px;padding:13px 15px max(18px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--paper)}
+#med-directions .md-nav button{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:43px;min-width:72px;font-size:11px;font-weight:600}
+#med-directions .md-nav button.active{color:var(--accent)}
+#med-directions .md-nav svg{width:21px;height:21px;stroke-width:1.6}
+#med-directions .md-progress-line{display:flex;gap:4px;margin:11px 0 24px}
+#med-directions .md-progress-line span{height:3px;flex:1;border-radius:2px;background:var(--line)}
+#med-directions .md-progress-line span.complete{background:var(--accent)}
+#med-directions .ritual .md-top{padding-top:22px}
+#med-directions .ritual .md-content{padding-top:23px}
+#med-directions .ritual h2{font-family:Lora,Georgia,serif;font-weight:400;font-size:39px;letter-spacing:-.045em;line-height:1.15;margin-bottom:10px}
+#med-directions .md-ritual-intro{position:relative;min-height:133px;padding-right:67px}
+#med-directions .md-sun{position:absolute;right:0;top:1px;width:70px;height:70px;color:#9a7546;display:grid;place-items:center}
+#med-directions .md-sun svg{width:65px;height:65px;stroke-width:.8}
+#med-directions .md-ritual-intro p{font-size:12px;color:var(--muted);margin-top:13px}
+#med-directions .md-ritual-block{background:#e5ead8;border-radius:24px;padding:20px;margin-bottom:21px}
+#med-directions .md-ritual-block h3{font-family:Lora,Georgia,serif;font-size:26px;font-weight:400;letter-spacing:-.04em}
+#med-directions .md-ritual-block .md-hero-header{margin-bottom:8px}
+#med-directions .md-ritual-block .md-row{padding:13px 0;border-color:#c6d0bc}
+#med-directions .md-ritual-block .md-pill-box{background:#f4f5e9}
+#med-directions .md-ritual-block .md-primary{margin-top:17px;border-radius:30px}
+#med-directions .md-ritual-block .md-hero-footer{margin-bottom:-8px}
+#med-directions .md-ritual-later{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+#med-directions .md-ritual-later>svg{width:20px;height:20px;margin-top:3px;color:var(--muted);stroke-width:1.4}
+#med-directions .md-ritual-later b{font-size:14px;font-weight:650}
+#med-directions .md-ritual-later p{font-size:12px;color:var(--muted);margin-top:4px}
+#med-directions .md-ritual-later time{margin-left:auto;font-size:12px;color:var(--muted);padding-top:3px}
+#med-directions .cassette h2{font-size:35px;font-weight:800;letter-spacing:-.045em}
+#med-directions .cassette .md-heading{margin-top:9px;margin-bottom:9px}
+#med-directions .md-cassette-summary{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:20px}
+#med-directions .md-tray{background:#d7d8cc;padding:7px;border-radius:25px;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:20px}
+#med-directions .md-compartment{position:relative;background:#f4f2e9;border:1px solid #fff9;box-shadow:0 2px 3px #283b2510;min-height:188px;border-radius:18px;padding:16px 14px;text-align:left;color:var(--ink)}
+#med-directions .md-compartment.active{background:#dceab3;border-color:#f2f7de;min-height:217px}
+#med-directions .md-compartment.taken{background:#e8eade;min-height:217px}
+#med-directions .md-compartment h3{font-size:16px;font-weight:750;margin-bottom:2px}
+#med-directions .md-compartment p{font-size:11px;color:#60715b}
+#med-directions .md-compartment .md-tray-pill{display:flex;gap:15px;align-items:center;justify-content:center;height:76px}
+#med-directions .md-compartment .md-tray-pill .md-pill{height:48px;width:24px}
+#med-directions .md-compartment .md-tray-pill .md-pill.round{height:30px;width:30px}
+#med-directions .md-compartment .md-tray-pill .md-pill.round:after{top:13px}
+#med-directions .md-compartment strong{font-size:12px;font-weight:700;display:block}
+#med-directions .md-compartment small{display:block;font-size:11px;color:#5c6b59;margin-top:2px}
+#med-directions .md-compartment .md-status{position:absolute;right:13px;top:18px;color:#40674c}
+#med-directions .md-status svg{width:16px;height:16px}
+#med-directions .md-compartment.empty{background:#dfdfd4;display:flex;flex-direction:column;justify-content:space-between;box-shadow:none;border-color:#d2d4c7}
+#med-directions .md-compartment.empty .md-empty-mark{height:58px;display:grid;place-items:center;color:#73816e}
+#med-directions .md-empty-mark svg{width:25px;height:25px;stroke-width:1}
+#med-directions .md-cassette-action{display:flex;align-items:center;gap:15px;padding:0 1px}
+#med-directions .md-cassette-action p{font-size:11px;color:var(--muted);flex:1}
+#med-directions .md-cassette-action .md-primary{width:auto;min-width:161px;padding:0 16px}
+#med-directions .focus .md-brand{color:var(--muted)}
+#med-directions .focus .md-content{padding-top:22px}
+#med-directions .md-focus-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+#med-directions .md-focus-head span:last-child{color:var(--accent)}
+#med-directions .md-focus-main{text-align:center;padding:26px 0 22px}
+#med-directions .md-focus-time{font-size:70px;line-height:1;font-weight:400;letter-spacing:-.065em;color:var(--accent);font-variant-numeric:tabular-nums}
+#med-directions .md-focus-object{height:130px;display:grid;place-items:center}
+#med-directions .md-focus-object .md-pill{width:32px;height:72px;border-width:2px;box-shadow:inset 6px 0 8px #ffffff33,5px 10px 14px #0003}
+#med-directions .md-focus-main h2{font-size:28px;margin:4px 0 7px;letter-spacing:-.04em}
+#med-directions .md-focus-main p{font-size:13px;color:var(--muted)}
+#med-directions .focus .md-primary{color:#24351e;border-radius:15px;min-height:54px}
+#med-directions .md-focus-secondary{display:flex;justify-content:center;gap:30px;margin-top:3px}
+#med-directions .md-focus-next{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);margin-top:25px;padding-top:19px;font-size:13px}
+#med-directions .md-focus-next small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+#med-directions .md-focus-done{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-top:22px}
+#med-directions .md-focus-done svg{width:14px;height:14px}
+#med-directions .md-notice{display:flex;gap:10px;align-items:center;padding:12px 14px;background:var(--soft);border-radius:12px;margin-bottom:17px;font-size:12px;color:var(--ink)}
+#med-directions .md-detail-head{display:flex;align-items:center;gap:7px;padding:16px 15px 0}
+#med-directions .md-detail-head span{font-size:13px;color:var(--muted)}
+#med-directions .md-detail{padding:28px 24px 30px;min-height:658px}
+#med-directions .md-detail .md-pill-box{width:85px;height:96px;margin:0 0 25px;border-radius:24px}
+#med-directions .md-detail h2{margin-bottom:7px}
+#med-directions .md-detail h3{font-size:15px;margin:29px 0 8px}
+#med-directions .md-detail dl{margin:22px 0}
+#med-directions .md-detail dl div{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line);font-size:13px;gap:15px}
+#med-directions .md-detail dt{color:var(--muted)}
+#med-directions .md-detail dd{margin:0;text-align:right}
+#med-directions .md-detail p{color:var(--muted);font-size:13px}
+#med-directions .md-history-day{font-size:12px;color:var(--muted);margin:24px 0 5px}
+#med-directions .md-toast{position:absolute;bottom:95px;left:16px;right:16px;padding:12px 13px;background:var(--ink);color:var(--paper);border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;z-index:7;font-size:12px;box-shadow:0 6px 20px #0002}
+#med-directions .md-toast button{background:transparent;border:0;color:inherit;font-size:12px;font-weight:750;min-height:36px}
+#med-directions .md-footnote{text-align:center;font-size:11px;color:#71766f;margin:11px 0 0}
+#med-directions button:active{filter:brightness(.95)}
+#med-directions .md-phone ::selection{background:var(--accent);color:var(--paper)}
+@media(max-width:420px){#med-directions{padding-top:80px}#med-directions .md-phone{border-radius:23px}#med-directions .md-top{padding-left:18px;padding-right:18px}#med-directions .md-content{padding-left:18px;padding-right:18px}#med-directions .md-compartment{padding:15px 11px}#med-directions .md-cassette-action{gap:8px}#med-directions .md-cassette-action .md-primary{min-width:143px;font-size:12px}#med-directions .md-switch{border-radius:14px}}
+@media(prefers-reduced-motion:no-preference){#med-directions .md-primary{transition:background-color .15s ease-out}#med-directions .md-toast{animation:md-toast-in .18s ease-out}@keyframes md-toast-in{from{transform:translateY(7px)}to{transform:translateY(0)}}}
+</style>
+<div id="med-directions">
+  <div class="md-switch" role="group" aria-label="Варианты дизайна">
+    <button type="button" data-variant="clear" aria-pressed="true"><span>01</span>Ясно</button>
+    <button type="button" data-variant="ritual" aria-pressed="false"><span>02</span>Ритуал</button>
+    <button type="button" data-variant="cassette" aria-pressed="false"><span>03</span>Кассета</button>
+    <button type="button" data-variant="focus" aria-pressed="false"><span>04</span>Фокус</button>
+  </div>
+  <div class="md-phone clear" aria-label="Макет напоминаний о приёме лекарств"></div>
+  <div class="md-footnote">Демонстрационные препараты и расписание</div>
+  <div class="md-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></div>
+</div>
+<script>
+(()=>{
+const root=document.getElementById('med-directions');
+const phone=root.querySelector('.md-phone');
+const names={clear:'Ясно',ritual:'Ритуал',cassette:'Кассета',focus:'Фокус'};
+const saved=window.openai?.widgetState?.modelContent;
+const state={variant:names[saved?.variant]?saved.variant:'clear',taken:saved?.taken===true,delayed:saved?.delayed===true,view:'today',toast:''};
+const icon=name=>`<i data-lucide="${name}" aria-hidden="true"></i>`;
+const pill=(color='')=>`<span class="md-pill ${color}" aria-hidden="true"></span>`;
+const time=()=>state.delayed?'09:00':'08:30';
+const top=()=>`<header class="md-top"><div class="md-brand">${icon('pill')} по времени</div><div class="md-top-actions"><button class="md-icon-button" data-action="notifications" aria-label="Уведомления">${icon('bell')}</button></div></header>`;
+const nav=()=>`<nav class="md-nav" aria-label="Основная навигация">${[['today','calendar-days','Сегодня'],['meds','pill','Препараты'],['history','clock-3','История']].map(([id,ic,label])=>`<button type="button" data-view="${id}" class="${state.view===id?'active':''}" ${state.view===id?'aria-current="page"':''}>${icon(ic)}${label}</button>`).join('')}</nav>`;
+const primary=(label)=>`<button type="button" class="md-primary" data-action="take">${icon(state.taken?'check-check':'check')}${state.taken?'Приём отмечен':label||'Принято'}</button>`;
+const secondary=()=>`<div class="md-hero-footer"><button class="md-text-button" data-action="${state.taken?'undo':'delay'}">${state.taken?'Отменить отметку':state.delayed?'Вернуть на 08:30':'Через 30 минут'}</button><button class="md-text-button" data-view="detail">О препарате ${icon('chevron-right')}</button></div>`;
+const row=(title,desc,col,end,sub='')=>`<div class="md-row"><div class="md-pill-box">${pill(col)}</div><div class="md-row-copy"><b>${title}</b><small>${desc}</small></div><div class="md-row-end">${end}${sub?`<small>${sub}</small>`:''}</div></div>`;
+function clear(){return `<div class="md-content"><div class="md-heading"><h2>Сегодня</h2><span class="md-sub">17 сентября</span></div><div class="md-week">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map((d,i)=>`<div class="md-day ${i===3?'active':''}">${d}<b>${14+i}</b><em></em></div>`).join('')}</div><section class="md-hero"><div class="md-hero-header"><span class="md-time">${time()}</span><span class="md-now">${state.taken?'Принято':state.delayed?'Напомним позже':'Пора принять'}</span></div><div class="md-med-main"><div class="md-pill-box">${pill('gold')}</div><div><h3>Витамин D₃</h3><p class="md-sub">1 капсула · после еды</p></div></div>${primary()}${secondary()}</section><div class="md-section-label"><strong>Позже</strong><span>Остался 1 приём</span></div>${row('Магний','1 таблетка · после еды','green','20:00')}<div class="md-section-label"><strong>Уже принято</strong><span>${state.taken?2:1} из 3</span></div>${row('Препарат А','1 таблетка','round',icon('check'),'07:32')}${state.taken?row('Витамин D₃','1 капсула','gold',icon('check'),time()):''}</div>`}
+function ritual(){return `<div class="md-content"><div class="md-ritual-intro"><h2>Доброе<br>утро.</h2><div class="md-sun">${icon('sun')}</div><p>Четверг, 17 сентября · всё по плану</p></div><section class="md-ritual-block"><div class="md-hero-header"><h3>После завтрака</h3><span class="md-time">${time()}</span></div>${row('Витамин D₃','1 капсула','gold',state.taken?icon('check'):'')}${primary()}${secondary()}</section><div class="md-section-label"><strong>Ваш день</strong><span>${state.taken?2:1} из 3 приёмов</span></div><div class="md-ritual-later">${icon('circle-check')}<div><b>Препарат А</b><p>Уже принято · 1 таблетка</p></div><time>07:32</time></div><div class="md-ritual-later">${icon('moon')}<div><b>После ужина</b><p>Магний · 1 таблетка</p></div><time>20:00</time></div></div>`}
+function cassette(){return `<div class="md-content"><div class="md-heading"><h2>Мой день</h2><span class="md-sub">Чт, 17 сен</span></div><div class="md-cassette-summary"><span>Всё на своих местах</span><span>${state.taken?2:1} из 3 принято</span></div><div class="md-tray"><section class="md-compartment taken"><h3>Натощак</h3><p>07:30</p><span class="md-status">${icon('circle-check')}</span><div class="md-tray-pill">${pill('round')}</div><strong>Препарат А</strong><small>Принято в 07:32</small></section><button class="md-compartment active" data-view="detail"><h3>Завтрак</h3><p>${time()} · ${state.taken?'принято':'ближайший'}</p><div class="md-tray-pill">${pill('gold')}</div><strong>Витамин D₃</strong><small>1 капсула · после еды</small></button><section class="md-compartment empty"><div><h3>Обед</h3><p>Без приёмов</p></div><div class="md-empty-mark">${icon('sun')}</div><small>Перерыв до вечера</small></section><button class="md-compartment" data-view="magnesium"><h3>Ужин</h3><p>20:00</p><div class="md-tray-pill">${pill('green')}</div><strong>Магний</strong><small>1 таблетка · после еды</small></button></div><div class="md-cassette-action"><p>${state.taken?'Завтрак отмечен. Следующий приём вечером.':'После завтрака — одна капсула.'}</p>${primary('Отметить приём')}</div>${secondary()}</div>`}
+function focus(){return `<div class="md-content"><div class="md-focus-head"><span>Четверг, 17 сентября</span><span>${state.taken?'Принято':state.delayed?'Напомним позже':'Ближайший приём'}</span></div><section class="md-focus-main"><div class="md-focus-time">${time()}</div><div class="md-focus-object">${pill('gold')}</div><h2>Витамин D₃</h2><p>1 капсула · после завтрака</p></section>${primary('Я принял')}<div class="md-focus-secondary"><button class="md-text-button" data-action="${state.taken?'undo':'delay'}">${state.taken?'Отменить отметку':state.delayed?'Вернуть на 08:30':'Через 30 минут'}</button><button class="md-text-button" data-view="detail">О препарате</button></div><div class="md-focus-next"><div><small>Следом</small>Магний · 1 таблетка</div><div><small>После ужина</small>20:00</div></div><div class="md-focus-done">${icon('check-check')}Препарат А принят в 07:32</div><div class="md-progress-line">${[0,1,2].map(i=>`<span class="${i<(state.taken?2:1)?'complete':''}"></span>`).join('')}</div></div>`}
+function detail(magnesium=false){return `<div class="md-detail-head"><button class="md-icon-button" data-view="today" aria-label="Назад">${icon('arrow-left')}</button><span>Препарат</span></div><div class="md-detail"><div class="md-pill-box">${pill(magnesium?'green':'gold')}</div><h2>${magnesium?'Магний':'Витамин D₃'}</h2><p>Добавка · ежедневный приём</p><dl><div><dt>Количество</dt><dd>${magnesium?'1 таблетка':'1 капсула'}</dd></div><div><dt>Время</dt><dd>${magnesium?'20:00':time()}</dd></div><div><dt>Условие приёма</dt><dd>После еды</dd></div><div><dt>Напоминания</dt><dd>Включены</dd></div></dl><h3>Сегодня</h3><p>${magnesium?'Приём запланирован на вечер.':state.taken?'Приём уже отмечен.':'Приём ещё не отмечен.'}</p><div style="height:28px"></div>${!magnesium?primary():`<button class="md-primary" data-view="today">Вернуться к расписанию</button>`}${!magnesium&&state.taken?'<button class="md-text-button" data-action="undo">Отменить отметку</button>':''}</div>`}
+function meds(){return `<div class="md-content"><div class="md-heading"><h2>Препараты</h2><span class="md-sub">3 активных</span></div><p class="md-sub">Ваше ежедневное расписание</p>${row('Препарат А','1 таблетка · натощак','round','07:30')}<button data-view="detail" style="width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left">${row('Витамин D₃','1 капсула · после еды','gold',time())}</button><button data-view="magnesium" style="width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left">${row('Магний','1 таблетка · после еды','green','20:00')}</button></div>`}
+function history(){return `<div class="md-content"><div class="md-heading"><h2>История</h2></div><p class="md-sub">Отметки приёма сохраняются здесь</p><div class="md-history-day">Сегодня, 17 сентября</div>${state.taken?row('Витамин D₃','Принято · 1 капсула','gold',time()):''}${row('Препарат А','Принято · 1 таблетка','round','07:32')}<div class="md-history-day">Вчера, 16 сентября</div>${row('Магний','Принято · 1 таблетка','green','20:04')}${row('Витамин D₃','Принято · 1 капсула','gold','08:36')}${row('Препарат А','Принято · 1 таблетка','round','07:31')}</div>`}
+function notifications(){return `<div class="md-detail-head"><button class="md-icon-button" data-view="today" aria-label="Назад">${icon('arrow-left')}</button><span>Напоминания</span></div><div class="md-detail"><h2>Всё настроено</h2><div style="height:20px"></div><div class="md-notice">${icon('bell-ring')}Уведомления включены</div><p>Напомним о каждом приёме по вашему расписанию.</p><dl><div><dt>Препарат А</dt><dd>07:30</dd></div><div><dt>Витамин D₃</dt><dd>${time()}</dd></div><div><dt>Магний</dt><dd>20:00</dd></div></dl><button class="md-primary" data-view="today">К сегодняшнему дню</button></div>`}
+function persist(){window.openai?.setWidgetState?.({modelContent:{variant:state.variant,direction:names[state.variant],taken:state.taken,delayed:state.delayed},privateContent:{view:state.view}})?.catch(()=>{})}
+function render(){
+phone.className='md-phone '+state.variant;
+let content='';
+if(state.view==='detail'||state.view==='magnesium')content=detail(state.view==='magnesium');
+else if(state.view==='notifications')content=notifications();
+else content=top()+(state.view==='meds'?meds():state.view==='history'?history():({clear,ritual,cassette,focus}[state.variant])());
+phone.innerHTML=content+nav()+(state.toast?`<div class="md-toast" role="status"><span>${state.toast}</span><button data-action="${state.taken?'undo':'dismiss'}">${state.taken?'Отменить':'Понятно'}</button></div>`:'');
+root.querySelectorAll('[data-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.variant===state.variant)));
+if(globalThis.lucide)globalThis.lucide.createIcons({attrs:{width:16,height:16}});
+}
+root.addEventListener('click',event=>{
+const button=event.target.closest('button');if(!button||!root.contains(button))return;
+if(button.dataset.variant){state.variant=button.dataset.variant;state.toast='';root.querySelector('.md-live').textContent='Дизайн: '+names[state.variant];}
+if(button.dataset.view){state.view=button.dataset.view;state.toast='';}
+if(button.dataset.action==='take'){if(!state.taken){state.taken=true;state.toast='Витамин D₃ — приём отмечен';}}
+if(button.dataset.action==='undo'){state.taken=false;state.toast='Отметка отменена';}
+if(button.dataset.action==='delay'){state.delayed=!state.delayed;state.toast=state.delayed?'Напомним в 09:00':'Напомним в 08:30';}
+if(button.dataset.action==='dismiss')state.toast='';
+if(button.dataset.action==='notifications'){state.view='notifications';state.toast='';}
+render();persist();
+});
+window.addEventListener('openai:set_globals',event=>{const next=event.detail?.globals?.widgetState?.modelContent;if(!next)return;if(next.variant===state.variant&&next.taken===state.taken&&next.delayed===state.delayed)return;if(names[next.variant])state.variant=next.variant;if(typeof next.taken==='boolean')state.taken=next.taken;if(typeof next.delayed==='boolean')state.delayed=next.delayed;state.toast='';render();});
+render();
+})();
+</script>

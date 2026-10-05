@@ -1,0 +1,2167 @@
+<!doctype html>
+<html lang="en" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>TABLETOCKA — Фокус</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="TABLETOCKA — Фокус" data-srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;TABLETOCKA — Фокус&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled=&quot;true&quot;]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled=&quot;true&quot;] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed=&quot;true&quot;],
+  [aria-selected=&quot;true&quot;],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type=&quot;file&quot;]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type=&quot;color&quot;] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type=&quot;date&quot;],
+    [type=&quot;datetime-local&quot;],
+    [type=&quot;month&quot;],
+    [type=&quot;time&quot;],
+    [type=&quot;week&quot;]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: &quot;&quot;;
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type=&quot;application/json&quot; id=&quot;codex-visualization-widget-state&quot;&gt;__CODEX_VISUALIZATION_WIDGET_STATE__&lt;/script&gt;
+&lt;script&gt;(() =&gt; {
+  const root = document.documentElement;
+  const mediaQuery = globalThis.matchMedia(&quot;(prefers-color-scheme: dark)&quot;);
+  const apply = Reflect.apply;
+  const isArray = Array.isArray;
+  const hasOwn = Object.hasOwn;
+  const parentWindow = globalThis.parent;
+  const stringify = JSON.stringify;
+  const parse = JSON.parse;
+  const encode = TextEncoder.prototype.encode.bind(new TextEncoder());
+  const initialStateElement = document.getElementById(
+    &quot;codex-visualization-widget-state&quot;,
+  );
+  const initialGlobals = parse(initialStateElement?.textContent ?? &quot;{}&quot;);
+  initialStateElement?.remove();
+  /** @type {Record&lt;string, unknown&gt; | null} */
+  let state = initialGlobals.widgetState ?? null;
+  const statePersistence = initialGlobals.statePersistence ?? &quot;none&quot;;
+  let nextStateRequestId = 0;
+  /** @type {Map&lt;number, { resolve: () =&gt; void; reject: (error: Error) =&gt; void; timeout: ReturnType&lt;typeof globalThis.setTimeout&gt;; serializedState: string }&gt;} */
+  const pendingStateWrites = new Map();
+  const persistenceError = () =&gt;
+    Object.assign(
+      new Error(&quot;The host could not persist the widget state update&quot;),
+      {
+        code: -32000,
+        data: { code: &quot;widget_state_persistence_failed&quot;, retryable: false },
+      },
+    );
+  /**
+   * @param {object} prototype
+   * @param {string} property
+   */
+  const getPrototypeGetter = (prototype, property) =&gt; {
+    // oxlint-disable-next-line typescript/unbound-method -- invoked through captured Reflect.apply
+    const getter = Object.getOwnPropertyDescriptor(prototype, property)?.get;
+    if (getter == null) {
+      throw new Error(`Missing ${property} getter`);
+    }
+    return getter;
+  };
+  const getMessageData = getPrototypeGetter(MessageEvent.prototype, &quot;data&quot;);
+  const getMessagePorts = getPrototypeGetter(MessageEvent.prototype, &quot;ports&quot;);
+  const getMessageSource = getPrototypeGetter(MessageEvent.prototype, &quot;source&quot;);
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const addHostMessageListener = MessagePort.prototype.addEventListener;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const postHostMessage = MessagePort.prototype.postMessage;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const startHostPort = MessagePort.prototype.start;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const stopMessagePropagation = Event.prototype.stopImmediatePropagation;
+  /** @type {MessagePort | null} */
+  let hostPort = null;
+  const postToHost = (type, payload) =&gt; {
+    if (hostPort != null) {
+      apply(postHostMessage, hostPort, [{ type, ...payload }]);
+    }
+  };
+  const openExternal = ({ href }) =&gt; {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost(&quot;open-external&quot;, { href });
+    }
+  };
+  const sendFollowUpMessage = ({ context, prompt, title }) =&gt; {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost(&quot;follow-up&quot;, { context, prompt, title });
+    }
+    return Promise.resolve();
+  };
+  /**
+   * @param {Record&lt;string, unknown&gt; | ((previous: Record&lt;string, unknown&gt; | null) =&gt; Record&lt;string, unknown&gt;)} next
+   * @returns {Promise&lt;void&gt;}
+   */
+  const setWidgetState = async (next) =&gt; {
+    const nextState = typeof next === &quot;function&quot; ? next(state) : next;
+    if (
+      nextState == null ||
+      typeof nextState !== &quot;object&quot; ||
+      isArray(nextState)
+    ) {
+      throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+    }
+    const inputState = stringify(
+      nextState,
+      (_key, /** @type {unknown} */ value) =&gt; {
+        if (
+          typeof value === &quot;undefined&quot; ||
+          typeof value === &quot;function&quot; ||
+          typeof value === &quot;symbol&quot; ||
+          (typeof value === &quot;number&quot; &amp;&amp; !Number.isFinite(value))
+        ) {
+          throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+        }
+        return value;
+      },
+    );
+    const parsedState = parse(inputState);
+    if (
+      parsedState == null ||
+      typeof parsedState !== &quot;object&quot; ||
+      isArray(parsedState)
+    ) {
+      throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+    }
+    const storedState = {
+      modelContent: null,
+      privateContent: null,
+      ...parsedState,
+    };
+    const serializedState = stringify(storedState);
+    if (encode(serializedState).length &gt; 16 * 1024) {
+      throw new TypeError(
+        &quot;Widget state must be a JSON object of at most 16 KiB&quot;,
+      );
+    }
+    if (
+      hasOwn(storedState, &quot;imageIds&quot;) &amp;&amp;
+      (!isArray(storedState.imageIds) ||
+        storedState.imageIds.some(
+          (/** @type {unknown} */ id) =&gt; typeof id !== &quot;string&quot;,
+        ))
+    ) {
+      throw new TypeError(&quot;Widget state imageIds must be an array of strings&quot;);
+    }
+    if (storedState.imageIds?.length &gt; 0) {
+      throw Object.assign(
+        new TypeError(&quot;Visualization state does not support image attachments&quot;),
+        { code: -32602, data: { code: &quot;images_unsupported&quot; } },
+      );
+    }
+    state = storedState;
+    globalThis.openai.widgetState = state;
+    globalThis.dispatchEvent(
+      new CustomEvent(&quot;openai:set_globals&quot;, {
+        detail: { globals: { widgetState: state } },
+      }),
+    );
+    if (statePersistence === &quot;none&quot;) {
+      throw persistenceError();
+    }
+    const id = ++nextStateRequestId;
+    return new Promise((resolve, reject) =&gt; {
+      const timeout = globalThis.setTimeout(() =&gt; {
+        pendingStateWrites.delete(id);
+        reject(persistenceError());
+      }, 30_000);
+      pendingStateWrites.set(id, { resolve, reject, timeout, serializedState });
+      postToHost(&quot;widget-state-write&quot;, { id, state: serializedState });
+    });
+  };
+  const syncTheme = () =&gt; {
+    const theme = mediaQuery.matches ? &quot;dark&quot; : &quot;light&quot;;
+    root.dataset.theme = theme;
+    globalThis.openai = {
+      ...globalThis.openai,
+      openExternal,
+      sendFollowUpMessage,
+      setWidgetState,
+      theme,
+      visualizationStyleVariables: {},
+      visualizationTheme: theme,
+      widgetState: state,
+      statePersistence,
+      stateModelContext: &quot;none&quot;,
+    };
+    globalThis.dispatchEvent(
+      new CustomEvent(&quot;openai:set_globals&quot;, {
+        detail: { globals: globalThis.openai },
+      }),
+    );
+  };
+  const sendHeight = () =&gt; {
+    postToHost(&quot;height&quot;, {
+      height: Math.ceil(
+        Math.max(
+          document.body.scrollHeight,
+          document.body.getBoundingClientRect().height,
+        ),
+      ),
+    });
+  };
+
+  globalThis.addEventListener(
+    &quot;message&quot;,
+    (event) =&gt; {
+      const data = apply(getMessageData, event, []);
+      const ports = apply(getMessagePorts, event, []);
+      const source = apply(getMessageSource, event, []);
+      if (
+        hostPort != null ||
+        source !== parentWindow ||
+        typeof data !== &quot;object&quot; ||
+        data?.type !== &quot;codex-visualization-initialize&quot; ||
+        !isArray(ports) ||
+        ports.length !== 1
+      ) {
+        return;
+      }
+      apply(stopMessagePropagation, event, []);
+      const nextHostPort = ports[0];
+      try {
+        apply(addHostMessageListener, nextHostPort, [
+          &quot;message&quot;,
+          (event) =&gt; {
+            const data = apply(getMessageData, event, []);
+            if (typeof data === &quot;object&quot; &amp;&amp; data?.type === &quot;measure&quot;) {
+              sendHeight();
+            } else if (
+              typeof data === &quot;object&quot; &amp;&amp;
+              data?.type === &quot;widget-state-result&quot;
+            ) {
+              /** @type {unknown} */
+              const id = data.id;
+              if (typeof id !== &quot;number&quot;) {
+                return;
+              }
+              const pending = pendingStateWrites.get(id);
+              if (pending != null) {
+                pendingStateWrites.delete(id);
+                globalThis.clearTimeout(pending.timeout);
+                if (data.ok === true) {
+                  pending.resolve();
+                } else {
+                  pending.reject(persistenceError());
+                }
+              }
+            }
+          },
+        ]);
+        apply(startHostPort, nextHostPort, []);
+      } catch {
+        return;
+      }
+      hostPort = nextHostPort;
+      for (const [id, { serializedState }] of pendingStateWrites) {
+        postToHost(&quot;widget-state-write&quot;, { id, state: serializedState });
+      }
+      sendHeight();
+    },
+    { capture: true },
+  );
+  document.currentScript?.remove();
+  mediaQuery.addEventListener(&quot;change&quot;, syncTheme);
+  globalThis.addEventListener(&quot;click&quot;, (event) =&gt; {
+    if (event.defaultPrevented) {
+      return;
+    }
+    let element = null;
+    if (event.target instanceof globalThis.Element) {
+      element = event.target;
+    } else if (event.target instanceof globalThis.Node) {
+      element = event.target.parentElement;
+    }
+    const link = element?.closest(&quot;a[href]&quot;);
+    const href = link?.getAttribute(&quot;href&quot;);
+    if (href == null) {
+      return;
+    }
+    if (href.startsWith(&quot;#&quot;)) {
+      let id;
+      try {
+        id = decodeURIComponent(href.slice(1));
+      } catch {
+        return;
+      }
+      const target = id.length === 0 ? root : document.getElementById(id);
+      if (
+        target == null ||
+        globalThis.navigator.userActivation?.isActive !== true
+      ) {
+        return;
+      }
+      event.preventDefault();
+      postToHost(&quot;scroll-to&quot;, {
+        top: target.getBoundingClientRect().top + globalThis.scrollY,
+      });
+      return;
+    }
+    event.preventDefault();
+    openExternal({ href });
+  });
+  new ResizeObserver(sendHeight).observe(document.body);
+  syncTheme();
+})();
+&lt;/script&gt;
+&lt;style&gt;
+@import url(&#x27;https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;650;700;750;800&amp;family=Lora:wght@400;500;600&amp;display=swap&#x27;);
+#focus-styles{position:relative;padding:90px 0 12px;font-family:Manrope,-apple-system,BlinkMacSystemFont,sans-serif;color:#202720;color-scheme:light}
+#focus-styles *{box-sizing:border-box}
+#focus-styles button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#focus-styles .md-switch{position:absolute;z-index:8;top:8px;right:0;left:0;max-width:390px;margin:auto;background:#252924;color:#fff;padding:5px;border-radius:16px;display:flex;box-shadow:0 6px 20px #15200d18}
+#focus-styles .md-switch button{flex:1;min-height:44px;padding:5px 2px;border:0;border-radius:11px;background:transparent;color:#c6ccc4;font-size:12px;font-weight:650}
+#focus-styles .md-switch button[aria-pressed=true]{background:#fff;color:#202720}
+#focus-styles .md-switch button span{display:block;font-size:11px;letter-spacing:.05em;opacity:.65;margin-bottom:2px}
+#focus-styles .md-phone{--paper:#f6f7f9;--ink:#202638;--muted:#626b7c;--line:#dfe3eb;--accent:#3659d9;--soft:#e9eefc;position:relative;margin:auto;width:100%;max-width:390px;min-height:756px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:30px;overflow:clip;box-shadow:0 16px 48px #14201d0b;font-size:14px;line-height:1.5;isolation:isolate}
+#focus-styles .md-phone.ritual{--paper:#f7f5ed;--ink:#253e33;--muted:#647164;--line:#daddcf;--accent:#294d3c;--soft:#e8ecdb}
+#focus-styles .md-phone.cassette{--paper:#edeae3;--ink:#253d39;--muted:#626d65;--line:#d4d5ca;--accent:#294940;--soft:#dde4d4}
+#focus-styles .md-phone.focus{--paper:#202823;--ink:#f1f3e9;--muted:#aab8ac;--line:#425048;--accent:#d4ed98;--soft:#354239;color-scheme:dark}
+#focus-styles .md-top{padding:23px 22px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#focus-styles .md-brand{font-size:14px;letter-spacing:-.02em;font-weight:800;display:flex;align-items:center;gap:7px}
+#focus-styles .md-brand i{width:17px;height:17px}
+#focus-styles .md-top-actions{display:flex;gap:5px}
+#focus-styles .md-icon-button{border:0;background:transparent;color:var(--ink);width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+#focus-styles .md-icon-button:hover{background:var(--soft)}
+#focus-styles .md-icon-button svg{width:20px;height:20px}
+#focus-styles .md-content{padding:13px 22px 26px;min-height:606px}
+#focus-styles h2,#focus-styles h3,#focus-styles p{margin:0}
+#focus-styles .md-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:21px}
+#focus-styles h2{font-size:32px;line-height:1.2;font-weight:750;letter-spacing:-.04em}
+#focus-styles .md-sub{color:var(--muted);font-size:12px}
+#focus-styles .md-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:25px}
+#focus-styles .md-day{text-align:center;padding:8px 0 9px;color:var(--muted);border-radius:13px;font-size:11px;line-height:1.8}
+#focus-styles .md-day b{display:block;font-size:15px;color:var(--ink);font-weight:650}
+#focus-styles .md-day.active{background:var(--accent);color:#e9edff}
+#focus-styles .md-day.active b{color:#fff}
+#focus-styles .md-day em{display:block;width:3px;height:3px;border-radius:50%;background:currentColor;margin:4px auto 0}
+#focus-styles .md-section-label{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px;font-size:12px;color:var(--muted);font-weight:600}
+#focus-styles .md-section-label strong{color:var(--ink);font-weight:700;font-size:13px}
+#focus-styles .md-hero{background:#fff;border-radius:21px;padding:19px;margin-bottom:24px}
+#focus-styles .md-hero-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px}
+#focus-styles .md-time{font-size:13px;font-weight:650;font-variant-numeric:tabular-nums}
+#focus-styles .md-now{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:11px;font-weight:700}
+#focus-styles .md-now:before{content:&#x27;&#x27;;width:5px;height:5px;border-radius:50%;background:currentColor}
+#focus-styles .md-med-main{display:flex;align-items:center;gap:15px;margin-bottom:19px}
+#focus-styles .md-med-main h3{font-size:23px;font-weight:750;letter-spacing:-.03em;line-height:1.3;margin-bottom:3px}
+#focus-styles .md-pill-box{width:56px;height:64px;display:grid;place-items:center;background:var(--soft);border-radius:17px;flex:none}
+#focus-styles .md-pill{position:relative;display:inline-block;width:20px;height:40px;border:1.5px solid #6f82c7;border-radius:16px;transform:rotate(32deg);background:linear-gradient(to bottom,#afbfef 49%,#fff 50%);box-shadow:inset 3px 0 3px #ffffff55,2px 3px 4px #25366713}
+#focus-styles .md-pill.gold{border-color:#bc8b39;background:linear-gradient(to bottom,#e9bb63 49%,#f8e4b4 50%)}
+#focus-styles .md-pill.green{border-color:#7d8c73;background:linear-gradient(to bottom,#a5b797 49%,#e6ebda 50%)}
+#focus-styles .md-pill.round{height:24px;width:24px;transform:rotate(25deg);background:#fafafa;border-color:#adb4b2;border-radius:50%}
+#focus-styles .md-pill.round:after{content:&#x27;&#x27;;position:absolute;left:3px;right:3px;top:10px;height:1px;background:#bac1ba}
+#focus-styles .md-primary{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;min-height:49px;border:0;border-radius:13px;background:var(--accent);color:#fff;font-size:14px;font-weight:700}
+#focus-styles .md-primary svg{width:17px;height:17px}
+#focus-styles .md-primary:hover{filter:brightness(.94)}
+#focus-styles .md-text-button{min-height:44px;border:0;background:transparent;color:var(--muted);font-size:12px;padding:8px}
+#focus-styles .md-hero-footer svg{width:12px;height:12px;vertical-align:middle}
+#focus-styles .md-hero-footer{display:flex;justify-content:space-between;align-items:center;margin:5px -7px -10px}
+#focus-styles .md-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+#focus-styles .md-row:last-child{border-bottom:0}
+#focus-styles .md-row .md-pill-box{width:42px;height:46px;border-radius:12px;background:var(--soft)}
+#focus-styles .md-row .md-pill{width:13px;height:27px}
+#focus-styles .md-row .md-pill.round{height:21px;width:21px}
+#focus-styles .md-row .md-pill.round:after{top:8px}
+#focus-styles .md-row-copy{flex:1;min-width:0}
+#focus-styles .md-row-copy b{font-size:14px;font-weight:650;display:block}
+#focus-styles .md-row-copy small{font-size:11px;color:var(--muted)}
+#focus-styles .md-row-end{text-align:right;font-size:12px;font-weight:600;color:var(--muted)}
+#focus-styles .md-row-end svg{width:17px;height:17px}
+#focus-styles .md-row-end small{display:block;font-size:11px;font-weight:400}
+#focus-styles .md-nav{display:flex;align-items:center;justify-content:space-around;gap:4px;padding:13px 15px max(18px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--paper)}
+#focus-styles .md-nav button{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:43px;min-width:72px;font-size:11px;font-weight:600}
+#focus-styles .md-nav button.active{color:var(--accent)}
+#focus-styles .md-nav svg{width:21px;height:21px;stroke-width:1.6}
+#focus-styles .md-progress-line{display:flex;gap:4px;margin:11px 0 24px}
+#focus-styles .md-progress-line span{height:3px;flex:1;border-radius:2px;background:var(--line)}
+#focus-styles .md-progress-line span.complete{background:var(--accent)}
+#focus-styles .ritual .md-top{padding-top:22px}
+#focus-styles .ritual .md-content{padding-top:23px}
+#focus-styles .ritual h2{font-family:Lora,Georgia,serif;font-weight:400;font-size:39px;letter-spacing:-.045em;line-height:1.15;margin-bottom:10px}
+#focus-styles .md-ritual-intro{position:relative;min-height:133px;padding-right:67px}
+#focus-styles .md-sun{position:absolute;right:0;top:1px;width:70px;height:70px;color:#9a7546;display:grid;place-items:center}
+#focus-styles .md-sun svg{width:65px;height:65px;stroke-width:.8}
+#focus-styles .md-ritual-intro p{font-size:12px;color:var(--muted);margin-top:13px}
+#focus-styles .md-ritual-block{background:#e5ead8;border-radius:24px;padding:20px;margin-bottom:21px}
+#focus-styles .md-ritual-block h3{font-family:Lora,Georgia,serif;font-size:26px;font-weight:400;letter-spacing:-.04em}
+#focus-styles .md-ritual-block .md-hero-header{margin-bottom:8px}
+#focus-styles .md-ritual-block .md-row{padding:13px 0;border-color:#c6d0bc}
+#focus-styles .md-ritual-block .md-pill-box{background:#f4f5e9}
+#focus-styles .md-ritual-block .md-primary{margin-top:17px;border-radius:30px}
+#focus-styles .md-ritual-block .md-hero-footer{margin-bottom:-8px}
+#focus-styles .md-ritual-later{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+#focus-styles .md-ritual-later&gt;svg{width:20px;height:20px;margin-top:3px;color:var(--muted);stroke-width:1.4}
+#focus-styles .md-ritual-later b{font-size:14px;font-weight:650}
+#focus-styles .md-ritual-later p{font-size:12px;color:var(--muted);margin-top:4px}
+#focus-styles .md-ritual-later time{margin-left:auto;font-size:12px;color:var(--muted);padding-top:3px}
+#focus-styles .cassette h2{font-size:35px;font-weight:800;letter-spacing:-.045em}
+#focus-styles .cassette .md-heading{margin-top:9px;margin-bottom:9px}
+#focus-styles .md-cassette-summary{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:20px}
+#focus-styles .md-tray{background:#d7d8cc;padding:7px;border-radius:25px;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:20px}
+#focus-styles .md-compartment{position:relative;background:#f4f2e9;border:1px solid #fff9;box-shadow:0 2px 3px #283b2510;min-height:188px;border-radius:18px;padding:16px 14px;text-align:left;color:var(--ink)}
+#focus-styles .md-compartment.active{background:#dceab3;border-color:#f2f7de;min-height:217px}
+#focus-styles .md-compartment.taken{background:#e8eade;min-height:217px}
+#focus-styles .md-compartment h3{font-size:16px;font-weight:750;margin-bottom:2px}
+#focus-styles .md-compartment p{font-size:11px;color:#60715b}
+#focus-styles .md-compartment .md-tray-pill{display:flex;gap:15px;align-items:center;justify-content:center;height:76px}
+#focus-styles .md-compartment .md-tray-pill .md-pill{height:48px;width:24px}
+#focus-styles .md-compartment .md-tray-pill .md-pill.round{height:30px;width:30px}
+#focus-styles .md-compartment .md-tray-pill .md-pill.round:after{top:13px}
+#focus-styles .md-compartment strong{font-size:12px;font-weight:700;display:block}
+#focus-styles .md-compartment small{display:block;font-size:11px;color:#5c6b59;margin-top:2px}
+#focus-styles .md-compartment .md-status{position:absolute;right:13px;top:18px;color:#40674c}
+#focus-styles .md-status svg{width:16px;height:16px}
+#focus-styles .md-compartment.empty{background:#dfdfd4;display:flex;flex-direction:column;justify-content:space-between;box-shadow:none;border-color:#d2d4c7}
+#focus-styles .md-compartment.empty .md-empty-mark{height:58px;display:grid;place-items:center;color:#73816e}
+#focus-styles .md-empty-mark svg{width:25px;height:25px;stroke-width:1}
+#focus-styles .md-cassette-action{display:flex;align-items:center;gap:15px;padding:0 1px}
+#focus-styles .md-cassette-action p{font-size:11px;color:var(--muted);flex:1}
+#focus-styles .md-cassette-action .md-primary{width:auto;min-width:161px;padding:0 16px}
+#focus-styles .focus .md-brand{color:var(--muted)}
+#focus-styles .focus .md-content{padding-top:22px}
+#focus-styles .md-focus-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+#focus-styles .md-focus-head span:last-child{color:var(--accent)}
+#focus-styles .md-focus-main{text-align:center;padding:26px 0 22px}
+#focus-styles .md-focus-time{font-size:70px;line-height:1;font-weight:400;letter-spacing:-.065em;color:var(--accent);font-variant-numeric:tabular-nums}
+#focus-styles .md-focus-object{height:130px;display:grid;place-items:center}
+#focus-styles .md-focus-object .md-pill{width:32px;height:72px;border-width:2px;box-shadow:inset 6px 0 8px #ffffff33,5px 10px 14px #0003}
+#focus-styles .md-focus-main h2{font-size:28px;margin:4px 0 7px;letter-spacing:-.04em}
+#focus-styles .md-focus-main p{font-size:13px;color:var(--muted)}
+#focus-styles .focus .md-primary{color:#24351e;border-radius:15px;min-height:54px}
+#focus-styles .md-focus-secondary{display:flex;justify-content:center;gap:30px;margin-top:3px}
+#focus-styles .md-focus-next{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);margin-top:25px;padding-top:19px;font-size:13px}
+#focus-styles .md-focus-next small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+#focus-styles .md-focus-done{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-top:22px}
+#focus-styles .md-focus-done svg{width:14px;height:14px}
+#focus-styles .md-notice{display:flex;gap:10px;align-items:center;padding:12px 14px;background:var(--soft);border-radius:12px;margin-bottom:17px;font-size:12px;color:var(--ink)}
+#focus-styles .md-detail-head{display:flex;align-items:center;gap:7px;padding:16px 15px 0}
+#focus-styles .md-detail-head span{font-size:13px;color:var(--muted)}
+#focus-styles .md-detail{padding:28px 24px 30px;min-height:658px}
+#focus-styles .md-detail .md-pill-box{width:85px;height:96px;margin:0 0 25px;border-radius:24px}
+#focus-styles .md-detail h2{margin-bottom:7px}
+#focus-styles .md-detail h3{font-size:15px;margin:29px 0 8px}
+#focus-styles .md-detail dl{margin:22px 0}
+#focus-styles .md-detail dl div{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line);font-size:13px;gap:15px}
+#focus-styles .md-detail dt{color:var(--muted)}
+#focus-styles .md-detail dd{margin:0;text-align:right}
+#focus-styles .md-detail p{color:var(--muted);font-size:13px}
+#focus-styles .md-history-day{font-size:12px;color:var(--muted);margin:24px 0 5px}
+#focus-styles .md-toast{position:absolute;bottom:95px;left:16px;right:16px;padding:12px 13px;background:var(--ink);color:var(--paper);border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;z-index:7;font-size:12px;box-shadow:0 6px 20px #0002}
+#focus-styles .md-toast button{background:transparent;border:0;color:inherit;font-size:12px;font-weight:750;min-height:36px}
+#focus-styles .md-footnote{text-align:center;font-size:11px;color:#71766f;margin:11px 0 0}
+#focus-styles button:active{filter:brightness(.95)}
+#focus-styles .md-phone ::selection{background:var(--accent);color:var(--paper)}
+@media(max-width:420px){#focus-styles{padding-top:80px}#focus-styles .md-phone{border-radius:23px}#focus-styles .md-top{padding-left:18px;padding-right:18px}#focus-styles .md-content{padding-left:18px;padding-right:18px}#focus-styles .md-compartment{padding:15px 11px}#focus-styles .md-cassette-action{gap:8px}#focus-styles .md-cassette-action .md-primary{min-width:143px;font-size:12px}#focus-styles .md-switch{border-radius:14px}}
+@media(prefers-reduced-motion:no-preference){#focus-styles .md-primary{transition:background-color .15s ease-out}#focus-styles .md-toast{animation:md-toast-in .18s ease-out}@keyframes md-toast-in{from{transform:translateY(7px)}to{transform:translateY(0)}}}
+#focus-styles .md-phone.focus{--paper:#201823;--ink:#fff4f6;--muted:#d0b8ce;--line:#665063;--accent:#f7c6df;--soft:#493245;--on-action:#44233b;--clock:var(--ink);--button-radius:28px;--button-fill:var(--accent);background:var(--paper);border-color:var(--line)}
+#focus-styles .md-phone.plum{background:radial-gradient(ellipse at 94% 27%,#784762 0,transparent 53%),radial-gradient(ellipse at 3% 0,#554568 0,transparent 58%),linear-gradient(165deg,#312536,#271c28 65%,#201823)}
+#focus-styles .md-phone.dawn{--paper:#fcf5e9;--ink:#593531;--muted:#805d53;--line:#d7b4a7;--accent:#843f39;--soft:#f1d9cd;--on-action:#fff8f0;--clock:#6b3936;--button-radius:28px;color-scheme:light;background:radial-gradient(ellipse at 93% 10%,#f0bd96 0,transparent 56%),radial-gradient(ellipse at 4% 35%,#f5c6c3 0,transparent 54%),linear-gradient(174deg,#fae9cf,#fcf5e9 77%)}
+#focus-styles .md-phone.tide{--paper:#102c37;--ink:#eaf7f4;--muted:#aeced1;--line:#4b737e;--accent:#b9f2db;--soft:#204751;--on-action:#143c37;--clock:#e0fff5;--button-radius:16px;--button-fill:linear-gradient(105deg,#c7f5dd,#91dece);background:radial-gradient(ellipse at 90% 35%,#216664 0,transparent 60%),radial-gradient(ellipse at 0 0,#244777 0,transparent 59%),linear-gradient(160deg,#163754,#102c37 76%)}
+#focus-styles .md-phone.coal{--paper:#282623;--ink:#f4eee6;--muted:#bdb2a6;--line:#5a5148;--accent:#efb578;--soft:#39322c;--on-action:#332317;--clock:#efb578;--button-radius:8px;background:#282623;border-radius:17px}
+#focus-styles .focus .md-content{padding-top:24px;min-height:609px}
+#focus-styles .focus .md-focus-head{font-size:11px;gap:8px}
+#focus-styles .focus .md-focus-head span:last-child{color:var(--ink)}
+#focus-styles .focus .md-focus-main{padding-top:35px;padding-bottom:25px}
+#focus-styles .focus .md-focus-time{font-size:78px;letter-spacing:-.04em;color:var(--clock)}
+#focus-styles .focus .md-focus-object{height:145px;position:relative}
+#focus-styles .focus .md-focus-object .md-pill{width:35px;height:78px;z-index:1;border-width:1px;box-shadow:inset 5px 1px 7px #fff5,inset -4px -2px 7px #0002,9px 16px 18px #100b1c30}
+#focus-styles .focus .md-focus-main h2{font-size:29px;font-weight:650}
+#focus-styles .focus .md-focus-main p{font-size:13px}
+#focus-styles .focus .md-primary{border-radius:var(--button-radius);background:var(--button-fill);color:var(--on-action);font-size:14px;min-height:54px;box-shadow:0 7px 18px #080a1110}
+#focus-styles .focus .md-text-button{color:var(--muted);font-size:12px}
+#focus-styles .focus .md-focus-secondary{gap:25px;margin-top:7px}
+#focus-styles .focus .md-focus-next{margin-top:24px;padding-top:20px;font-size:14px}
+#focus-styles .focus .md-focus-done{margin-top:24px;font-size:11px}
+#focus-styles .focus .md-progress-line{margin-bottom:10px;gap:5px}
+#focus-styles .focus .md-nav{background:transparent;border-top-color:var(--line);padding-bottom:22px}
+#focus-styles .focus .md-nav button{font-size:11px;min-width:76px;border-radius:12px;padding:6px 9px}
+#focus-styles .focus .md-nav button.active{color:var(--accent)}
+#focus-styles .focus .md-brand{color:var(--ink);font-weight:650}
+#focus-styles .focus .md-top{padding-top:24px}
+#focus-styles .plum .md-focus-time{font-family:Lora,Georgia,serif;font-weight:400;font-size:76px;font-variant-numeric:lining-nums tabular-nums;letter-spacing:-.055em}
+#focus-styles .plum .md-focus-object .md-pill{border-color:#e6acc5;background:linear-gradient(175deg,#ffe0ec 0,#e8a5c9 49%,#896481 50%,#c098b5 100%)}
+#focus-styles .plum .md-nav button.active{background:#f7c6df13}
+#focus-styles .dawn .md-brand{font-family:Lora,Georgia,serif;font-size:16px;font-weight:500}
+#focus-styles .dawn .md-focus-time{font-weight:400;font-size:79px;letter-spacing:-.055em}
+#focus-styles .dawn .md-focus-main h2,#focus-styles .dawn .md-detail h2{font-family:Lora,Georgia,serif;font-weight:500;letter-spacing:-.03em;font-size:30px}
+#focus-styles .dawn .md-focus-object .md-pill{border-color:#b6664a;background:linear-gradient(175deg,#e9a77e,#cf805a 49%,#ffe3bb 50%,#edc797);box-shadow:inset 4px 1px 7px #fff5,inset -3px -2px 7px #76341d20,8px 15px 18px #9c4f2b20;transform:rotate(-28deg)}
+#focus-styles .dawn .md-nav button.active{background:#843f3910}
+#focus-styles .tide .md-focus-time{font-weight:500;font-size:77px;letter-spacing:-.065em}
+#focus-styles .tide .md-focus-object .md-pill{border-color:#bce6dd;background:linear-gradient(175deg,#e6fff0,#a7e6d5 49%,#469890 50%,#80d4c2)}
+#focus-styles .tide .md-nav button.active{background:#b9f2db10}
+#focus-styles .tide .md-focus-next{border-radius:15px;border:1px solid #7ba2a24d;padding:15px 16px;margin-top:20px}
+#focus-styles .tide .md-focus-done{margin-top:20px}
+#focus-styles .coal .md-focus-time{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:71px;font-weight:400;letter-spacing:-.065em}
+#focus-styles .coal .md-brand{font-weight:750;letter-spacing:.01em}
+#focus-styles .coal .md-focus-main h2{font-size:28px;font-weight:750}
+#focus-styles .coal .md-focus-object .md-pill{border-color:#c38a51;background:linear-gradient(to bottom,#e2b785 49%,#625749 50%);box-shadow:inset 3px 0 3px #fff3,6px 9px 7px #0002;transform:rotate(40deg)}
+#focus-styles .coal .md-nav button{border-radius:0}
+#focus-styles .coal .md-nav button.active{color:var(--ink);box-shadow:inset 0 -2px var(--accent)}
+#focus-styles .coal .md-progress-line span{height:2px;border-radius:0}
+#focus-styles .coal .md-pill-box{border-radius:8px}
+#focus-styles .md-switch{background:#28272b;max-width:390px;padding:5px;border-radius:16px}
+#focus-styles .md-switch button{font-size:12px;min-height:49px;display:flex;align-items:center;justify-content:center;gap:7px;font-weight:600}
+#focus-styles .md-switch button span{display:inline-block;flex-shrink:0;margin:0;width:12px;height:12px;border-radius:50%;opacity:1;box-shadow:inset 0 0 0 1px #0001}
+#focus-styles .md-switch button[data-variant=plum] span{background:linear-gradient(130deg,#675277,#e1a4c2)}
+#focus-styles .md-switch button[data-variant=dawn] span{background:linear-gradient(130deg,#edb689,#f4d8ce)}
+#focus-styles .md-switch button[data-variant=tide] span{background:linear-gradient(130deg,#477ab3,#a9e9cb)}
+#focus-styles .md-switch button[data-variant=coal] span{background:linear-gradient(130deg,#66584a,#e5b686)}
+@media(max-width:360px){#focus-styles .md-switch button{gap:4px;font-size:11px}#focus-styles .md-switch button span{width:9px;height:9px}#focus-styles .focus .md-focus-head{font-size:11px}#focus-styles .focus .md-focus-secondary{gap:12px}#focus-styles .focus .md-focus-time{font-size:71px}}
+#focus-styles .md-switch button{flex-direction:column;gap:5px;min-width:0;font-size:11px}
+#focus-styles .md-switch button[data-variant=glass] span{background:linear-gradient(140deg,#fff 8%,#b3dbf2 43%,#ead5e8 73%,#fff);box-shadow:inset 0 0 0 1px #fff9,0 1px 3px #0002}
+#focus-styles .md-phone.glass{--paper:#e6eef4;--ink:#20364c;--muted:#4e6175;--line:#a8bdcb;--accent:#174a80;--soft:#e8f1f8;--on-action:#123c64;--clock:#28445e;--button-radius:28px;--button-fill:linear-gradient(130deg,#ffffffa8,#c5e6fa82 45%,#d5dffb9c);color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,Manrope,sans-serif;background:radial-gradient(ellipse at 110% 3%,#b9ceec 0,transparent 48%),radial-gradient(ellipse at -20% 43%,#b6d9e3 0,transparent 48%),radial-gradient(ellipse at 98% 69%,#dfc5de 0,transparent 50%),linear-gradient(150deg,#edf3f8,#e1edf4 49%,#d9e8eb);border-color:#d2dfe8;box-shadow:0 16px 48px #233c5714,inset 0 1px 0 #fff}
+#focus-styles .glass .md-top{padding-top:23px}
+#focus-styles .glass .md-brand{font-weight:650;letter-spacing:-.025em}
+#focus-styles .glass .md-icon-button{border:1px solid #ffffffad;background:linear-gradient(135deg,#ffffffab,#ffffff24 65%,#ffffff65);box-shadow:inset 0 1px 1px #fff,0 3px 9px #45698515;-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3)}
+#focus-styles .glass .md-focus-time{font-family:-apple-system,BlinkMacSystemFont,Manrope,sans-serif;font-size:82px;font-weight:300;letter-spacing:-.045em;text-shadow:0 1px 0 #fff9}
+#focus-styles .glass .md-focus-main h2{font-family:-apple-system,BlinkMacSystemFont,Manrope,sans-serif;font-weight:600;letter-spacing:-.035em}
+#focus-styles .glass .md-focus-object .md-pill{width:36px;height:79px;border:1px solid #ffffffd9;background:linear-gradient(102deg,#fff9 0,#ffffff0d 15%,#ffffff55 28%,#c1cfe626 55%,#ffffff1a 77%,#fff9 100%),linear-gradient(180deg,#d3e5ed9e 0,#e1ecf9bb 49%,#acc5e7b5 50%,#d2ddf39c 100%);box-shadow:inset 2px 1px 3px #fff,inset -3px -2px 4px #7895ad42,9px 13px 18px #52759630;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);transform:rotate(30deg)}
+#focus-styles .glass .md-focus-object .md-pill:before{content:&#x27;&#x27;;position:absolute;inset:5px 5px 42px 5px;border-radius:20px;background:linear-gradient(115deg,#ffffffd9,#fff0 65%);pointer-events:none}
+#focus-styles .glass .md-primary{position:relative;border:1px solid #ffffffbd;box-shadow:inset 0 1px 1px #fff,inset 0 -1px 1px #8ba9c94d,0 6px 18px #3c618822;-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);font-weight:650;text-shadow:0 1px 0 #fff8}
+#focus-styles .glass .md-primary:before{content:&#x27;&#x27;;position:absolute;inset:2px;border-radius:inherit;border-top:1px solid #fffc;border-bottom:1px solid #fff6;pointer-events:none}
+#focus-styles .glass .md-primary:hover{filter:brightness(1.035)}
+#focus-styles .glass .md-focus-next{border-top:1px solid #96aec075;box-shadow:inset 0 1px 0 #ffffff91}
+#focus-styles .glass .md-focus-done{color:#4a6377}
+#focus-styles .glass .md-progress-line span{background:#96aec066}
+#focus-styles .glass .md-progress-line span.complete{background:#416d91}
+#focus-styles .glass .md-nav{position:relative;margin:0 14px 20px;padding:5px 6px;border:1px solid #ffffffb8;border-radius:35px;background:linear-gradient(120deg,#ffffffe0,#eef5faab 45%,#ffffffa6);box-shadow:inset 0 1px 1px #fff,inset 0 -1px 1px #8faabc50,0 8px 21px #4166811f;-webkit-backdrop-filter:blur(20px) saturate(1.45);backdrop-filter:blur(20px) saturate(1.45);gap:3px}
+#focus-styles .glass .md-nav button{flex:1;min-width:0;min-height:53px;border-radius:28px;padding:7px 4px;gap:4px;color:#4c6174}
+#focus-styles .glass .md-nav button.active{color:#144c7e;background:linear-gradient(135deg,#fff8,#b7d4ef7d);box-shadow:inset 0 1px 1px #fff,0 2px 4px #54789714}
+#focus-styles .glass .md-pill-box{background:linear-gradient(135deg,#ffffffa6,#d4e3f063);border:1px solid #ffffffb3;box-shadow:inset 0 1px 0 #fff}
+#focus-styles .glass .md-toast{background:#203b53;color:#f5fbff}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#focus-styles .glass .md-primary{background:#d6e7f5}#focus-styles .glass .md-nav{background:#edf3f8}#focus-styles .glass .md-icon-button{background:#edf3f8}}
+@media(prefers-reduced-transparency:reduce){#focus-styles .glass .md-primary{background:#d6e7f5;backdrop-filter:none;-webkit-backdrop-filter:none}#focus-styles .glass .md-nav,#focus-styles .glass .md-icon-button{background:#edf3f8;backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(max-width:360px){#focus-styles .glass .md-focus-time{font-size:74px}}
+
+&lt;/style&gt;
+&lt;div id=&quot;focus-styles&quot;&gt;
+  &lt;div class=&quot;md-switch&quot; role=&quot;group&quot; aria-label=&quot;Стили Фокуса&quot;&gt;
+    &lt;button type=&quot;button&quot; data-variant=&quot;plum&quot; aria-pressed=&quot;true&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Слива&lt;/button&gt;
+    &lt;button type=&quot;button&quot; data-variant=&quot;dawn&quot; aria-pressed=&quot;false&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Рассвет&lt;/button&gt;
+    &lt;button type=&quot;button&quot; data-variant=&quot;tide&quot; aria-pressed=&quot;false&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Прилив&lt;/button&gt;
+    &lt;button type=&quot;button&quot; data-variant=&quot;coal&quot; aria-pressed=&quot;false&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Уголь&lt;/button&gt;
+    &lt;button type=&quot;button&quot; data-variant=&quot;glass&quot; aria-pressed=&quot;false&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Стекло&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;md-phone focus glass&quot; aria-label=&quot;Макет напоминаний о приёме лекарств&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;md-footnote&quot;&gt;Демонстрационные препараты и расписание&lt;/div&gt;
+  &lt;div class=&quot;md-live&quot; aria-live=&quot;polite&quot; style=&quot;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+(()=&gt;{
+const root=document.getElementById(&#x27;focus-styles&#x27;);
+const phone=root.querySelector(&#x27;.md-phone&#x27;);
+const names={plum:&#x27;Слива&#x27;,dawn:&#x27;Рассвет&#x27;,tide:&#x27;Прилив&#x27;,coal:&#x27;Уголь&#x27;,glass:&#x27;Стекло&#x27;};
+const saved=window.openai?.widgetState?.modelContent;
+const state={variant:saved?.styleSet===&#x27;focus-five&#x27;&amp;&amp;names[saved?.variant]?saved.variant:&#x27;glass&#x27;,taken:saved?.taken===true,delayed:saved?.delayed===true,view:&#x27;today&#x27;,toast:&#x27;&#x27;};
+const icon=name=&gt;`&lt;i data-lucide=&quot;${name}&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;`;
+const pill=(color=&#x27;&#x27;)=&gt;`&lt;span class=&quot;md-pill ${color}&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;`;
+const time=()=&gt;state.delayed?&#x27;09:00&#x27;:&#x27;08:30&#x27;;
+const top=()=&gt;`&lt;header class=&quot;md-top&quot;&gt;&lt;div class=&quot;md-brand&quot;&gt;${icon(&#x27;pill&#x27;)} по времени&lt;/div&gt;&lt;div class=&quot;md-top-actions&quot;&gt;&lt;button class=&quot;md-icon-button&quot; data-action=&quot;notifications&quot; aria-label=&quot;Уведомления&quot;&gt;${icon(&#x27;bell&#x27;)}&lt;/button&gt;&lt;/div&gt;&lt;/header&gt;`;
+const nav=()=&gt;`&lt;nav class=&quot;md-nav&quot; aria-label=&quot;Основная навигация&quot;&gt;${[[&#x27;today&#x27;,&#x27;calendar-days&#x27;,&#x27;Сегодня&#x27;],[&#x27;meds&#x27;,&#x27;pill&#x27;,&#x27;Препараты&#x27;],[&#x27;history&#x27;,&#x27;clock-3&#x27;,&#x27;История&#x27;]].map(([id,ic,label])=&gt;`&lt;button type=&quot;button&quot; data-view=&quot;${id}&quot; class=&quot;${state.view===id?&#x27;active&#x27;:&#x27;&#x27;}&quot; ${state.view===id?&#x27;aria-current=&quot;page&quot;&#x27;:&#x27;&#x27;}&gt;${icon(ic)}${label}&lt;/button&gt;`).join(&#x27;&#x27;)}&lt;/nav&gt;`;
+const primary=(label)=&gt;`&lt;button type=&quot;button&quot; class=&quot;md-primary&quot; data-action=&quot;take&quot;&gt;${icon(state.taken?&#x27;check-check&#x27;:&#x27;check&#x27;)}${state.taken?&#x27;Приём отмечен&#x27;:label||&#x27;Принято&#x27;}&lt;/button&gt;`;
+const secondary=()=&gt;`&lt;div class=&quot;md-hero-footer&quot;&gt;&lt;button class=&quot;md-text-button&quot; data-action=&quot;${state.taken?&#x27;undo&#x27;:&#x27;delay&#x27;}&quot;&gt;${state.taken?&#x27;Отменить отметку&#x27;:state.delayed?&#x27;Вернуть на 08:30&#x27;:&#x27;Через 30 минут&#x27;}&lt;/button&gt;&lt;button class=&quot;md-text-button&quot; data-view=&quot;detail&quot;&gt;О препарате ${icon(&#x27;chevron-right&#x27;)}&lt;/button&gt;&lt;/div&gt;`;
+const row=(title,desc,col,end,sub=&#x27;&#x27;)=&gt;`&lt;div class=&quot;md-row&quot;&gt;&lt;div class=&quot;md-pill-box&quot;&gt;${pill(col)}&lt;/div&gt;&lt;div class=&quot;md-row-copy&quot;&gt;&lt;b&gt;${title}&lt;/b&gt;&lt;small&gt;${desc}&lt;/small&gt;&lt;/div&gt;&lt;div class=&quot;md-row-end&quot;&gt;${end}${sub?`&lt;small&gt;${sub}&lt;/small&gt;`:&#x27;&#x27;}&lt;/div&gt;&lt;/div&gt;`;
+function focus(){return `&lt;div class=&quot;md-content&quot;&gt;&lt;div class=&quot;md-focus-head&quot;&gt;&lt;span&gt;Четверг, 17 сентября&lt;/span&gt;&lt;span&gt;${state.taken?&#x27;Принято&#x27;:state.delayed?&#x27;Напомним позже&#x27;:&#x27;Ближайший приём&#x27;}&lt;/span&gt;&lt;/div&gt;&lt;section class=&quot;md-focus-main&quot;&gt;&lt;div class=&quot;md-focus-time&quot;&gt;${time()}&lt;/div&gt;&lt;div class=&quot;md-focus-object&quot;&gt;${pill(&#x27;gold&#x27;)}&lt;/div&gt;&lt;h2&gt;Витамин D₃&lt;/h2&gt;&lt;p&gt;1 капсула · после завтрака&lt;/p&gt;&lt;/section&gt;${primary(&#x27;Я принял&#x27;)}&lt;div class=&quot;md-focus-secondary&quot;&gt;&lt;button class=&quot;md-text-button&quot; data-action=&quot;${state.taken?&#x27;undo&#x27;:&#x27;delay&#x27;}&quot;&gt;${state.taken?&#x27;Отменить отметку&#x27;:state.delayed?&#x27;Вернуть на 08:30&#x27;:&#x27;Через 30 минут&#x27;}&lt;/button&gt;&lt;button class=&quot;md-text-button&quot; data-view=&quot;detail&quot;&gt;О препарате&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;md-focus-next&quot;&gt;&lt;div&gt;&lt;small&gt;Следом&lt;/small&gt;Магний · 1 таблетка&lt;/div&gt;&lt;div&gt;&lt;small&gt;После ужина&lt;/small&gt;20:00&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;md-focus-done&quot;&gt;${icon(&#x27;check-check&#x27;)}Препарат А принят в 07:32&lt;/div&gt;&lt;div class=&quot;md-progress-line&quot;&gt;${[0,1,2].map(i=&gt;`&lt;span class=&quot;${i&lt;(state.taken?2:1)?&#x27;complete&#x27;:&#x27;&#x27;}&quot;&gt;&lt;/span&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;&lt;/div&gt;`}
+function detail(magnesium=false){return `&lt;div class=&quot;md-detail-head&quot;&gt;&lt;button class=&quot;md-icon-button&quot; data-view=&quot;today&quot; aria-label=&quot;Назад&quot;&gt;${icon(&#x27;arrow-left&#x27;)}&lt;/button&gt;&lt;span&gt;Препарат&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;md-detail&quot;&gt;&lt;div class=&quot;md-pill-box&quot;&gt;${pill(magnesium?&#x27;green&#x27;:&#x27;gold&#x27;)}&lt;/div&gt;&lt;h2&gt;${magnesium?&#x27;Магний&#x27;:&#x27;Витамин D₃&#x27;}&lt;/h2&gt;&lt;p&gt;Добавка · ежедневный приём&lt;/p&gt;&lt;dl&gt;&lt;div&gt;&lt;dt&gt;Количество&lt;/dt&gt;&lt;dd&gt;${magnesium?&#x27;1 таблетка&#x27;:&#x27;1 капсула&#x27;}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Время&lt;/dt&gt;&lt;dd&gt;${magnesium?&#x27;20:00&#x27;:time()}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Условие приёма&lt;/dt&gt;&lt;dd&gt;После еды&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Напоминания&lt;/dt&gt;&lt;dd&gt;Включены&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;h3&gt;Сегодня&lt;/h3&gt;&lt;p&gt;${magnesium?&#x27;Приём запланирован на вечер.&#x27;:state.taken?&#x27;Приём уже отмечен.&#x27;:&#x27;Приём ещё не отмечен.&#x27;}&lt;/p&gt;&lt;div style=&quot;height:28px&quot;&gt;&lt;/div&gt;${!magnesium?primary():`&lt;button class=&quot;md-primary&quot; data-view=&quot;today&quot;&gt;Вернуться к расписанию&lt;/button&gt;`}${!magnesium&amp;&amp;state.taken?&#x27;&lt;button class=&quot;md-text-button&quot; data-action=&quot;undo&quot;&gt;Отменить отметку&lt;/button&gt;&#x27;:&#x27;&#x27;}&lt;/div&gt;`}
+function meds(){return `&lt;div class=&quot;md-content&quot;&gt;&lt;div class=&quot;md-heading&quot;&gt;&lt;h2&gt;Препараты&lt;/h2&gt;&lt;span class=&quot;md-sub&quot;&gt;3 активных&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;md-sub&quot;&gt;Ваше ежедневное расписание&lt;/p&gt;${row(&#x27;Препарат А&#x27;,&#x27;1 таблетка · натощак&#x27;,&#x27;round&#x27;,&#x27;07:30&#x27;)}&lt;button data-view=&quot;detail&quot; style=&quot;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left&quot;&gt;${row(&#x27;Витамин D₃&#x27;,&#x27;1 капсула · после еды&#x27;,&#x27;gold&#x27;,time())}&lt;/button&gt;&lt;button data-view=&quot;magnesium&quot; style=&quot;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left&quot;&gt;${row(&#x27;Магний&#x27;,&#x27;1 таблетка · после еды&#x27;,&#x27;green&#x27;,&#x27;20:00&#x27;)}&lt;/button&gt;&lt;/div&gt;`}
+function history(){return `&lt;div class=&quot;md-content&quot;&gt;&lt;div class=&quot;md-heading&quot;&gt;&lt;h2&gt;История&lt;/h2&gt;&lt;/div&gt;&lt;p class=&quot;md-sub&quot;&gt;Отметки приёма сохраняются здесь&lt;/p&gt;&lt;div class=&quot;md-history-day&quot;&gt;Сегодня, 17 сентября&lt;/div&gt;${state.taken?row(&#x27;Витамин D₃&#x27;,&#x27;Принято · 1 капсула&#x27;,&#x27;gold&#x27;,time()):&#x27;&#x27;}${row(&#x27;Препарат А&#x27;,&#x27;Принято · 1 таблетка&#x27;,&#x27;round&#x27;,&#x27;07:32&#x27;)}&lt;div class=&quot;md-history-day&quot;&gt;Вчера, 16 сентября&lt;/div&gt;${row(&#x27;Магний&#x27;,&#x27;Принято · 1 таблетка&#x27;,&#x27;green&#x27;,&#x27;20:04&#x27;)}${row(&#x27;Витамин D₃&#x27;,&#x27;Принято · 1 капсула&#x27;,&#x27;gold&#x27;,&#x27;08:36&#x27;)}${row(&#x27;Препарат А&#x27;,&#x27;Принято · 1 таблетка&#x27;,&#x27;round&#x27;,&#x27;07:31&#x27;)}&lt;/div&gt;`}
+function notifications(){return `&lt;div class=&quot;md-detail-head&quot;&gt;&lt;button class=&quot;md-icon-button&quot; data-view=&quot;today&quot; aria-label=&quot;Назад&quot;&gt;${icon(&#x27;arrow-left&#x27;)}&lt;/button&gt;&lt;span&gt;Напоминания&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;md-detail&quot;&gt;&lt;h2&gt;Всё настроено&lt;/h2&gt;&lt;div style=&quot;height:20px&quot;&gt;&lt;/div&gt;&lt;div class=&quot;md-notice&quot;&gt;${icon(&#x27;bell-ring&#x27;)}Уведомления включены&lt;/div&gt;&lt;p&gt;Напомним о каждом приёме по вашему расписанию.&lt;/p&gt;&lt;dl&gt;&lt;div&gt;&lt;dt&gt;Препарат А&lt;/dt&gt;&lt;dd&gt;07:30&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Витамин D₃&lt;/dt&gt;&lt;dd&gt;${time()}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Магний&lt;/dt&gt;&lt;dd&gt;20:00&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;button class=&quot;md-primary&quot; data-view=&quot;today&quot;&gt;К сегодняшнему дню&lt;/button&gt;&lt;/div&gt;`}
+function persist(){window.openai?.setWidgetState?.({modelContent:{styleSet:&#x27;focus-five&#x27;,variant:state.variant,direction:&#x27;Фокус — &#x27;+names[state.variant],taken:state.taken,delayed:state.delayed},privateContent:{view:state.view}})?.catch(()=&gt;{})}
+function render(){
+phone.className=&#x27;md-phone focus &#x27;+state.variant;
+let content=&#x27;&#x27;;
+if(state.view===&#x27;detail&#x27;||state.view===&#x27;magnesium&#x27;)content=detail(state.view===&#x27;magnesium&#x27;);
+else if(state.view===&#x27;notifications&#x27;)content=notifications();
+else content=top()+(state.view===&#x27;meds&#x27;?meds():state.view===&#x27;history&#x27;?history():focus());
+phone.innerHTML=content+nav()+(state.toast?`&lt;div class=&quot;md-toast&quot; role=&quot;status&quot;&gt;&lt;span&gt;${state.toast}&lt;/span&gt;&lt;button data-action=&quot;${state.taken?&#x27;undo&#x27;:&#x27;dismiss&#x27;}&quot;&gt;${state.taken?&#x27;Отменить&#x27;:&#x27;Понятно&#x27;}&lt;/button&gt;&lt;/div&gt;`:&#x27;&#x27;);
+root.querySelectorAll(&#x27;[data-variant]&#x27;).forEach(b=&gt;b.setAttribute(&#x27;aria-pressed&#x27;,String(b.dataset.variant===state.variant)));
+if(globalThis.lucide)globalThis.lucide.createIcons({attrs:{width:16,height:16}});
+}
+root.addEventListener(&#x27;click&#x27;,event=&gt;{
+const button=event.target.closest(&#x27;button&#x27;);if(!button||!root.contains(button))return;
+if(button.dataset.variant){state.variant=button.dataset.variant;state.toast=&#x27;&#x27;;root.querySelector(&#x27;.md-live&#x27;).textContent=&#x27;Дизайн: &#x27;+names[state.variant];}
+if(button.dataset.view){state.view=button.dataset.view;state.toast=&#x27;&#x27;;}
+if(button.dataset.action===&#x27;take&#x27;){if(!state.taken){state.taken=true;state.toast=&#x27;Витамин D₃ — приём отмечен&#x27;;}}
+if(button.dataset.action===&#x27;undo&#x27;){state.taken=false;state.toast=&#x27;Отметка отменена&#x27;;}
+if(button.dataset.action===&#x27;delay&#x27;){state.delayed=!state.delayed;state.toast=state.delayed?&#x27;Напомним в 09:00&#x27;:&#x27;Напомним в 08:30&#x27;;}
+if(button.dataset.action===&#x27;dismiss&#x27;)state.toast=&#x27;&#x27;;
+if(button.dataset.action===&#x27;notifications&#x27;){state.view=&#x27;notifications&#x27;;state.toast=&#x27;&#x27;;}
+render();persist();
+});
+window.addEventListener(&#x27;openai:set_globals&#x27;,event=&gt;{const next=event.detail?.globals?.widgetState?.modelContent;if(!next)return;if(next.variant===state.variant&amp;&amp;next.taken===state.taken&amp;&amp;next.delayed===state.delayed)return;if(names[next.variant])state.variant=next.variant;if(typeof next.taken===&#x27;boolean&#x27;)state.taken=next.taken;if(typeof next.delayed===&#x27;boolean&#x27;)state.delayed=next.delayed;state.toast=&#x27;&#x27;;render();});
+render();
+})();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) =&gt; {
+    lastPointerWasTouch =
+      event.type === &quot;pointerdown&quot; &amp;&amp; event.pointerType === &quot;touch&quot;;
+  };
+  const handleTouchClick = (event) =&gt; {
+    const isTouch = event.pointerType === &quot;touch&quot; || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch &amp;&amp; activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() =&gt; {
+      if (activeTrigger === trigger &amp;&amp; !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) =&gt; {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerdown&quot;, handlePointer);
+    document.removeEventListener(&quot;pointercancel&quot;, handlePointer);
+    document.removeEventListener(&quot;click&quot;, handleTouchClick);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerdown&quot;, handlePointer);
+  document.addEventListener(&quot;pointercancel&quot;, handlePointer);
+  document.addEventListener(&quot;click&quot;, handleTouchClick);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-tabs&quot;&gt;
+(() =&gt; {
+  const selector = &#x27;.nav[role=&quot;tablist&quot;] [role=&quot;tab&quot;]&#x27;;
+  const disabled = &#x27;:disabled,[aria-disabled=&quot;true&quot;]&#x27;;
+  const selectTab = (selected) =&gt; {
+    const panelId = selected.getAttribute(&quot;aria-controls&quot;);
+    for (const tab of selected.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;)) {
+      const active = tab === selected;
+      tab.classList.toggle(&quot;active&quot;, active);
+      tab.setAttribute(&quot;aria-selected&quot;, String(active));
+      const id = tab.getAttribute(&quot;aria-controls&quot;);
+      const panel = id &amp;&amp; document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden &amp;&amp; selected.id) {
+          panel.setAttribute(&quot;aria-labelledby&quot;, selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) =&gt; {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === &quot;click&quot;) {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;),
+    ).filter((candidate) =&gt; !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === &quot;ArrowRight&quot; || event.key === &quot;ArrowDown&quot;) {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === &quot;ArrowLeft&quot; || event.key === &quot;ArrowUp&quot;) {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === &quot;Home&quot;) {
+      next = 0;
+    } else if (event.key === &quot;End&quot;) {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll(&#x27;.nav[role=&quot;tablist&quot;]&#x27;)) {
+    const selected =
+      list.querySelector(&#x27;[role=&quot;tab&quot;][aria-selected=&quot;true&quot;]&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;].active&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;]&#x27;);
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener(&quot;click&quot;, interact);
+  document.addEventListener(&quot;keydown&quot;, interact);
+  window.addEventListener(&quot;pagehide&quot;, () =&gt; {
+    document.removeEventListener(&quot;click&quot;, interact);
+    document.removeEventListener(&quot;keydown&quot;, interact);
+  }, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+<script>(() => {
+  const frame = document.getElementById("codex-visualization");
+  if (!(frame instanceof HTMLIFrameElement)) {
+    return;
+  }
+  let viewportHeight = globalThis.innerHeight;
+  const storageKey = `codex:visualization-widget-state-v2:${JSON.stringify([
+    globalThis.location.pathname,
+    globalThis.location.search,
+  ])}`;
+  const parseState = (serializedState) => {
+    if (
+      typeof serializedState !== "string" ||
+      new TextEncoder().encode(serializedState).length > 16 * 1024
+    ) {
+      throw new TypeError(
+        "Widget state must be a JSON object of at most 16 KiB",
+      );
+    }
+    /** @type {unknown} */
+    const state = JSON.parse(serializedState);
+    if (
+      state == null ||
+      typeof state !== "object" ||
+      Array.isArray(state) ||
+      ("imageIds" in state &&
+        (!Array.isArray(state.imageIds) || state.imageIds.length > 0))
+    ) {
+      throw new TypeError("Widget state must be a JSON object");
+    }
+    const storedState = { modelContent: null, privateContent: null, ...state };
+    const canonicalState = JSON.stringify(
+      storedState,
+      (_key, /** @type {unknown} */ value) => {
+        if (typeof value === "number" && !Number.isFinite(value)) {
+          throw new TypeError("Widget state must contain finite numbers");
+        }
+        return value;
+      },
+    );
+    if (new TextEncoder().encode(canonicalState).length > 16 * 1024) {
+      throw new TypeError(
+        "Widget state must be a JSON object of at most 16 KiB",
+      );
+    }
+    return storedState;
+  };
+  let storage = null;
+  let state = null;
+  try {
+    const localStorage = globalThis.localStorage;
+    const probeKey = `${storageKey}:probe`;
+    localStorage.setItem(probeKey, "1");
+    localStorage.removeItem(probeKey);
+    storage = localStorage;
+    const savedState = storage.getItem(storageKey);
+    if (savedState != null) {
+      try {
+        state = parseState(savedState);
+      } catch {
+        // Invalid saved state does not disable future writes.
+      }
+    }
+  } catch {
+    storage = null;
+  }
+  const initialGlobals = {
+    widgetState: state,
+    statePersistence: storage == null ? "none" : "local",
+  };
+
+  const channel = new MessageChannel();
+  channel.port1.addEventListener("message", (event) => {
+    const data = event.data;
+    if (typeof data !== "object" || data == null) {
+      return;
+    }
+    if (data.type === "widget-state-write") {
+      if (!Number.isSafeInteger(data.id) || data.id <= 0) {
+        return;
+      }
+      let ok = false;
+      try {
+        if (storage != null) {
+          const state = parseState(data.state);
+          storage.setItem(storageKey, JSON.stringify(state));
+          ok = true;
+        }
+      } catch {
+        // Storage denial, quota limits, and invalid state return a failed receipt.
+      }
+      channel.port1.postMessage({
+        type: "widget-state-result",
+        id: data.id,
+        ok,
+      });
+      return;
+    }
+    if (data.type === "height") {
+      const height = data.height;
+      if (
+        typeof height === "number" &&
+        Number.isFinite(height) &&
+        height >= 0 &&
+        height <= 10_000
+      ) {
+        frame.style.height = Math.ceil(height) + "px";
+      }
+      return;
+    }
+    if (data.type === "scroll-to") {
+      const top = data.top;
+      if (
+        typeof top === "number" &&
+        Number.isFinite(top) &&
+        top >= 0 &&
+        globalThis.navigator.userActivation?.isActive === true
+      ) {
+        globalThis.scrollTo({
+          top: Math.ceil(
+            globalThis.scrollY + frame.getBoundingClientRect().top + top,
+          ),
+        });
+      }
+      return;
+    }
+    if (data.type === "open-external") {
+      const rawHref = data.href;
+      if (typeof rawHref !== "string") {
+        return;
+      }
+      let href;
+      try {
+        const url = new URL(rawHref, document.baseURI);
+        if (url.protocol !== "https:") {
+          return;
+        }
+        href = url.href;
+      } catch {
+        return;
+      }
+      if (globalThis.navigator.userActivation?.isActive === true) {
+        const anchor = document.createElement("a");
+        anchor.href = href;
+        anchor.rel = "noopener noreferrer";
+        anchor.target = "_blank";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      }
+      return;
+    }
+    if (data.type === "follow-up") {
+      const prompt = data.prompt;
+      if (
+        typeof prompt !== "string" ||
+        globalThis.navigator.userActivation?.isActive !== true
+      ) {
+        return;
+      }
+      const title = data.title;
+      globalThis.prompt(typeof title === "string" ? title : prompt, prompt);
+    }
+  });
+  channel.port1.start();
+  const srcdoc = frame.dataset.srcdoc;
+  if (srcdoc == null) {
+    return;
+  }
+  globalThis.addEventListener("resize", () => {
+    const height = Number.parseFloat(frame.style.height);
+    if (!Number.isFinite(height) || height <= viewportHeight) {
+      frame.style.removeProperty("height");
+    }
+    viewportHeight = globalThis.innerHeight;
+    channel.port1.postMessage({ type: "measure" });
+  });
+  frame.addEventListener(
+    "load",
+    () => {
+      frame.contentWindow?.postMessage(
+        { type: "codex-visualization-initialize" },
+        "*",
+        [channel.port2],
+      );
+    },
+    { once: true },
+  );
+  // Match the trusted bootstrap element, not the same text in an authored title.
+  frame.srcdoc = srcdoc.replace(
+    '<script type="application/json" id="codex-visualization-widget-state">__CODEX_VISUALIZATION_WIDGET_STATE__<\/script>',
+    () =>
+      '<script type="application/json" id="codex-visualization-widget-state">' +
+      JSON.stringify(initialGlobals).replaceAll("<", "\\u003c") +
+      "<\/script>",
+  );
+  delete frame.dataset.srcdoc;
+})();
+</script>
+</body>
+</html>
