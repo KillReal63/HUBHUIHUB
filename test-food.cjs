@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),F=require('./dist/food/plan-logic.js');
+assert.equal(F.monday('2026-10-11'),'2026-10-05');
+assert.equal(F.addDays('2028-02-28',2),'2028-03-01');
+const recipes=[{id:'r',ingredients:[{name:' Рис ',unit:'г',quantity:100},{name:'Молоко',unit:'мл',quantity:200}]}];
+const plans=[{date:'2026-10-06',recipeId:'r',servings:2},{date:'2026-10-08',recipeId:'r',servings:1},{date:'2026-10-04',recipeId:'r',servings:99},{date:'2026-10-12',recipeId:'r',servings:99}];
+const stocks=[{name:'рис',unit:'г',quantity:250,expiry:''},{name:'Молоко',unit:'мл',quantity:600,expiry:'2026-10-07'},{name:'Рис',unit:'шт',quantity:999,expiry:''},{name:'Рис',unit:'г',quantity:999,expiry:'2026-10-05'}];
+const before=JSON.stringify(stocks),rows=F.shopping(plans,recipes,stocks,'2026-10-05','2026-10-06');
+assert.equal(rows[0].needed,300);assert.equal(rows[0].available,250);assert.equal(rows[0].missing,50);
+assert.equal(rows[1].available,400);assert.equal(rows[1].missing,200);assert.equal(JSON.stringify(stocks),before);
+assert.equal(F.shopping(plans,recipes,stocks,'2026-10-05','2026-10-09').length,0);
+assert.deepEqual(F.useFirst([{quantity:1,expiry:'2026-10-05'},{quantity:0,expiry:'2026-10-06'},{quantity:1,expiry:'2026-10-09'},{quantity:1,expiry:'2026-10-06'},{quantity:1,expiry:'2026-10-10'}],'2026-10-06').map(s=>s.expiry),['2026-10-06','2026-10-09']);
+console.log('PASS: week boundaries, portions, shared inventory, units, expiry by meal date, no mutation, use-first order');
