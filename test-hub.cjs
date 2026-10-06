@@ -9,6 +9,8 @@ vm.runInContext(source,context);
  assert.equal(node('main').hidden,true);
  for(const url of ['https://evil.test/vovrema/','//evil.test/gym/','/gym/../../api/logout','/api/logout','javascript:alert(1)','/gym-malicious/'])assert.equal(vm.runInContext(`safeNext(${JSON.stringify(url)})`,context),null,url);
  assert.equal(vm.runInContext("safeNext('/gym/program')",context),'/gym/program');
+ assert.equal(vm.runInContext("safeNext('/food/')",context),'/food/');
+ assert.equal(vm.runInContext("safeNext('/food-malicious/')",context),null);
  node('#password').value='test-password';await node('#auth-form').onsubmit({preventDefault(){}});assert.equal(target,'/vovrema/');assert.equal(node('main').hidden,false);
  await node('#logout').onclick();assert.equal(node('main').hidden,true);
  // A new installation uses the root worker, but an existing subscription is kept.

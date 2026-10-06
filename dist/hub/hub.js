@@ -1,7 +1,7 @@
 const $=selector=>document.querySelector(selector);
 let authenticated=false,setupRequired=false,checking=false,toastTimer;
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
-function safeNext(value){try{const url=new URL(value,location.origin);if(url.origin===location.origin&&/^\/(vovrema|gym|tasks)(\/|$)/.test(url.pathname))return url.pathname+url.search+url.hash}catch{}return null}
+function safeNext(value){try{const url=new URL(value,location.origin);if(url.origin===location.origin&&/^\/(vovrema|gym|tasks|food)(\/|$)/.test(url.pathname))return url.pathname+url.search+url.hash}catch{}return null}
 const next=safeNext(new URLSearchParams(location.search).get('next'));
 async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await response.json();if(!response.ok){if(response.status===401&&authenticated){authenticated=false;showSession()}throw Error(data.error||'Не удалось выполнить запрос')}return data}
 function showSession(){$('main').hidden=!authenticated;$('#auth').hidden=authenticated;$('#logout').hidden=!authenticated;$('#setup-fields').hidden=!setupRequired;$('#setup-fields').disabled=!setupRequired;$('#auth-title').textContent=setupRequired?'Создать общий пароль':'С возвращением';$('#password').autocomplete=setupRequired?'new-password':'current-password';$('#auth-submit').textContent=setupRequired?'Сохранить пароль и войти':'Войти'}
