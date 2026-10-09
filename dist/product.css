@@ -374,3 +374,19 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 #focus-styles #history-list .history-top,#focus-styles #history-list .dose-info { grid-column:1/-1; }
 #focus-styles #history-list .history-transfer { margin-top:4px; gap:2px; }
 @media(max-width:360px) { #focus-styles .md-top { gap:6px; padding-left:14px; padding-right:14px; } #focus-styles .hub-link { padding:0 4px; } }
+
+/* Constrain the native iOS date/time control, including its inner value box. */
+#focus-styles #skip-editor #skip-form,
+#focus-styles #skip-editor #skip-custom-field { min-width:0; max-width:100%; }
+#focus-styles #skip-editor input[type=datetime-local] {
+  -webkit-appearance:none; appearance:none;
+  display:block; width:100%; min-width:0; max-width:100%;
+  min-inline-size:0; box-sizing:border-box; height:52px;
+  padding:12px; line-height:24px; text-align:left;
+}
+#focus-styles #skip-editor input[type=datetime-local]::-webkit-date-and-time-value {
+  min-width:0; min-inline-size:0; text-align:left;
+}
+#focus-styles #skip-editor input[type=datetime-local]::-webkit-datetime-edit {
+  min-width:0; padding:0;
+}
