@@ -1,7 +1,8 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const base='/vovrema/',root=__dirname+'/dist/';
 const html=fs.readFileSync(root+'index.html','utf8');
-for(const match of html.matchAll(/(?:src|href)="([^"]+)"/g)){const url=match[1];assert.ok(url==='/'||url.startsWith('/?next=')||url.startsWith(base),url);if(url.startsWith(base)&&url!==base)assert.ok(fs.existsSync(root+url.slice(base.length)),url)}
+for(const match of html.matchAll(/(?:src|href)="([^"]+)"/g)){const url=match[1];assert.ok(url==='/'||url.startsWith('/?next=')||url.startsWith(base)||['/hub/chrome.css','/hub/chrome.js'].includes(url),url);if(url.startsWith(base)&&url!==base)assert.ok(fs.existsSync(root+url.slice(base.length)),url)}
+for(const name of ['hub/chrome.css','hub/chrome.js'])assert.ok(fs.existsSync(root+name));
 const manifest=JSON.parse(fs.readFileSync(root+'manifest.webmanifest','utf8'));
 assert.equal(manifest.start_url,'/');assert.equal(manifest.scope,'/');assert.equal(manifest.id,'/');
 for(const icon of manifest.icons)assert.ok(fs.existsSync(root+icon.src.slice(base.length)));

@@ -1,3 +1,11 @@
+(() => {
+const $=selector=>document.querySelector(selector);
+async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'Не удалось выполнить запрос');return data;}
+async function signedIn(){const status=await api('session');return status.authenticated;}
+function toast(message){$('#notification-status').textContent=message;}
+let accordionState=null,pushAuthenticated=false;
+function syncAccordion(enabled){const panel=$('.device-notifications');if(panel&&accordionState!==enabled)panel.open=!enabled;accordionState=enabled;const label=$('#device-push-state');if(label)label.textContent=enabled?'Включены':'Отключены';}
+$('.device-notifications')?.addEventListener('toggle',()=>{const panel=$('.device-notifications');if(accordionState===false&&!panel.open)panel.open=true;});
 window.pushEnabled=false;
 const pushStatus=$('#notification-status'),pushButton=$('#notifications');
 const supported='serviceWorker'in navigator&&'PushManager'in window&&'Notification'in window;
@@ -17,10 +25,10 @@ const registrationReady=supported?(async()=>{
  if(!reg.active){await new Promise((resolve,reject)=>{const worker=reg.installing||reg.waiting;if(!worker)return reject(Error('Service worker unavailable'));const timer=setTimeout(()=>reject(Error('Service worker timeout')),15000);worker.addEventListener('statechange',()=>{if(worker.state==='activated'){clearTimeout(timer);resolve()}else if(worker.state==='redundant'){clearTimeout(timer);reject(Error('Service worker failed'))}})})}
  return pushRegistration=reg;
 })().catch(()=>null):Promise.resolve(null);
-function pushUI(enabled,zone){window.pushEnabled=enabled;pushButton.textContent=enabled?'Отключить на этом устройстве':'Включить уведомления';$('#push-test').hidden=!enabled;pushStatus.textContent=enabled?`Включены, даже когда сайт закрыт. Часовой пояс: ${zone}. При смене часового пояса открой сайт, чтобы обновить его. Уведомления продолжат приходить после выхода из аккаунта, пока ты их не отключишь.`:ios&&!standalone?'На iPhone: Safari → Поделиться → На экран «Домой». Открой сайт через новую иконку, войди и включи уведомления.':!supported?'Этот браузер не поддерживает Web Push. Открой сайт в Safari на iPhone через иконку на главном экране.':'Разреши уведомления на этом устройстве. Сервер будет отправлять их даже при закрытом сайте. Для доставки нужен интернет.'}
-window.pushRefresh=async()=>{if(!authenticated||pushBusy)return;try{const reg=await registrationReady;if(!reg){pushUI(false);return}const sub=await reg.pushManager.getSubscription();if(!sub||Notification.permission!=='granted'){pushUI(false);return}const status=await api('push/status',{endpoint:sub.endpoint});if(status.enabled){const zone=Intl.DateTimeFormat().resolvedOptions().timeZone;if(zone!==status.timezone)await api('push/subscribe',{subscription:sub.toJSON(),timezone:zone});pushUI(true,zone)}else pushUI(false)}catch{pushStatus.textContent='Не удалось проверить подписку. Проверь подключение и обнови страницу.'}};
+function pushUI(enabled,zone){syncAccordion(enabled);window.pushEnabled=enabled;pushButton.textContent=enabled?'Отключить на этом устройстве':'Включить уведомления';$('#push-test').hidden=!enabled;pushStatus.textContent=enabled?`Включены, даже когда сайт закрыт. Часовой пояс: ${zone}. При смене часового пояса открой сайт, чтобы обновить его. Уведомления продолжат приходить после выхода из аккаунта, пока ты их не отключишь.`:ios&&!standalone?'На iPhone: Safari → Поделиться → На экран «Домой». Открой сайт через новую иконку, войди и включи уведомления.':!supported?'Этот браузер не поддерживает Web Push. Открой сайт в Safari на iPhone через иконку на главном экране.':'Разреши уведомления на этом устройстве. Сервер будет отправлять их даже при закрытом сайте. Для доставки нужен интернет.'}
+window.pushRefresh=async()=>{if(pushBusy)return;try{pushAuthenticated=await signedIn();pushButton.disabled=!pushAuthenticated;if(!pushAuthenticated){pushUI(false);pushStatus.textContent='Войди в аккаунт, чтобы управлять уведомлениями.';return;}const reg=await registrationReady;if(!reg){pushUI(false);return}const sub=await reg.pushManager.getSubscription();if(!sub||Notification.permission!=='granted'){pushUI(false);return}const status=await api('push/status',{endpoint:sub.endpoint});if(status.enabled){const zone=Intl.DateTimeFormat().resolvedOptions().timeZone;if(zone!==status.timezone)await api('push/subscribe',{subscription:sub.toJSON(),timezone:zone});pushUI(true,zone)}else pushUI(false)}catch{pushStatus.textContent='Не удалось проверить подписку. Проверь подключение и обнови страницу.'}};
 pushButton.onclick=async()=>{
- if(pushBusy||!authenticated)return;
+ if(pushBusy||!pushAuthenticated)return;
  if(ios&&!standalone){pushUI(false);return}
  if(!supported){pushUI(false);return}
  pushBusy=true;pushButton.disabled=true;
@@ -39,4 +47,6 @@ pushButton.onclick=async()=>{
  }catch(e){pushStatus.textContent=e.message||'Не удалось включить уведомления. Попробуй снова.'}finally{pushBusy=false;pushButton.disabled=false}
 };
 $('#push-test').onclick=async()=>{const button=$('#push-test');button.disabled=true;try{const reg=await registrationReady;const sub=await reg?.pushManager.getSubscription();if(!sub)throw Error('Сначала включи уведомления');await api('push/test',{endpoint:sub.endpoint});toast('Служба доставки приняла тестовое уведомление. Проверь экран уведомлений.')}catch(e){toast(e.message||'Не удалось отправить тест')}finally{button.disabled=false}};
-pushUI(false);if(authenticated)window.pushRefresh();window.addEventListener('focus',()=>window.pushRefresh());
+pushButton.disabled=true;pushUI(false);window.pushRefresh();window.addEventListener('focus',()=>window.pushRefresh());
+
+})();

@@ -7,7 +7,7 @@
   bar.className = 'style-picker';
   bar.setAttribute('aria-label', 'Варианты оформления');
   bar.innerHTML = '<span class="style-label">Оформление</span><div class="style-options">' + variants.map(([id, name, detail]) => `<button type="button" class="style-option" data-style="${id}" title="${detail}" aria-pressed="false"><span class="swatch swatch-${id}" aria-hidden="true"></span>${name}</button>`).join('') + '</div>';
-  document.querySelector('header').after(bar);
+  document.querySelector('[data-gym-appearance]').append(bar);
   function apply(id) {
     root.dataset.theme = id;
     bar.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.style === id)));
