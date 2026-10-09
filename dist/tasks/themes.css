@@ -4,3 +4,36 @@
 :root[data-tasks-theme=iris]{color-scheme:light;--bg:#eeeaf4;--panel:#fcfaff;--ink:#3e304c;--muted:#6d5d7c;--accent:#644578;--line:#d5cade;--control-border:#97849e;--focus:#644578;--done-bg:#e6dfed;--done-ink:#59406c}
 :root[data-tasks-theme=graphite]{color-scheme:dark;--bg:#182229;--panel:#22313a;--ink:#eef4f6;--muted:#b7c7cf;--accent:#9bced6;--line:#485d69;--field:#18262f;--control-border:#708791;--inverse:#182229;--on-accent:#17313a;--danger:#ffadb1;--done-bg:#304e4b;--done-ink:#c2e9d5;--focus:#9bced6}
 input,select,textarea{background:var(--field);color:var(--ink);border-color:var(--control-border)}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}.primary,.add{color:var(--on-accent)}.tabs button[aria-pressed=true],#toast{color:var(--inverse)}.tabs span{opacity:1}.complete{border-color:var(--control-border)}.done-row .complete{background:var(--done-bg);color:var(--done-ink);border-color:var(--control-border)}.delete,#form-error,#load-error{color:var(--danger)}:focus-visible{outline-color:var(--focus)}dialog::backdrop{background:#10182099}.settings-button{display:grid;place-items:center;width:46px;height:46px;padding:0;border-color:var(--control-border);border-radius:50%}.theme-settings{margin-top:26px}.theme-settings legend{font-size:17px;font-weight:600;margin-bottom:8px}.theme-description{font-size:13px;margin:8px 0 18px}.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.theme-card{margin:0;padding:11px;border:1px solid var(--control-border);border-radius:16px;cursor:pointer;min-width:0}.theme-card:has(input:checked){outline:2px solid var(--accent);outline-offset:2px}.theme-preview{display:block;position:relative;height:64px;border-radius:9px;background:var(--sample-bg);overflow:hidden;margin-bottom:12px}.theme-preview i{position:absolute;background:var(--sample-panel);inset:14px 12px;border-radius:7px}.theme-preview b{position:absolute;background:var(--sample-accent);width:35%;height:7px;left:24px;top:28px;border-radius:5px}.theme-name{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600}.theme-name input{width:18px;height:18px;margin:0;accent-color:var(--accent);flex-shrink:0}.theme-caption{display:block;font-size:12px;color:var(--muted);margin:6px 0 2px;line-height:1.45}#theme-storage{margin:20px 0 0}#settings .push-panel{margin-top:22px}#settings .actions button{border-color:var(--control-border)}
+
+/* Air keeps the original cards. Sage is a ruled daily notebook. */
+:root[data-tasks-theme=sage] .tasks-intro h1{font-family:"Trebuchet MS",sans-serif;font-weight:700;font-size:52px;letter-spacing:-2px}
+:root[data-tasks-theme=sage] .task-row{border-radius:0;background:transparent;border-bottom:1px solid var(--line);margin:0;padding:20px 4px}
+:root[data-tasks-theme=sage] .task-time{display:inline-block;border-bottom:2px solid var(--accent);padding-bottom:3px;font:600 16px/1.4 "Courier New",monospace;margin-bottom:10px}
+:root[data-tasks-theme=sage] .tabs{border:1px solid var(--line);border-radius:8px;padding:5px;background:var(--panel)}
+:root[data-tasks-theme=sage] .tabs button{border-radius:5px}
+:root[data-tasks-theme=sage] .complete{border-radius:8px;background:var(--panel)}
+:root[data-tasks-theme=sage] .add{border-radius:12px}
+/* Iris puts the time in its own column, like an appointment ribbon. */
+:root[data-tasks-theme=iris] .tasks-intro h1{font-family:Georgia,serif;font-style:italic;font-size:60px;letter-spacing:-2px}
+:root[data-tasks-theme=iris] .task-row{border-radius:4px 22px 22px 4px;border-left:3px solid var(--accent);padding:18px 12px;margin:14px 0}
+:root[data-tasks-theme=iris] .task-body{display:grid;grid-template-columns:58px minmax(0,1fr);gap:5px 10px}
+:root[data-tasks-theme=iris] .task-time{grid-column:1;grid-row:1/4;font:500 16px/1.4 Georgia,serif;padding-top:2px}
+:root[data-tasks-theme=iris] .task-body h2,:root[data-tasks-theme=iris] .task-meta,:root[data-tasks-theme=iris] .task-note{grid-column:2;margin:0}
+:root[data-tasks-theme=iris] .task-body h2{font:600 19px/1.25 Georgia,serif}
+:root[data-tasks-theme=iris] .tabs{border:0;background:var(--panel);border-radius:18px;padding:6px}
+:root[data-tasks-theme=iris] .group-title{letter-spacing:2px;margin-top:32px}
+/* Graphite is a dense control panel with rectangular actions. */
+:root[data-tasks-theme=graphite] .tasks-intro{border-bottom:1px solid var(--line);margin-bottom:22px;padding:28px 0}
+:root[data-tasks-theme=graphite] .tasks-intro h1{font-family:"Trebuchet MS",sans-serif;font-size:46px;font-weight:700;letter-spacing:-1px}
+:root[data-tasks-theme=graphite] .task-row{border:1px solid var(--line);border-radius:8px;padding:14px;margin:8px 0}
+:root[data-tasks-theme=graphite] .task-time{font:600 15px/1.4 ui-monospace,Consolas,monospace;letter-spacing:1px}
+:root[data-tasks-theme=graphite] .task-body h2{font-size:16px;margin:3px 0 6px}
+:root[data-tasks-theme=graphite] .complete,:root[data-tasks-theme=graphite] .add{border-radius:8px}
+:root[data-tasks-theme=graphite] .tabs{gap:1px;background:var(--line);border:1px solid var(--line);padding:0;border-radius:8px;overflow:hidden}
+:root[data-tasks-theme=graphite] .tabs button{background:var(--panel);border-radius:0}
+:root[data-tasks-theme=graphite] .tabs button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+:root[data-tasks-theme=graphite] .group-title{font-family:ui-monospace,monospace;letter-spacing:1.5px}
+.theme-card:has([value=sage]) .theme-preview i{border-radius:0;background:repeating-linear-gradient(var(--sample-panel),var(--sample-panel) 9px,var(--sample-bg) 10px)}
+.theme-card:has([value=iris]) .theme-preview i{border-radius:0 12px 12px 0;border-left:3px solid var(--sample-accent)}
+.theme-card:has([value=graphite]) .theme-preview i{border-radius:3px;border:1px solid var(--sample-accent)}
+@media(max-width:360px){:root[data-tasks-theme=iris] .task-body{display:block}:root[data-tasks-theme=iris] .task-time{margin-bottom:8px}.task-actions{width:58px}}

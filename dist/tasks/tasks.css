@@ -4,3 +4,14 @@
 dialog input:not([type=checkbox]):not([type=radio]), dialog select, dialog textarea { font-size:16px; min-width:0; max-width:100%; }
 dialog form, dialog label, .when > * { min-width:0; }
 dialog { overflow-x:hidden; }
+
+/* Shared actions and four filters stay usable on narrow screens. */
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tabs button{min-width:0;padding:11px 6px;font-size:14px;white-space:normal}
+.task-row{align-items:flex-start}.task-body{flex:1;min-width:0}.task-actions{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;width:65px}
+.complete{display:grid;place-items:center;margin:0;position:relative;background:transparent}
+.complete:empty::after{content:'';width:17px;height:17px;border:1.5px solid currentColor;border-radius:50%}
+.row-delete{font-size:12px;min-height:44px;padding:8px 3px;border:0;color:var(--muted)}.row-delete:hover{color:var(--danger)}
+.history-limit{font-size:12px;margin:0 3px 12px;color:var(--muted)}.missed-row .task-time{color:var(--danger)}
+#remove-dialog h2{margin-bottom:16px}#remove-dialog p{overflow-wrap:anywhere}#remove-dialog .actions{justify-content:flex-end}#remove-dialog .delete{margin:0}
+@media(min-width:580px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
