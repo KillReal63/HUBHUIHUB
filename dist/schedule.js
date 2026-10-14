@@ -15,7 +15,7 @@ function moveMoment(moment, minutes) {
  const d=new Date(moment+':00Z');d.setUTCMinutes(d.getUTCMinutes()+minutes);return d.toISOString().slice(0,16);
 }
 function shiftedMoment(med, base, shifts=med.shifts||[]) {
- return moveMoment(base,shifts.reduce((n,s)=>n+(base>=s.from?s.minutes:0),0));
+ return moveMoment(base,shifts.reduce((n,s)=>n+((s.scope==='once'?base===s.from:base>=s.from)?s.minutes:0),0));
 }
 function scheduleEntries(state,date){
  const result=[],fixedByMed=new Map();
@@ -25,8 +25,8 @@ function scheduleEntries(state,date){
  }
  for(const med of state.meds){
   const shifts=med.shifts||[],offsets=new Set([0]);let offset=0;
-  for(const shift of [...shifts].sort((a,b)=>a.from.localeCompare(b.from))){offset+=shift.minutes;offsets.add(offset)}
-  const dates=new Set([date]);
+  for(const shift of shifts.filter(s=>s.scope!=='once').sort((a,b)=>a.from.localeCompare(b.from))){offset+=shift.minutes;offsets.add(offset)}
+  const dates=new Set([date,...shifts.filter(s=>s.scope==='once').map(s=>s.from.slice(0,10))]);
   for(const offset of offsets){dates.add(moveMoment(date+'T00:00',-offset).slice(0,10));dates.add(moveMoment(date+'T23:59',-offset).slice(0,10))}
   const seen=new Set();
   function add(baseDate,time){
@@ -42,6 +42,6 @@ function scheduleEntries(state,date){
 }
 function effectiveCourseEnd(med){
  if(!med.end||!med.times.length)return med.end;
- return shiftedMoment(med,med.end+'T'+[...med.times].sort().at(-1)).slice(0,10);
+ return shiftedMoment(med,med.end+'T'+[...med.times].sort().at(-1),(med.shifts||[]).filter(s=>s.scope!=='once')).slice(0,10);
 }
 if(typeof module!=='undefined')module.exports={scheduledOn,courseEnd,moveMoment,shiftedMoment,scheduleEntries,effectiveCourseEnd};

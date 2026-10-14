@@ -6,7 +6,7 @@ class Element{
  addEventListener(){}showModal(){this.open=true}close(){this.open=false}focus(){}scrollIntoView(){}reset(){}
 }
 const html=fs.readFileSync('dist/tasks/index.html','utf8'),nodes=new Map([...html.matchAll(/id="([^"]+)"/g)].map(m=>['#'+m[1],new Element()]));nodes.set('main',new Element());
-const tabs=['all','active','done','missed'].map(filter=>{const e=new Element();e.dataset.filter=filter;return e});
+const tabs=['active','done','missed'].map(filter=>{const e=new Element();e.dataset.filter=filter;return e});
 const model={tasks:[{id:'a',title:'Future',date:'2099-01-01',time:'09:00',repeat:'once',days:[],timezone:'Asia/Dubai',note:''},{id:'b',title:'Repeat',date:'2026-10-07',time:'09:00',repeat:'daily',days:[],timezone:'Asia/Dubai',note:''}],done:{'b|2026-10-07':'2026-10-07T06:00:00Z'}};
 let persisted=structuredClone(model),posts=0,conflict=false;
 const context=vm.createContext({TaskSchedule:schedule,Intl,Date,URLSearchParams,structuredClone,Map,Error,Number,String,crypto:{randomUUID:()=> 'new'},location:{search:'',pathname:'/tasks/',replace(){}},window:{addEventListener(){}},setTimeout:()=>1,clearTimeout(){},setInterval(){},document:{hidden:false,createElement:()=>new Element(),querySelector:s=>nodes.get(s)||null,querySelectorAll:s=>s==='[data-filter]'?tabs:[],addEventListener(){}},fetch:async(path,options)=>{if(options.method==='POST'){posts++;if(conflict)return{ok:false,status:409,json:async()=>({error:'Conflict'})};persisted=JSON.parse(options.body).state}return{ok:true,json:async()=>({version:1,state:structuredClone(persisted)})}}});

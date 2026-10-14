@@ -45,3 +45,11 @@
   .catalog-detail .panel-head button { align-self: flex-end; }
   .catalog-photos { gap: 8px; }
 }
+
+:root{--ink:#eef2ec;--soft:#28332c}
+:root dialog .gym-close,:root[data-theme] dialog .gym-close{display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--ink)}
+.gym-close svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.catalog-detail .panel-head{display:flex;flex-direction:row;align-items:flex-start}.catalog-detail .panel-head .gym-close{align-self:flex-start}.catalog-detail .panel-head>div{min-width:0;flex:1}
+.photo-open{padding:0;border:1px solid var(--line);background:#fff;min-width:0;overflow:hidden;border-radius:10px;cursor:zoom-in}.photo-open .catalog-photo{width:100%}
+.photo-viewer{width:calc(100% - 24px);max-width:960px;max-height:calc(100dvh - 24px);padding:16px;overflow:auto}.photo-viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.photo-viewer-head p{overflow-wrap:anywhere}.photo-viewer>img{display:block;width:100%;max-height:75dvh;object-fit:contain;background:#fff;border-radius:8px}.photo-viewer [hidden]{display:none}
+body:has(dialog[open]){overflow:hidden}dialog{max-height:calc(100dvh - 32px);overflow-y:auto}.day-error{color:var(--danger-ink,#ffb6ad)}

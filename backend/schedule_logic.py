@@ -5,7 +5,7 @@ def move_moment(moment, minutes):
     return (dt.datetime.fromisoformat(moment)+dt.timedelta(minutes=minutes)).isoformat(timespec='minutes')
 
 def shifted_moment(med, base):
-    return move_moment(base,sum(s['minutes'] for s in med.get('shifts',[]) if base>=s['from']))
+    return move_moment(base,sum(s['minutes'] for s in med.get('shifts',[]) if (base==s['from'] if s.get('scope')=='once' else base>=s['from'])))
 
 def scheduled_on(med,date):
     if date<med['start'] or (med['end'] and date>med['end']):return False
@@ -21,9 +21,9 @@ def schedule_entries(state,date):
         if moment[:10]==date:fixed_by_med.setdefault(key.split('|')[1],[]).append(key)
     for med in state['meds']:
         offsets={0};offset=0
-        for shift in sorted(med.get('shifts',[]),key=lambda s:s['from']):
+        for shift in sorted((s for s in med.get('shifts',[]) if s.get('scope')!='once'),key=lambda s:s['from']):
             offset+=shift['minutes'];offsets.add(offset)
-        dates={date}
+        dates={date}|{s['from'][:10] for s in med.get('shifts',[]) if s.get('scope')=='once'}
         for offset in offsets:
             dates.add(move_moment(date+'T00:00',-offset)[:10])
             dates.add(move_moment(date+'T23:59',-offset)[:10])

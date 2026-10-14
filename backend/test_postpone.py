@@ -71,6 +71,22 @@ class PostponeTests(unittest.TestCase):
         self.assertEqual(schedule_entries(self.state,'2026-10-26'),[])
         self.assertEqual(len(schedule_entries(self.state,'2026-10-29')),1)
 
+    def test_single_dose_delay_and_notification(self):
+        self.state['taken']={}
+        self.med['shifts']=[dict(**{'from':'2026-09-29T20:00'},minutes=360,scope='once',at='2026-09-29T16:00:00Z')]
+        self.server.validate_state(self.state)
+        self.assertEqual(shifted_moment(self.med,'2026-09-29T20:00'),'2026-09-30T02:00')
+        self.assertEqual(shifted_moment(self.med,'2026-09-30T09:00'),'2026-09-30T09:00')
+        self.assertEqual(len(schedule_entries(self.state,'2026-09-30')),3)
+        old=dt.datetime(2026,9,29,20,tzinfo=ZoneInfo('Asia/Dubai')).timestamp()
+        self.assertEqual(list(self.push.due(self.state,'Asia/Dubai',0,old)),[])
+        self.assertEqual(list(self.push.due(self.state,'Asia/Dubai',0,old+360*60)),[('2026-09-29|m|20:00',old+360*60)])
+        self.med['shifts'].append(dict(**{'from':'2026-09-29T20:00'},minutes=1440,scope='course',at='2026-09-29T16:01:00Z'))
+        self.assertEqual(shifted_moment(self.med,'2026-09-30T09:00'),'2026-10-01T09:00')
+        self.assertIn(('2026-09-29|m|20:00','2026-10-01T02:00'),schedule_entries(self.state,'2026-10-01'))
+        self.med['shifts'][0]['scope']='invalid'
+        with self.assertRaises(ValueError):self.server.validate_state(self.state)
+
     def test_invalid_changes_rejected(self):
         self.server.validate_state(self.state)
         for minutes in (0,-1,True,525601):

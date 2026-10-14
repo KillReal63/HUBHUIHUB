@@ -19,14 +19,15 @@ function updateSkipPreview(){
  const form=$('#skip-form'),mode=form.elements.postpone.value,custom=mode==='custom';
  $('#skip-custom-field').hidden=!custom;form.elements.target.disabled=!custom;
  const target=postponeTarget(x);
- $('#skip-submit').textContent=mode==='skip'?'Пропустить приём':'Перенести курс';
- $('#skip-preview').textContent=mode==='skip'?'Этот приём будет отмечен как пропущенный. Остальное расписание не изменится.':target&&form.elements.target.validity.valid?`Продолжить ${prettyMoment(target)}. Сдвинутся выбранный приём, последующие неотмеченные приёмы и окончание курса.`:'Укажи дату и время продолжения курса.';
+ const once=mode==='hour'||mode==='custom';
+ $('#skip-submit').textContent=mode==='skip'?'Пропустить приём':once?'Перенести приём':'Перенести курс';
+ $('#skip-preview').textContent=mode==='skip'?'Этот приём будет отмечен как пропущенный. Остальное расписание не изменится.':target&&form.elements.target.validity.valid?once?`Этот приём — ${prettyMoment(target)}. Остальные приёмы и дни курса останутся по расписанию.`:`Продолжить ${prettyMoment(target)}. Сдвинутся выбранный приём, последующие неотмеченные приёмы и окончание курса; время суток сохранится.`:'Укажи дату и время продолжения курса.';
 }
 function openSkip(key){
  skippingKey=key;const x=skipEntry();if(!x)return;
  const form=$('#skip-form');form.reset();$('#skip-error').textContent='';
  $('#skip-description').textContent=x.med.name+' · '+prettyMoment(x.moment);
- $('#skip-day-label').textContent=x.moment.slice(0,10)===today()?'На завтра':'На 1 день';
+ $('#skip-day-label').textContent=x.moment.slice(0,10)===today()?'Курс на завтра':'Курс на 1 день';
  form.elements.target.value=moveMoment(x.moment,1440);form.elements.target.min=moveMoment(x.moment>localMoment()?x.moment:localMoment(),1);
  updateSkipPreview();$('#skip-editor').showModal();$('#skip-title').focus();
 }
@@ -41,12 +42,12 @@ $('#skip-form').onsubmit=async event=>{
   if(!Number.isInteger(minutes)||minutes<=0||minutes>525600||target<=localMoment()){$('#skip-error').textContent='Выбери время в будущем, позже текущего приёма, в пределах года.';return}
   const shifts=x.med.shifts||[];
   if(shifts.length>=200||shifts.reduce((n,s)=>n+s.minutes,0)+minutes>5256000){$('#skip-error').textContent='Достигнут предел переносов этого курса.';return}
-  x.med.shifts=[...shifts,{from:x.base,minutes,at:stamp}];
+  x.med.shifts=[...shifts,{from:x.base,minutes,at:stamp,scope:['hour','custom'].includes($('#skip-form').elements.postpone.value)?'once':'course'}];
  }else{
   state.skipped??={};state.fixed??={};state.skipped[x.key]=stamp;state.fixed[x.key]=x.moment;
  }
  $('#skip-submit').disabled=true;
- try{if(await save()){$('#skip-editor').close();toast(target?'Курс перенесён. Расписание и напоминания обновлены.':'Приём пропущен')}}finally{$('#skip-submit').disabled=false}
+ try{if(await save()){$('#skip-editor').close();toast(target?'Перенос сохранён. Напоминания обновлены.':'Приём пропущен')}}finally{$('#skip-submit').disabled=false}
 };
 document.addEventListener('click',async event=>{
  const button=event.target.closest('button');if(!button||busy||!authenticated)return;

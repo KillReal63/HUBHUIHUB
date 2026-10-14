@@ -35,3 +35,14 @@ assert.equal(views.missed.length,100);
 views=schedule.lists([{...task,date:'2026-10-09',timezone:'America/Los_Angeles',time:'09:00'}],{},viewNow);
 assert.equal(views.active.length,1);assert.equal(views.missed.length,0);
 console.log('PASS: task views distinguish upcoming, missed occurrences, completed and per-record timezones');
+
+const midnight=new Date('2026-10-09T21:00:00Z');
+const dubai={...task,id:'dubai',date:'2026-10-10',time:'09:00',timezone:'Asia/Dubai'};
+const la={...task,id:'la',date:'2026-10-09',time:'18:00',timezone:'America/Los_Angeles'};
+const later={...dubai,id:'later',date:'2026-10-11'};
+views=schedule.lists([dubai,la,later],{},midnight,'today');
+assert.deepEqual(views.active.map(x=>x.task.id),['la','dubai']);
+assert.equal(schedule.lists([dubai,la,later],{},midnight,'any').active.length,3);
+views=schedule.lists([daily],{'daily|2026-10-08':'2026-10-09T07:00:00Z'},viewNow,'today');
+assert.equal(views.active.length,0);assert.equal(views.done.length,0);assert.deepEqual(views.missed.map(x=>x.day),['2026-10-09']);
+console.log('PASS: today/all periods use each task timezone and occurrence date');

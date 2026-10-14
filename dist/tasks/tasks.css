@@ -15,3 +15,9 @@ dialog { overflow-x:hidden; }
 .history-limit{font-size:12px;margin:0 3px 12px;color:var(--muted)}.missed-row .task-time{color:var(--danger)}
 #remove-dialog h2{margin-bottom:16px}#remove-dialog p{overflow-wrap:anywhere}#remove-dialog .actions{justify-content:flex-end}#remove-dialog .delete{margin:0}
 @media(min-width:580px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Explicit completion action and three equal filters. */
+.tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.tabs button{font-size:12px;padding:11px 3px;overflow-wrap:anywhere}.tabs span{display:block;margin:2px 0 0}.task-actions{width:96px;gap:2px}.task-actions .complete{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px;height:auto;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.4;background:var(--accent);color:var(--on-accent);border:1px solid var(--accent)}.done-row .task-actions .complete{background:var(--done-bg);color:var(--done-ink);border-color:var(--control-border)}
+@media(max-width:360px){.task-actions{width:88px}.task-row{gap:8px}}
+
+.task-period{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:16px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px}.task-period button{border:0;font-size:14px;padding:10px 6px;min-width:0}.task-period button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}

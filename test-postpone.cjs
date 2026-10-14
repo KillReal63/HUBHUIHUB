@@ -17,3 +17,23 @@ assert.equal(scheduleEntries({meds:[cycle],taken:{}},'2026-10-25')[0].time,'09:0
 assert.equal(scheduleEntries({meds:[cycle],taken:{}},'2026-10-26').length,0);
 assert.equal(scheduleEntries({meds:[cycle],taken:{}},'2026-10-29').length,1);
 console.log('PASS: partial course, repeated shifts, midnight, course end, fixed outcomes, undo and cycles');
+
+// A one-time delay never shifts later doses, even across midnight or course end.
+const single={...med,shifts:[{from:'2026-09-29T20:00',minutes:360,scope:'once',at:'2026-09-29T16:00:00Z'}]};
+const singleState={meds:[single],taken:{},skipped:{},fixed:{}};
+assert.equal(shiftedMoment(single,'2026-09-29T20:00'),'2026-09-30T02:00');
+assert.equal(shiftedMoment(single,'2026-09-30T09:00'),'2026-09-30T09:00');
+assert.equal(scheduleEntries(singleState,'2026-09-30').length,3);
+single.shifts.push({from:'2026-09-29T20:00',minutes:1440,scope:'course',at:'2026-09-29T16:01:00Z'});
+assert.equal(shiftedMoment(single,'2026-09-29T20:00'),'2026-10-01T02:00');
+assert.equal(shiftedMoment(single,'2026-09-30T09:00'),'2026-10-01T09:00');
+assert.equal(effectiveCourseEnd(single),'2026-10-01');
+single.shifts=[{from:'2026-09-30T20:00',minutes:3000,scope:'once',at:'2026-09-29T16:02:00Z'}];
+assert.equal(effectiveCourseEnd(single),'2026-09-30');
+assert.equal(scheduleEntries(singleState,'2026-10-02').length,1);
+single.shifts.push({from:'2026-09-30T20:00',minutes:60,scope:'once',at:'2026-09-29T16:03:00Z'});
+assert.equal(shiftedMoment(single,'2026-09-30T20:00'),'2026-10-02T23:00');
+singleState.taken['2026-09-30|m|20:00']='2026-10-02T19:00:00Z';singleState.fixed['2026-09-30|m|20:00']='2026-10-02T23:00';
+single.shifts=[];
+assert.equal(scheduleEntries(singleState,'2026-10-02')[0].time,'23:00');
+console.log('PASS: one-time delay, midnight, combined course shift, repeated delay and frozen outcomes');

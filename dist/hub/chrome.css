@@ -18,3 +18,5 @@ body> #app-header{width:calc(100% - 40px);padding-top:calc(12px + env(safe-area-
 .device-notifications-content .device-push-privacy,#focus-styles .device-notifications-content .device-push-privacy{font-size:12px;margin:14px 0 0}
 #gym-settings .style-picker{margin:0;padding:0;border:0;max-width:100%;background:none}#gym-settings .style-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}#gym-settings .style-option{min-width:0;padding:10px;font-size:14px}
 #hub-settings #logout{margin-top:20px}#app-header :focus-visible,.device-notifications :focus-visible{outline:3px solid var(--accent,currentColor);outline-offset:3px}
+
+#app-header .app-back{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:8px 0;color:inherit;text-decoration:none;font:600 15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}#app-header .app-back span{font-size:24px}

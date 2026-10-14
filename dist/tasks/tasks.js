@@ -1,11 +1,11 @@
 const $=selector=>document.querySelector(selector);
 const schedule=TaskSchedule,deviceZone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-let authenticated=false,state={tasks:[],done:{}},version=0,busy=false,filter='active',editing=null,editingZone=deviceZone,toastTimer,targetShown=false;
+let authenticated=false,state={tasks:[],done:{}},version=0,busy=false,filter='active',period='today',editing=null,editingZone=deviceZone,toastTimer,targetShown=false;
 const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 function signIn(){authenticated=false;state={tasks:[],done:{}};$('#editor').close();$('#remove-dialog').close();$('main').hidden=true;location.replace('/?next='+encodeURIComponent(location.pathname+location.search))}
 async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await response.json();if(!response.ok){if(response.status===401)signIn();const error=Error(data.error||'Не удалось выполнить запрос');error.status=response.status;throw error}return data}
-async function load(){const result=await api('tasks');state=result.state;version=result.version;authenticated=true;$('main').hidden=false;$('#loading').hidden=true;$('#add').disabled=false;$('#retry').hidden=true;$('#load-error').textContent='';if(!targetShown){const id=new URLSearchParams(location.search).get('task');if(id){const lists=schedule.lists(state.tasks,state.done);if(lists.missed.some(x=>x.task.id===id))filter='missed';else if(lists.done.some(x=>x.task.id===id)&&!lists.active.some(x=>x.task.id===id))filter='done';}}render();if(!targetShown&&$('.highlight')){$('.highlight').scrollIntoView({block:'center'});targetShown=true}}
+async function load(){const result=await api('tasks');state=result.state;version=result.version;authenticated=true;$('main').hidden=false;$('#loading').hidden=true;$('#add').disabled=false;$('#retry').hidden=true;$('#load-error').textContent='';if(!targetShown){const id=new URLSearchParams(location.search).get('task');if(id){period='any';const lists=schedule.lists(state.tasks,state.done);if(lists.missed.some(x=>x.task.id===id))filter='missed';else if(lists.done.some(x=>x.task.id===id)&&!lists.active.some(x=>x.task.id===id))filter='done';}}render();if(!targetShown&&$('.highlight')){$('.highlight').scrollIntoView({block:'center'});targetShown=true}}
 async function save(next){const result=await api('tasks',{state:next,version});state=next;version=result.version;render()}
 async function change(fn){if(busy)return false;busy=true;$('#save').disabled=true;try{await fn();return true}catch(error){if(error.status===409){await load().catch(()=>{});toast(error.message)}if($('#editor').open)$('#form-error').textContent=error.message;else toast(error.message);return false}finally{busy=false;$('#save').disabled=false}}
 function element(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
@@ -14,7 +14,7 @@ function repeatLabel(task){return task.repeat==='once'?'Один раз':task.re
 function zoneLabel(zone){return new Intl.DateTimeFormat('ru',{timeZone:zone,timeZoneName:'long'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName').value}
 function row(task,day,status){
   const done=status==='done',article=element('article','task-row '+status+'-row');article.dataset.task=task.id;
-  const button=element('button','complete',done?'✓':'');button.type='button';button.setAttribute('aria-label',(done?'Отменить выполнение: ':'Выполнить: ')+task.title+' · '+dateLabel(day));
+  const button=element('button','complete',done?'↶ Отменить':'✓ Готово');button.type='button';button.setAttribute('aria-pressed',String(done));button.setAttribute('aria-label',(done?'Отменить выполнение: ':'Выполнить: ')+task.title+' · '+dateLabel(day));
   button.onclick=()=>change(async()=>{const next=structuredClone(state),key=task.id+'|'+day;if(done)delete next.done[key];else next.done[key]=new Date().toISOString();await save(next);toast(done?'Отметка отменена':'Готово!')});
   const content=element('button','task-body');content.type='button';content.setAttribute('aria-label','Изменить: '+task.title);content.onclick=()=>openEditor(task.id);
   content.append(element('span','task-time',task.time),element('h2','',task.title));
@@ -24,17 +24,18 @@ function row(task,day,status){
   if(new URLSearchParams(location.search).get('task')===task.id)article.classList.add('highlight');return article;
 }
 function render(){
-  const list=$('#list');list.replaceChildren();const buckets=schedule.lists(state.tasks,state.done);
+  const list=$('#list');list.replaceChildren();const buckets=schedule.lists(state.tasks,state.done,new Date(),period);
+  document.querySelectorAll('[data-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.period===period)));
   $('#active-count').textContent=buckets.active.length;
   document.querySelectorAll('[data-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filter===filter)));
   const names={active:'Предстоящие',done:'Выполненные',missed:'Пропущенные'};let count=0;
-  for(const section of filter==='all'?['active','missed','done']:[filter]){
+  for(const section of [filter]){
     const items=buckets[section];if(!items?.length)continue;
     list.append(element('h2','group-title',names[section]));
-    if(section!=='active')list.append(element('p','history-limit','Последние '+(section==='done'?'выполнения':'пропущенные даты')+' · до 100 записей'));
+    if(period==='any'&&section!=='active')list.append(element('p','history-limit','Последние '+(section==='done'?'выполнения':'пропущенные даты')+' · до 100 записей'));
     for(const item of items){list.append(row(item.task,item.day,item.status));count++;}
   }
-  if(!count){const empty=element('section','empty'),copy={active:['Всё спокойно','Предстоящих дел нет. Можно добавить новое.'],done:['Пока без отметок','Здесь появятся выполненные дела.'],missed:['Нет пропущенных','Здесь будут невыполненные дела, назначенное время которых уже прошло.'],all:['Начнём с одного дела','Добавь дело и выбери время напоминания.']}[filter];empty.append(element('div','empty-mark','✓'),element('h2','',copy[0]),element('p','',copy[1]));if(filter==='active'||filter==='all'){const add=element('button','','Добавить дело');add.onclick=()=>openEditor();empty.append(add)}list.append(empty)}
+  if(!count){const empty=element('section','empty'),copy={active:['Всё спокойно','Предстоящих дел нет. Можно добавить новое.'],done:['Пока без отметок','Здесь появятся выполненные дела.'],missed:['Нет пропущенных','Здесь будут невыполненные дела, назначенное время которых уже прошло.'],all:['Начнём с одного дела','Добавь дело и выбери время напоминания.']}[filter];empty.append(element('div','empty-mark','✓'),element('h2','',copy[0]),element('p','',period==='today'?'На сегодня в этом разделе дел нет. Другие даты — во вкладке «Дела вообще».':copy[1]));if(filter==='active'){const add=element('button','','Добавить дело');add.onclick=()=>openEditor();empty.append(add)}list.append(empty)}
 }
 let deleting=null;
 function requestDelete(id){if(busy)return;const task=state.tasks.find(t=>t.id===id);if(!task)return;deleting=id;$('#remove-description').textContent='Удалить «'+task.title+'»'+(task.repeat==='once'?' вместе с отметками выполнения?':' вместе со всеми повторами и отметками выполнения?');$('#remove-dialog').showModal();}
@@ -57,6 +58,7 @@ $('#delete-no').onclick=()=>{if(!busy)$('#remove-dialog').close()};
 $('#remove-dialog').addEventListener('cancel',e=>{if(busy)e.preventDefault()});
 $('#delete-yes').onclick=async()=>{if(!deleting)return;const id=deleting;$('#delete-yes').disabled=true;const saved=await change(async()=>{const next=structuredClone(state);next.tasks=next.tasks.filter(task=>task.id!==id);for(const key of Object.keys(next.done))if(key.startsWith(id+'|'))delete next.done[key];await save(next)});$('#delete-yes').disabled=false;if(saved){$('#remove-dialog').close();if(editing===id)$('#editor').close();deleting=null;toast('Запись удалена')}};
 
+document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{period=button.dataset.period;render()});
 document.querySelectorAll('[data-filter]').forEach(button=>button.onclick=()=>{filter=button.dataset.filter;render()});
 async function refresh(){if(busy||$('#editor').open||$('#remove-dialog').open||document.hidden)return;busy=true;try{await load();window.pushRefresh?.()}catch(error){$('#loading').hidden=true;$('#load-error').textContent=error.status===401?'Переходим к общему входу…':'Не удалось обновить дела. Проверь подключение.';$('#retry').hidden=false}finally{busy=false}}
 $('#retry').onclick=refresh;$('#today').textContent=new Intl.DateTimeFormat('ru',{weekday:'long',day:'numeric',month:'long'}).format(new Date());

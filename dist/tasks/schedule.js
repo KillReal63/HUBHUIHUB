@@ -17,7 +17,7 @@
     }
     return null;
   }
-  function lists(tasks,done,now=new Date()){
+  function lists(tasks,done,now=new Date(),period='any'){
     const active=[],missed=[],completed=[],byId=new Map(tasks.map(t=>[t.id,t]));
     for(const task of tasks){
       const today=dayAt(task.timezone,now),time=new Intl.DateTimeFormat('en-GB',{timeZone:task.timezone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);
@@ -35,7 +35,8 @@
     active.sort((a,b)=>(a.day+a.task.time).localeCompare(b.day+b.task.time));
     missed.sort((a,b)=>(b.day+b.task.time).localeCompare(a.day+a.task.time));
     completed.sort((a,b)=>b.stamp.localeCompare(a.stamp));
-    return {active,missed:missed.slice(0,100),done:completed.slice(0,100)};
+    const inPeriod=item=>period!=='today'||item.day===dayAt(item.task.timezone,now);
+    return {active:active.filter(inPeriod),missed:missed.filter(inPeriod).slice(0,100),done:completed.filter(inPeriod).slice(0,100)};
   }
   const api={dayAt,addDays,occurs,next,lists};root.TaskSchedule=api;
   if(typeof module!=='undefined')module.exports=api;

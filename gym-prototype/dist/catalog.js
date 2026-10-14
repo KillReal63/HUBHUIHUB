@@ -151,24 +151,33 @@ const Catalog = (() => {
   function openDetail(entry, rev, savedName) {
     const returnFocus = document.activeElement;
     const translation = entry.ru || (russian?.catalogRevision === rev ? russian.exercises[entry.id] : null);
-    const dlg = modal(`<div class="panel-head"><div><h2 id="catalog-detail-title">${esc(savedName || title(entry))}</h2><p lang="en">${esc(entry.name)}</p></div><button class="secondary" data-catalog-action="close">Закрыть</button></div>
+    const dlg = modal(`<div class="panel-head"><div><h2 id="catalog-detail-title">${esc(savedName || title(entry))}</h2><p lang="en">${esc(entry.name)}</p></div><button class="gym-close" data-catalog-action="close" aria-label="Закрыть упражнение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
       <p>${esc(muscleText(entry.primaryMuscles))} · ${esc(equipmentText(entry))}${levels[entry.level] ? ` · ${levels[entry.level]}` : ''}</p>
       ${entry.secondaryMuscles.length ? `<p class="helper">Дополнительно: ${esc(muscleText(entry.secondaryMuscles))}</p>` : ''}
-      <div class="catalog-photos">${entry.images.length ? entry.images.map((path, i) => photo(path, rev, `${title(entry)} — положение ${i + 1}`)).join('') : photo('', rev, '')}</div>
+      <div class="catalog-photos">${entry.images.length ? entry.images.map((path, i) => `<button type="button" class="photo-open" data-photo-index="${i}" aria-label="Открыть фото ${i + 1}">${photo(path, rev, `${title(entry)} — положение ${i + 1}`)}</button>`).join('') : photo('', rev, '')}</div>
       <div class="catalog-technique">${technique(entry, translation, 'loading')}</div>
       <p class="helper catalog-source">Источник: <a href="${sourceURL}/tree/${/^[a-f0-9]{40}$/.test(rev) ? rev : 'main'}" target="_blank" rel="noopener noreferrer">free-exercise-db</a>. <a href="/gym/catalog/NOTICE.txt" target="_blank" rel="noopener">О данных и фотографиях</a></p>
       ${savedName ? '' : state.days.length ? `<form id="catalog-add-form" class="editor"><h3>Добавить в программу</h3>
-        <div class="form-grid"><label class="field full">День<select name="day">${[...state.days].sort((a, b) => a.weekday - b.weekday).map(day => `<option value="${esc(day.id)}" ${day.id === current()?.id ? 'selected' : ''}>${WEEKDAYS[day.weekday]} · ${esc(day.name)}</option>`).join('')}</select></label>
-        <label class="field full">Группа в программе<select name="group" required><option value="" ${!groupFor(entry) ? 'selected' : ''} disabled>Выбери группу мышц</option>${Object.entries(GROUPS).map(([id, [, name]]) => `<option value="${id}" ${id === groupFor(entry) ? 'selected' : ''}>${name}</option>`).join('')}</select></label>
-        <label class="field">Подходы<input name="sets" type="number" min="1" max="50" step="1" value="3" required></label>
-        <label class="field">Повторения<input name="reps" type="number" min="1" max="1000" step="1" value="12" required></label>
-        <label class="field full">Вес, кг · необязательно<input name="weight" type="number" min="0" max="2000" step="0.25" placeholder="Без веса"></label></div>
+        <div class="form-grid"><label class="field full">День<select name="day">${[...state.days].sort((a, b) => (a.weekday ?? 7) - (b.weekday ?? 7)).map(day => `<option value="${esc(day.id)}" ${day.id === current()?.id ? 'selected' : ''}>${WEEKDAYS[day.weekday] || 'Без привязки'} · ${esc(day.name)}</option>`).join('')}</select></label>
+        </div><p class="helper">Подходы, повторения и вес можно изменить в выбранном дне.</p>
         <p class="helper" id="catalog-duplicate" role="status"></p><p class="helper" id="catalog-save-error" role="alert"></p><button type="submit">Добавить в программу</button>
       </form>` : '<div class="editor"><p>Сначала создай день в программе, затем вернись к этому упражнению.</p><a class="button" href="/gym/program">Создать день</a></div>'}`);
     dlg.classList.add('catalog-detail');
     dlg.setAttribute('aria-labelledby', 'catalog-detail-title');
     dlg.addEventListener('close', () => { if (returnFocus?.isConnected) returnFocus.focus(); });
     dlg.querySelector('[data-catalog-action="close"]').onclick = () => dlg.close();
+    dlg.querySelectorAll('[data-photo-index]').forEach(button => button.onclick = () => {
+      const index = Number(button.dataset.photoIndex), url = imageURL(entry.images[index], rev);
+      if (!url) return;
+      const viewer = document.createElement('dialog');
+      viewer.className = 'photo-viewer';
+      viewer.setAttribute('aria-label', 'Фото упражнения');
+      viewer.innerHTML = `<div class="photo-viewer-head"><p>${esc(title(entry))} · ${index + 1} / ${entry.images.length}</p><button type="button" class="gym-close" aria-label="Закрыть фото"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><img src="${esc(url)}" alt="${esc(title(entry))} — положение ${index + 1}" referrerpolicy="no-referrer"><p class="photo-error" hidden>Фото не загрузилось. Закрой окно и попробуй снова.</p>`;
+      document.body.append(viewer); viewer.showModal();
+      viewer.querySelector('button').onclick = () => viewer.close();
+      viewer.querySelector('img').onerror = () => {viewer.querySelector('img').hidden = true;viewer.querySelector('.photo-error').hidden = false;};
+      viewer.addEventListener('close', () => { viewer.remove(); if(button.isConnected)button.focus(); });
+    });
     const refreshTranslation = async () => {
       const container = dlg.querySelector('.catalog-technique');
       container.innerHTML = technique(entry, null, 'loading');
@@ -201,11 +210,11 @@ const Catalog = (() => {
       event.preventDefault();
       if (!form.reportValidity()) return;
       const data = new FormData(form), day = state.days.find(d => d.id === data.get('day'));
-      if (!day || !GROUPS[data.get('group')]) return;
+      if (!day) return;
       const previousGroups = [...day.groups], previousSelected = state.selected;
       const exercise = {
-        id: uid(), name: title(entry), group: data.get('group'), sets: Number(data.get('sets')), reps: Number(data.get('reps')),
-        weight: data.get('weight') === '' ? '' : Number(data.get('weight')), note: '',
+        id: uid(), name: title(entry), group: groupFor(entry) || day.groups[0] || 'back', sets: 3, reps: 12,
+        weight: '', note: '',
         reference: { ...entry, source: 'free-exercise-db', revision: rev }
       };
       day.exercises.push(exercise);

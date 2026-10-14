@@ -82,7 +82,8 @@ def validate_state(value):
         if not isinstance(shifts,list) or len(shifts)>200:raise ValueError('Слишком много переносов')
         total=0
         for shift in shifts:
-            if not isinstance(shift,dict) or set(shift)!={'from','minutes','at'}:raise ValueError('Некорректный перенос')
+            if not isinstance(shift,dict) or set(shift)-{'scope'}!={'from','minutes','at'}:raise ValueError('Некорректный перенос')
+            if 'scope' in shift and shift['scope'] not in ('once','course'):raise ValueError('Некорректный тип переноса')
             valid_moment(shift['from'])
             if type(shift['minutes']) is not int or not 1<=shift['minutes']<=525600:raise ValueError('Некорректный перенос')
             total+=shift['minutes'];valid_stamp(shift['at'])
