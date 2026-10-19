@@ -48,6 +48,12 @@ class Integration(unittest.TestCase):
                 self.assertEqual(request('auth-check',authenticated=False)[0],401)
                 self.assertEqual(request('setup',{'password':password,'token':token})[0],409)
                 self.assertEqual(request('state',authenticated=False)[0],401)
+                for endpoint in ('food','gym','data/export'):
+                    self.assertEqual(request(endpoint,authenticated=False)[0],401)
+                    self.assertEqual(request(endpoint)[0],200)
+                self.assertEqual(request('food',{},origin='https://evil.example')[0],403)
+                self.assertEqual(request('gym',{},authenticated=False)[0],401)
+                self.assertEqual(request('data/restore',{},authenticated=False)[0],401)
                 med={'id':'test-id','name':'Тест','dose':'Тест','note':'','days':[1,2,3,4,5,6,0],'times':['09:00'],'start':'2026-09-17','end':''}
                 data={'meds':[med],'taken':{'2026-09-17|test-id|09:00':'2026-09-17T05:00:00.000Z'}}
                 self.assertEqual(request('state',{'state':data,'version':0})[0],200)

@@ -68,9 +68,23 @@ def save(c, body):
     version = body.get('version')
     if type(version) is not int or version < 0:
         raise ValueError('Invalid version')
+    has_links = c.execute("SELECT 1 FROM sqlite_master WHERE name='food_links'").fetchone()
+    if has_links:
+        linked = {r[0] for r in c.execute('SELECT task FROM food_links WHERE task IS NOT NULL')}
+        if any(t['id'] in linked and t['repeat'] != 'once' for t in state['tasks']):
+            return 400, {'error':'Связанная покупка должна быть разовой. Новую покупку создаёт правило питания.'}
     updated = c.execute('UPDATE tasks_state SET body=?,version=version+1 WHERE id=1 AND version=?', (json.dumps(state, ensure_ascii=False), version))
     if not updated.rowcount:
         return 409, {'error': 'Дела изменились на другом устройстве. Список обновлён; повтори действие.'}
+    # Remember explicit completion/deletion even if it is undone before the next worker tick.
+    if has_links:
+        by_id = {t['id']:t for t in state['tasks']}
+        for product, tid in c.execute('SELECT product,task FROM food_links WHERE task IS NOT NULL').fetchall():
+            task = by_id.get(tid)
+            if task is None or tid+'|'+task['date'] in state['done']:
+                c.execute('UPDATE food_links SET suppressed=1 WHERE product=?',(product,))
+            else:
+                c.execute('UPDATE food_links SET suppressed=0 WHERE product=?',(product,))
     c.commit()
     return 200, {'version': version+1}
 

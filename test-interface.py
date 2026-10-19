@@ -1,10 +1,11 @@
 from pathlib import Path
 import json,mimetypes,datetime
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parent; OUT=ROOT/'.hub-review/interface-checks'; OUT.mkdir(parents=True,exist_ok=True)
 DAY='2026-10-14'
 med={'id':'test-med','name':'Проверочный препарат','dose':'1','note':'','start':DAY,'end':'','days':list(range(7)),'times':['09:00','20:00']}
 state={'meds':[med],'taken':{},'skipped':{},'fixed':{}}
+module_states={'food':{'meals':[],'stocks':[],'recipes':[],'plans':[],'movements':[],'demo':False},'gym':{'version':1,'selected':None,'done':{},'days':[]}}
 tasks={'tasks':[{'id':'task-one','title':'Забрать заказ и купить продукты','note':'Проверка длинного названия на маленьком экране','date':DAY,'time':'23:59','repeat':'daily','days':[],'timezone':'Asia/Dubai'},{'id':'task-two','title':'Будущее дело','note':'','date':'2099-01-01','time':'12:00','repeat':'once','days':[],'timezone':'Asia/Dubai'}],'done':{}}
 def route(r):
  global state,tasks
@@ -21,6 +22,9 @@ def route(r):
   elif endpoint=='state':
    if data:state=data['state']
    body={'state':state,'version':1}
+  elif endpoint in module_states:
+   if data:module_states[endpoint]=data['state']
+   body={'state':module_states[endpoint],'version':1,'shopping':[]}
   else:body={'enabled':False}
   return r.fulfill(status=200,content_type='application/json',body=json.dumps(body))
  if path.startswith('/gym/') or path=='/gym':
@@ -65,8 +69,8 @@ with sync_playwright() as p:
  page.reload();page.wait_for_load_state('networkidle');assert page.locator('.day').count()==2;assert 'Без привязки' in page.locator('.days').inner_text()
  go('/gym/catalog');page.locator('[data-catalog-open]').first.wait_for();page.locator('[data-catalog-open]').first.click();assert page.locator('#catalog-add-form input').count()==0;assert page.locator('#catalog-add-form select').count()==1
  page.locator('[data-photo-index]').first.click();assert page.locator('.photo-viewer').is_visible();page.get_by_role('button',name='Закрыть фото',exact=True).click();assert page.locator('.catalog-detail').is_visible()
- page.locator('#catalog-add-form button[type=submit]').click();assert page.locator('.edit-row').count()==1
- page.locator('[data-edit]').first.click();page.locator('[name=sets]').fill('4');page.get_by_role('button',name='Сохранить упражнение',exact=True).click();assert '4 × 12' in page.locator('.edit-row').inner_text()
+ page.locator('#catalog-add-form button[type=submit]').click();expect(page.locator('.edit-row')).to_have_count(1)
+ page.locator('[data-edit]').first.click();page.locator('[name=sets]').fill('4');page.get_by_role('button',name='Сохранить упражнение',exact=True).click();expect(page.locator('.edit-row')).to_contain_text('4 × 12')
  for theme in ['original','logbook','studio','sport']:
   page.locator('#gym-settings-open').click();page.locator('[data-style="'+theme+'"]').click()
   color=page.locator('#gym-settings .gym-close').evaluate('(e)=>({fg:getComputedStyle(e).color,bg:getComputedStyle(e).backgroundColor})');assert contrast(color)>=3,(theme,color);page.locator('[data-close-settings]').click()
