@@ -1,0 +1,14 @@
+(function(){
+ 'use strict';
+ const settings=document.querySelector('#hub-settings');
+ const section=document.createElement('section');section.className='data-controls';
+ section.innerHTML='<h3>Копия данных</h3><p>Скачай записи всех четырёх приложений на компьютер. Пароли, сессии и ключи уведомлений в файл не входят.</p><button type="button" id="data-export">Скачать копию</button><label>Проверить файл для восстановления<input id="data-file" type="file" accept="application/json,.json"></label><div class="data-preview" id="data-preview" role="status"></div><button type="button" id="data-restore" hidden>Заменить данные проверенной копией</button>';
+ settings.append(section);
+ let backup=null,preview=null,operation=null,busy=false;
+ const status=section.querySelector('#data-preview'),restore=section.querySelector('#data-restore');
+ async function request(path,body){const response=await fetch('/api/data/'+path,{method:body?'POST':'GET',credentials:'same-origin',cache:'no-store',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const result=await response.json();if(!response.ok)throw Error(result.error||'Не удалось выполнить действие');return result}
+ function lock(value){busy=value;section.querySelectorAll('button,input').forEach(x=>x.disabled=value)}
+ section.querySelector('#data-export').onclick=async()=>{lock(true);try{HubDownload(await request('export'),'day-hub-backup.json');status.textContent='Копия скачана. Храни её в безопасном месте: файл содержит твои записи.'}catch(e){status.textContent=e.message}finally{lock(false)}};
+ section.querySelector('#data-file').onchange=async e=>{if(busy)return;backup=null;preview=null;operation=null;restore.hidden=true;const file=e.target.files[0];if(!file)return;lock(true);try{if(file.size>9000000)throw Error('Файл слишком большой');backup=JSON.parse(await file.text());preview=await request('restore',{action:'preview',backup});status.textContent='После восстановления:\n'+Object.entries(preview.incoming).map(([k,v])=>`${k}: ${preview.current[k]} → ${v}`).join('\n')+'\nВсе текущие записи будут заменены. Перед заменой будет скачана копия текущего состояния.';restore.hidden=false}catch(e){status.textContent=e.message;backup=null}finally{lock(false)}};
+ restore.onclick=async()=>{if(!backup||!preview||busy)return;if(!confirm('Заменить записи всех приложений этой копией? Изменения после даты копии будут убраны.'))return;lock(true);try{if(!operation){HubDownload(await request('export'),'day-hub-before-restore.json');operation=crypto.randomUUID()}await request('restore',{action:'restore',backup,digest:preview.digest,versions:preview.versions,operation});status.textContent='Данные восстановлены. Открой нужный раздел заново.';restore.hidden=true;backup=null;preview=null}catch(e){status.textContent=e.message+' При изменении данных выбери файл заново и повтори проверку.'}finally{lock(false)}};
+})();

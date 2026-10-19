@@ -206,7 +206,7 @@ const Catalog = (() => {
     };
     form.elements.day.addEventListener('change', duplicate);
     duplicate();
-    form.onsubmit = event => {
+    form.onsubmit = async event => {
       event.preventDefault();
       if (!form.reportValidity()) return;
       const data = new FormData(form), day = state.days.find(d => d.id === data.get('day'));
@@ -220,9 +220,8 @@ const Catalog = (() => {
       day.exercises.push(exercise);
       if (!day.groups.includes(exercise.group)) day.groups.push(exercise.group);
       state.selected = day.id;
-      if (!save()) {
-        day.exercises.pop(); day.groups = previousGroups; state.selected = previousSelected;
-        dlg.querySelector('#catalog-save-error').textContent = 'Не удалось сохранить в браузере. Освободи место в хранилище и попробуй снова.';
+      if (!await save()) {
+        dlg.querySelector('#catalog-save-error').textContent = 'Не удалось сохранить на сервере. Проверь связь и повтори действие.';
         return;
       }
       dlg.close();

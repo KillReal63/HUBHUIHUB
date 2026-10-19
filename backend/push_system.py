@@ -129,6 +129,12 @@ def due(state,zone,created,now):
 def run_once(now=None,sender=dispatch):
     now=time.time() if now is None else now
     with connect() as c:
+        import wellness
+        try:
+            wellness.tick(c,now)
+        except Exception:
+            c.rollback()
+            logging.error('Food reminder reconciliation failed; existing reminders continue')
         subscriptions=c.execute('SELECT id,body,zone,created FROM push_subscriptions').fetchall()
         c.execute('DELETE FROM push_deliveries WHERE created<?',(now-30*86400,))
         c.commit()
