@@ -10,8 +10,8 @@
  const path=location.pathname;
  const config=path.startsWith('/vovrema')?['[data-panel="settings"]','Все лекарства, расписания, переносы и история отметок будут удалены с сервера на всех устройствах.']:
  path.startsWith('/tasks')?['#settings','Все дела, повторы и отметки выполнения будут удалены с сервера на всех устройствах.']:
- path.startsWith('/food')?['#settings','Дневник питания, запасы, любимые блюда и меню будут удалены только в этом браузере.']:
- path.startsWith('/gym')?['#gym-settings','Все дни программы, упражнения в них и отметки выполнения будут удалены только в этом браузере. Каталог упражнений сохранится.']:null;
+ path.startsWith('/food')?['#settings','Дневник питания, запасы, история, любимые блюда и меню будут удалены с сервера на всех устройствах. Связанные покупки будут закрыты. Исходная локальная копия сохранится.']:
+ path.startsWith('/gym')?['#gym-settings','Все дни программы, упражнения в них и отметки выполнения будут удалены с сервера на всех устройствах. Каталог упражнений и исходная локальная копия сохранятся.']:null;
  if(!config)return;
  const settings=document.querySelector(config[0]);if(!settings)return;
  const section=document.createElement('section');section.className='app-reset-records';

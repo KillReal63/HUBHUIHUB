@@ -12,6 +12,8 @@ import sqlite3
 import time
 import push_system
 import tasks
+import wellness
+import data_portability
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -44,6 +46,7 @@ def initialize():
             with os.fdopen(fd, 'w') as f:
                 f.write(secrets.token_urlsafe(32))
         tasks.initialize(c)
+        wellness.initialize(c)
     push_system.initialize()
 
 def password_hash(password, salt):
@@ -168,6 +171,13 @@ class API(BaseHTTPRequestHandler):
             elif self.path=='/api/tasks':
                 if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
                 self.reply(200,tasks.read(c))
+            elif self.path in ('/api/food','/api/gym'):
+                if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
+                self.reply(200,wellness.response(c,self.path.rsplit('/',1)[1]))
+            elif self.path=='/api/data/export':
+                if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
+                c.execute('BEGIN')
+                self.reply(200,data_portability.snapshot(c))
             elif self.path=='/api/state':
                 if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
                 version, body=c.execute('SELECT version,body FROM state WHERE id=1').fetchone()
@@ -179,7 +189,7 @@ class API(BaseHTTPRequestHandler):
             return self.reply(403,{'error':'Недопустимый источник запроса'})
         try:
             length=int(self.headers.get('Content-Length','0'))
-            if not 0<length<=2_000_000: return self.reply(413,{'error':'Слишком большой запрос'})
+            if not 0<length<=10_000_000: return self.reply(413,{'error':'Слишком большой запрос'})
             if self.headers.get('Content-Type','').split(';')[0]!='application/json':
                 return self.reply(415,{'error':'Требуется JSON'})
             body=json.loads(self.rfile.read(length))
@@ -216,6 +226,12 @@ class API(BaseHTTPRequestHandler):
                     if self.path=='/api/setup': (DATA/'setup-token').unlink(missing_ok=True)
                     return self.reply(200,{'ok':True},f'session={session}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=604800')
                 if not self.authenticated(c): return self.reply(401,{'error':'Сессия закончилась. Войди снова.'})
+                if self.path in ('/api/food','/api/gym'):
+                    status,result=wellness.save(c,self.path.rsplit('/',1)[1],body)
+                    return self.reply(status,result)
+                if self.path=='/api/data/restore':
+                    status,result=data_portability.process(c,body,validate_state)
+                    return self.reply(status,result)
                 if self.path=='/api/tasks':
                     status,result=tasks.save(c,body)
                     return self.reply(status,result)
@@ -239,7 +255,10 @@ class API(BaseHTTPRequestHandler):
                     c.commit()
                     return self.reply(200,{'version':version+1})
                 self.reply(404,{'error':'Не найдено'})
-        except (ValueError, TypeError, KeyError):
+        except ValueError as error:
+            message = str(error) if self.path in ('/api/food','/api/gym','/api/data/restore') else 'Некорректные данные. Проверь поля.'
+            self.reply(400,{'error':message[:240]})
+        except (TypeError, KeyError, ZeroDivisionError, StopIteration, AttributeError):
             self.reply(400,{'error':'Некорректные данные. Проверь поля.'})
         except Exception:
             self.reply(500,{'error':'Ошибка сервера. Попробуй ещё раз.'})
