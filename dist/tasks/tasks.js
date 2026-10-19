@@ -63,3 +63,10 @@ document.querySelectorAll('[data-filter]').forEach(button=>button.onclick=()=>{f
 async function refresh(){if(busy||$('#editor').open||$('#remove-dialog').open||document.hidden)return;busy=true;try{await load();window.pushRefresh?.()}catch(error){$('#loading').hidden=true;$('#load-error').textContent=error.status===401?'Переходим к общему входу…':'Не удалось обновить дела. Проверь подключение.';$('#retry').hidden=false}finally{busy=false}}
 $('#retry').onclick=refresh;$('#today').textContent=new Intl.DateTimeFormat('ru',{weekday:'long',day:'numeric',month:'long'}).format(new Date());
 window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});setInterval(refresh,30000);refresh();
+
+window.resetAppRecords=async()=>{
+ if(busy||!authenticated)return false;
+ const saved=await change(()=>save({tasks:[],done:{}}));
+ if(saved){editing=null;deleting=null;$('#editor').close();$('#remove-dialog').close();toast('Записи дел сброшены');}
+ return saved;
+};

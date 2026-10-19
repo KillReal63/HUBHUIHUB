@@ -128,3 +128,12 @@ function syncIconOptions(){iconOptions.querySelectorAll('input').forEach(el=>el.
 syncIconOptions();
 iconOptions.addEventListener('change',event=>{if(event.target.name!=='iconStyle'||!iconStyles.includes(event.target.value))return;iconStyle=event.target.value;document.documentElement.dataset.icons=iconStyle;try{localStorage.setItem(iconStyleKey,iconStyle)}catch{toast('Стиль применён, но браузер не смог его запомнить')}syncIconOptions()});
 window.addEventListener('storage',event=>{if(event.key!==iconStyleKey)return;iconStyle=iconStyles.includes(event.newValue)?event.newValue:'glass';document.documentElement.dataset.icons=iconStyle;syncIconOptions()});
+
+// Settings reset uses the same versioned save and rollback as editing.
+window.resetAppRecords=async()=>{
+ if(busy||!authenticated)return false;
+ state={meds:[],taken:{},skipped:{},fixed:{},notified:{}};
+ const saved=await save();
+ if(saved){editing=null;$('#editor').close();$('#skip-editor').close();toast('Записи лекарств сброшены');}
+ return saved;
+};

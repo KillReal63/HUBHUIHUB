@@ -48,3 +48,11 @@ $('#demo').onclick=()=>{const d=today();persist({...demoMenu(d),demo:true,meals:
 $('#clear-demo').onclick=()=>{if(!confirm('Удалить записи примера, включая внесённые в него изменения, и начать пустой дневник?'))return;if(persist({meals:[],stocks:[],demo:false}))toast('Чистый дневник готов к твоим записям.')};
 async function boot(){try{const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store'});if(!response.ok)throw Error();const session=await response.json();if(!session.authenticated){location.replace('/?next=%2Ffood%2F');return}if(!ready){try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&Array.isArray(saved.meals)&&Array.isArray(saved.stocks))state=saved}catch{toast('Не удалось прочитать записи на устройстве.')}if(typeof foodExtras==='function')foodExtras(state);ready=true;render()}$('#connection').hidden=true;$('main').hidden=false}catch{$('main').hidden=true;$('#connection').hidden=false;$('#connection').textContent='Нет связи с сервером. Вернись в хаб или открой страницу ещё раз.'}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)boot()});boot();
+
+window.resetAppRecords=async()=>{
+ if(!ready)return false;
+ const saved=persist({meals:[],stocks:[],recipes:[],plans:[],demo:false});
+ if(saved){editStock=null;document.querySelectorAll('dialog[open]:not(#settings)').forEach(dialog=>dialog.close());toast('Записи питания сброшены');}
+ return saved;
+};
+window.addEventListener('storage',event=>{if(event.key===key)location.reload();});

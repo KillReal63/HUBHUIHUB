@@ -3,16 +3,16 @@
 :root[data-hub-theme=tiles]{--bg:#f4e9e3;--panel:#fffaf7;--ink:#4b322b;--muted:#725a50;--accent:#8a4933;--line:#d8beb1}
 :root[data-hub-theme=night]{color-scheme:dark;--bg:#202836;--panel:#2b374a;--ink:#eef2fa;--muted:#bdc9dc;--accent:#b9cffa;--line:#596b84}
 [data-hub-theme] .app.gym{background:var(--panel)}[data-hub-theme] .gym .mark{color:var(--accent)}
-[data-hub-theme=garden] .intro h1{font-family:"Trebuchet MS",sans-serif;font-weight:700;letter-spacing:-1.8px;font-size:clamp(34px,7vw,52px)}
+[data-hub-theme=garden] .intro h1{font-family:"Trebuchet MS",sans-serif;font-weight:700;letter-spacing:-1.8px;font-size:clamp(2.125rem,7vw,3.25rem)}
 [data-hub-theme=garden] .app{border-radius:8px 22px 22px 8px;border-left:4px solid var(--accent)}
-[data-hub-theme=garden] .mark{background:#e3ede3;border-radius:50%;height:36px;font-size:25px}
-[data-hub-theme=tiles] .intro h1{font-family:Georgia,serif;font-size:clamp(35px,7.5vw,56px)}
+[data-hub-theme=garden] .mark{background:#e3ede3;border-radius:50%;height:36px;font-size:1.5625rem}
+[data-hub-theme=tiles] .intro h1{font-family:Georgia,serif;font-size:clamp(2.1875rem,7.5vw,3.5rem)}
 [data-hub-theme=tiles] main nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 [data-hub-theme=tiles] .app{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px;border-radius:18px;min-width:0}
-[data-hub-theme=tiles] .app>span:last-child{position:absolute;top:16px;right:16px;font-size:20px}
-[data-hub-theme=tiles] .app h2{font-size:17px;overflow-wrap:anywhere}[data-hub-theme=tiles] .app p{font-size:12px;line-height:1.45;overflow-wrap:anywhere}
-[data-hub-theme=night] .intro h1{font-family:"Trebuchet MS",sans-serif;font-size:clamp(34px,7vw,54px);font-weight:600;letter-spacing:-1.5px}
+[data-hub-theme=tiles] .app>span:last-child{position:absolute;top:16px;right:16px;font-size:1.25rem}
+[data-hub-theme=tiles] .app h2{font-size:1.0625rem;overflow-wrap:anywhere}[data-hub-theme=tiles] .app p{font-size:0.75rem;line-height:1.45;overflow-wrap:anywhere}
+[data-hub-theme=night] .intro h1{font-family:"Trebuchet MS",sans-serif;font-size:clamp(2.125rem,7vw,3.375rem);font-weight:600;letter-spacing:-1.5px}
 [data-hub-theme=night] main nav{gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden}
 [data-hub-theme=night] .app{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}[data-hub-theme=night] .app:last-child{border-bottom:0}
 [data-hub-theme=night] input{background:var(--bg);color:var(--ink)}[data-hub-theme=night] .primary{color:var(--bg)}[data-hub-theme=night] #auth-error{color:#ffb8ba}
-.hub-themes{margin:24px 0 0}.hub-themes legend{font-size:17px;font-weight:600}.hub-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.hub-theme-choice{min-width:0;margin:0;padding:10px;border:1px solid var(--line);border-radius:12px;cursor:pointer}.hub-theme-choice:has(input:checked){outline:2px solid var(--accent);outline-offset:2px}.hub-theme-sample{display:grid;place-items:center;min-height:48px;background:var(--sample);color:var(--sample-ink);border-radius:7px;font-size:22px;letter-spacing:5px;margin-bottom:12px}.hub-theme-choice>span:not(.hub-theme-sample){display:flex;align-items:center;gap:7px;font-weight:600}.hub-theme-choice input{width:18px;height:18px;margin:0;accent-color:var(--accent)}.hub-theme-choice small{display:block;color:var(--muted);font-size:12px;margin-top:6px}#hub-theme-status{font-size:12px;margin:16px 0 0}
+.hub-themes{margin:24px 0 0}.hub-themes legend{font-size:1.0625rem;font-weight:600}.hub-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.hub-theme-choice{min-width:0;margin:0;padding:10px;border:1px solid var(--line);border-radius:12px;cursor:pointer}.hub-theme-choice:has(input:checked){outline:2px solid var(--accent);outline-offset:2px}.hub-theme-sample{display:grid;place-items:center;min-height:48px;background:var(--sample);color:var(--sample-ink);border-radius:7px;font-size:1.375rem;letter-spacing:5px;margin-bottom:12px}.hub-theme-choice>span:not(.hub-theme-sample){display:flex;align-items:center;gap:7px;font-weight:600}.hub-theme-choice input{width:18px;height:18px;margin:0;accent-color:var(--accent)}.hub-theme-choice small{display:block;color:var(--muted);font-size:0.75rem;margin-top:6px}#hub-theme-status{font-size:0.75rem;margin:16px 0 0}

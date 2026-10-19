@@ -38,3 +38,12 @@ window.addEventListener('popstate',()=>{document.querySelector('dialog:not([data
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 if(!state.selected)state.selected=state.days[0]?.id||null;save();render();
 const context=document.modelContext;if(context?.registerTool){const lifecycle=new AbortController();window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});const tools=[{name:'read_training_program',description:'Read the days, exercises and completion state.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute:()=>JSON.parse(JSON.stringify(state))},{name:'set_exercises_completed',description:'Set completion for exercises of the selected day and update the tracker.',inputSchema:{type:'object',properties:{exerciseIds:{type:'array',items:{type:'string'},minItems:1},completed:{type:'boolean'}},required:['exerciseIds','completed'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>{if(!input||!Array.isArray(input.exerciseIds)||!input.exerciseIds.length||input.exerciseIds.some(x=>typeof x!=='string')||typeof input.completed!=='boolean')throw Error('Invalid input');if(dirty)throw Error('Save the draft first');return setDone(input.exerciseIds,input.completed);}}];for(const tool of tools){try{Promise.resolve(context.registerTool(tool,{signal:lifecycle.signal})).catch(()=>{});}catch{}}}
+
+window.resetAppRecords=async()=>{
+ const next=initial();
+ try{localStorage.setItem(KEY,JSON.stringify(next));}catch{notify('Не удалось сбросить записи в браузере.');return false;}
+ state=next;editing=null;showForm=false;dirty=false;
+ document.querySelectorAll('dialog:not([data-app-settings])').forEach(dialog=>dialog.remove());
+ render();notify('Программа и отметки сброшены');return true;
+};
+window.addEventListener('storage',event=>{if(event.key===KEY)location.reload();});
