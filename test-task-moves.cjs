@@ -1,0 +1,22 @@
+const assert=require('node:assert/strict');
+const s=require('./dist/tasks/schedule.js');
+const task={id:'a',title:'Test',note:'',repeat:'interval',interval:3,date:'2026-10-01',time:'09:00',days:[],timezone:'Asia/Dubai'};
+let lists=s.lists([task],{},new Date('2026-10-04T06:00:00Z'));
+assert.equal(lists.active[0].day,'2026-10-07'); // Must not re-anchor at tomorrow.
+assert.deepEqual(lists.missed.map(x=>x.day),['2026-10-04','2026-10-01']);
+assert(s.occurs({...task,date:'2028-02-28'},'2028-03-02'));
+const moved={...task,repeat:'daily',shifts:{'2026-10-01':{date:'2026-10-02',time:'09:00'}}};
+lists=s.lists([moved],{},new Date('2026-10-02T04:00:00Z'),'today');
+assert.equal(lists.active.length,2);
+assert.deepEqual(lists.active.map(x=>x.day),['2026-10-01','2026-10-02']);
+assert.equal(lists.missed.length,0);
+lists=s.lists([moved],{'a|2026-10-01':'2026-10-02T04:00:00Z'},new Date('2026-10-02T04:00:00Z'),'today');
+assert.deepEqual(lists.active.map(x=>x.day),['2026-10-02']);
+assert.equal(lists.done[0].date,'2026-10-02');
+lists=s.lists([moved],{},new Date('2026-10-02T06:00:00Z'),'today');
+assert.equal(lists.missed.length,2);
+const once={...task,repeat:'once',shifts:{'2026-10-01':{date:'2026-09-29',time:'23:59'}}};
+assert.equal(s.lists([once],{},new Date('2026-09-29T19:00:00Z'),'today').active[0].day,'2026-10-01');
+assert.equal(s.lists([once],{},new Date('2026-09-30T00:00:00Z')).missed[0].date,'2026-09-29');
+assert.equal(s.lists([{...task,date:'2100-12-31'}],{},new Date('2100-12-31T06:00:00Z')).active.length,0);
+console.log('PASS: fixed interval anchor, leap day, moves, collisions, completion, today filtering and date limit');

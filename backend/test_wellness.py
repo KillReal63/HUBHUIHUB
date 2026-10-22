@@ -88,6 +88,21 @@ class Wellness(unittest.TestCase):
         self.replenish(p,8);self.assertEqual(self.active(),[])
         self.consume(p,9);self.assertNotEqual(self.active()[0]['id'],tid)
 
+    def test_moved_purchase_survives_reconcile_and_completion(self):
+        p=self.stock(2);self.enable(p)
+        versioned=tasks.read(self.c);task=versioned['state']['tasks'][0]
+        day=task['date'];tid=task['id']
+        task['shifts']={day:{'date':'2026-10-25','time':'10:30'}}
+        with self.c: self.assertEqual(tasks.save(self.c,versioned)[0],200)
+        self.enable(p)
+        versioned=tasks.read(self.c)
+        self.assertEqual(versioned['state']['tasks'][0]['shifts'],task['shifts'])
+        versioned['state']['done'][tid+'|'+day]=NOW.isoformat()
+        with self.c: self.assertEqual(tasks.save(self.c,versioned)[0],200)
+        self.enable(p)
+        self.assertEqual(self.active(),[])
+        self.assertEqual(len(tasks.read(self.c)['state']['tasks']),1)
+
     def test_repeat_request_and_stale_write(self):
         p=self.stock();v=w.read(self.c,'food')['version']
         body={'operation':str(uuid.uuid4()),'version':v,'command':'stock','product':p,'value':{'name':'Яйца','quantity':5,'unit':'шт','days':5,'date':'2026-10-19','expiry':'','timezone':'Asia/Dubai'}}
@@ -191,6 +206,23 @@ class Wellness(unittest.TestCase):
         before=w.read(self.c,'food')
         with self.assertRaises(ValueError),self.c:portability.process(self.c,{'action':'preview','backup':backup},lambda s:s)
         self.assertEqual(w.read(self.c,'food'),before)
+
+    def test_restore_preserves_subtasks_and_occurrence_checks(self):
+        p=self.stock(2);self.enable(p)
+        versioned=tasks.read(self.c);task=versioned['state']['tasks'][0]
+        task['subtasks']=[{'id':'bag','title':'Взять сумку'}]
+        task['subtaskDone']={task['date']:['bag']}
+        with self.c: self.assertEqual(tasks.save(self.c,versioned)[0],200)
+        backup=portability.snapshot(self.c)
+        with self.c: tasks.save(self.c,{'version':tasks.read(self.c)['version'],'state':tasks.EMPTY})
+        with self.c: _,preview=portability.process(self.c,{'action':'preview','backup':backup},lambda s:s)
+        with self.c:
+            code,_=portability.process(self.c,{'action':'restore','backup':backup,**preview,'operation':str(uuid.uuid4())},lambda s:s)
+        self.assertEqual(code,200)
+        restored=tasks.read(self.c)['state']['tasks'][0]
+        self.assertEqual(restored['subtasks'],task['subtasks'])
+        self.assertEqual(restored['subtaskDone'],task['subtaskDone'])
+        self.assertEqual(len(self.active()),1)
 
     def test_restore_preview_conflict_and_rollback_copy(self):
         self.stock();backup=portability.snapshot(self.c)

@@ -5,23 +5,23 @@
 :root[data-tasks-theme=graphite]{color-scheme:dark;--bg:#182229;--panel:#22313a;--ink:#eef4f6;--muted:#b7c7cf;--accent:#9bced6;--line:#485d69;--field:#18262f;--control-border:#708791;--inverse:#182229;--on-accent:#17313a;--danger:#ffadb1;--done-bg:#304e4b;--done-ink:#c2e9d5;--focus:#9bced6}
 input,select,textarea{background:var(--field);color:var(--ink);border-color:var(--control-border)}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}.primary,.add{color:var(--on-accent)}.tabs button[aria-pressed=true],#toast{color:var(--inverse)}.tabs span{opacity:1}.complete{border-color:var(--control-border)}.done-row .complete{background:var(--done-bg);color:var(--done-ink);border-color:var(--control-border)}.delete,#form-error,#load-error{color:var(--danger)}:focus-visible{outline-color:var(--focus)}dialog::backdrop{background:#10182099}.settings-button{display:grid;place-items:center;width:46px;height:46px;padding:0;border-color:var(--control-border);border-radius:50%}.theme-settings{margin-top:26px}.theme-settings legend{font-size:1.0625rem;font-weight:600;margin-bottom:8px}.theme-description{font-size:0.8125rem;margin:8px 0 18px}.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.theme-card{margin:0;padding:11px;border:1px solid var(--control-border);border-radius:16px;cursor:pointer;min-width:0}.theme-card:has(input:checked){outline:2px solid var(--accent);outline-offset:2px}.theme-preview{display:block;position:relative;height:64px;border-radius:9px;background:var(--sample-bg);overflow:hidden;margin-bottom:12px}.theme-preview i{position:absolute;background:var(--sample-panel);inset:14px 12px;border-radius:7px}.theme-preview b{position:absolute;background:var(--sample-accent);width:35%;height:7px;left:24px;top:28px;border-radius:5px}.theme-name{display:flex;align-items:center;gap:7px;font-size:0.9375rem;font-weight:600}.theme-name input{width:18px;height:18px;margin:0;accent-color:var(--accent);flex-shrink:0}.theme-caption{display:block;font-size:0.75rem;color:var(--muted);margin:6px 0 2px;line-height:1.45}#theme-storage{margin:20px 0 0}#settings .push-panel{margin-top:22px}#settings .actions button{border-color:var(--control-border)}
 
-/* Graphite retains its original layout; the three light themes are reworked. */
+/* Each theme keeps its visual character with roomier task cards. */
 :root[data-tasks-theme=sage] .tasks-intro h1{font-family:"Trebuchet MS",sans-serif;font-weight:700;font-size:3.125rem;letter-spacing:-1.5px}
-:root[data-tasks-theme=sage] .task-row{border-radius:18px;border:1px solid var(--line);border-left:4px solid var(--accent);padding:16px 12px;margin:12px 0;box-shadow:0 3px 0 #355e4708}
+:root[data-tasks-theme=sage] .task-row{border-radius:18px;border:1px solid var(--line);border-left:4px solid var(--accent);padding:22px 20px;margin:12px 0;box-shadow:0 3px 0 #355e4708}
 :root[data-tasks-theme=sage] .task-time{display:inline-block;font:600 0.9375rem/1.4 -apple-system,sans-serif;background:var(--done-bg);color:var(--done-ink);padding:4px 8px;border-radius:6px;margin-bottom:8px}
 :root[data-tasks-theme=sage] .task-body h2{font-size:1.125rem;font-weight:600}
 :root[data-tasks-theme=sage] .tabs{border:1px solid var(--line);border-radius:12px;padding:4px;background:var(--panel)}
 :root[data-tasks-theme=sage] .tabs button{border-radius:8px}
 :root[data-tasks-theme=sage] .add{border-radius:16px}
 :root[data-tasks-theme=iris] .tasks-intro h1{font-family:Georgia,serif;font-size:3.375rem;letter-spacing:-1.5px}
-:root[data-tasks-theme=iris] .task-row{border-radius:0;background:transparent;border-bottom:1px solid var(--line);padding:20px 0;margin:0;gap:12px}
+:root[data-tasks-theme=iris] .task-row{border-radius:0;background:transparent;border-bottom:1px solid var(--line);padding:24px 16px;margin:0;gap:16px}
 :root[data-tasks-theme=iris] .task-time{font:600 1.0625rem/1.4 -apple-system,sans-serif;margin-bottom:8px}
 :root[data-tasks-theme=iris] .task-body h2{font:600 1.25rem/1.3 Georgia,serif}
 :root[data-tasks-theme=iris] .tabs{border:0;padding:4px;background:var(--panel);border-radius:14px}
 :root[data-tasks-theme=iris] .group-title{margin-top:28px;letter-spacing:.6px}
 :root[data-tasks-theme=graphite] .tasks-intro{border-bottom:1px solid var(--line);margin-bottom:22px;padding:28px 0}
 :root[data-tasks-theme=graphite] .tasks-intro h1{font-family:"Trebuchet MS",sans-serif;font-size:2.875rem;font-weight:700;letter-spacing:-1px}
-:root[data-tasks-theme=graphite] .task-row{border:1px solid var(--line);border-radius:8px;padding:14px;margin:8px 0}
+:root[data-tasks-theme=graphite] .task-row{border:1px solid var(--line);border-radius:8px;padding:20px;margin:8px 0}
 :root[data-tasks-theme=graphite] .task-time{font:600 0.9375rem/1.4 ui-monospace,Consolas,monospace;letter-spacing:1px}
 :root[data-tasks-theme=graphite] .task-body h2{font-size:1rem;margin:3px 0 6px}
 :root[data-tasks-theme=graphite] .complete,:root[data-tasks-theme=graphite] .add{border-radius:8px}
@@ -31,7 +31,7 @@ input,select,textarea{background:var(--field);color:var(--ink);border-color:var(
 :root[data-tasks-theme=graphite] .group-title{font-family:ui-monospace,monospace;letter-spacing:1.5px}
 
 :root[data-tasks-theme=air] .tasks-intro h1{font-family:"Trebuchet MS",sans-serif;font-size:3.125rem;font-weight:600;letter-spacing:-2px}
-:root[data-tasks-theme=air] .task-row{background:transparent;border-radius:0;border-bottom:1px solid var(--line);padding:18px 0;margin:0}
+:root[data-tasks-theme=air] .task-row{background:transparent;border-radius:0;border-bottom:1px solid var(--line);padding:24px 16px;margin:0}
 :root[data-tasks-theme=air] .task-time{font-size:0.875rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px}
 :root[data-tasks-theme=air] .task-body h2{font-size:1.25rem;font-weight:500}
 :root[data-tasks-theme=air] .group-title{padding-bottom:10px;border-bottom:2px solid var(--accent)}

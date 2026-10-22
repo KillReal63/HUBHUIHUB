@@ -30,19 +30,42 @@ def validate(state):
         raise ValueError('Too many tasks')
     ids = set()
     for task in items:
-        if not isinstance(task, dict) or set(task) != {'id', 'title', 'note', 'date', 'time', 'repeat', 'days', 'timezone'}:
+        required = {'id', 'title', 'note', 'date', 'time', 'repeat', 'days', 'timezone'}
+        if not isinstance(task, dict) or not required <= set(task) or set(task) - required - {'interval', 'shifts', 'subtasks', 'subtaskDone'}:
             raise ValueError('Invalid task')
         if not isinstance(task['id'], str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,80}', task['id']) or task['id'] in ids:
             raise ValueError('Invalid id')
         ids.add(task['id'])
+        subtasks = task.get('subtasks', [])
+        if not isinstance(subtasks, list) or len(subtasks) > 50:
+            raise ValueError('В одном деле может быть до 50 подзадач')
+        subtask_ids = set()
+        for item in subtasks:
+            if not isinstance(item, dict) or set(item) != {'id', 'title'}:
+                raise ValueError('Invalid subtask')
+            if not isinstance(item['id'], str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,80}', item['id']) or item['id'] in subtask_ids:
+                raise ValueError('Invalid subtask id')
+            if not isinstance(item['title'], str) or not item['title'].strip() or len(item['title']) > 120:
+                raise ValueError('Invalid subtask title')
+            subtask_ids.add(item['id'])
+        checks = task.get('subtaskDone', {})
+        if not isinstance(checks, dict) or len(checks) > 50000:
+            raise ValueError('Invalid subtask completions')
+        for day, checked in checks.items():
+            date(day)
+            if not isinstance(checked, list) or len(checked) > len(subtask_ids) or any(not isinstance(sid, str) or sid not in subtask_ids for sid in checked) or len(set(checked)) != len(checked):
+                raise ValueError('Invalid subtask completion')
         for field, limit in [('title', 120), ('note', 1000)]:
             if not isinstance(task[field], str) or len(task[field]) > limit or (field == 'title' and not task[field].strip()):
                 raise ValueError('Invalid text')
         date(task['date'])
         if not isinstance(task['time'], str) or not re.fullmatch(r'([01]\d|2[0-3]):[0-5]\d', task['time']):
             raise ValueError('Invalid time')
-        if task['repeat'] not in ('once', 'daily', 'weekly'):
+        if task['repeat'] not in ('once', 'daily', 'weekly', 'interval'):
             raise ValueError('Invalid repeat')
+        if 'interval' in task or task['repeat'] == 'interval':
+            if type(task.get('interval')) is not int or not 1 <= task['interval'] <= 365:
+                raise ValueError('Интервал должен быть от 1 до 365 дней')
         days = task['days']
         if not isinstance(days, list) or len(days) > 7 or any(type(d) is not int or not 0 <= d <= 6 for d in days) or len(set(days)) != len(days) or (task['repeat'] == 'weekly' and not days):
             raise ValueError('Invalid weekdays')
@@ -52,6 +75,19 @@ def validate(state):
             ZoneInfo(task['timezone'])
         except Exception:
             raise ValueError('Invalid timezone') from None
+        shifts = task.get('shifts', {})
+        if not isinstance(shifts, dict) or len(shifts) > 1000:
+            raise ValueError('Invalid shifts')
+        for original, target in shifts.items():
+            source = date(original)
+            if not occurs(task, source) or not isinstance(target, dict) or set(target) != {'date', 'time'}:
+                raise ValueError('Invalid shifted occurrence')
+            date(target['date'])
+            if not isinstance(target['time'], str) or not re.fullmatch(r'([01]\d|2[0-3]):[0-5]\d', target['time']):
+                raise ValueError('Invalid shift time')
+            moment = dt.datetime.combine(date(target['date']), dt.time.fromisoformat(target['time']), ZoneInfo(task['timezone']))
+            if dt.datetime.fromtimestamp(moment.timestamp(), moment.tzinfo).replace(tzinfo=None) != moment.replace(tzinfo=None):
+                raise ValueError('Это время отсутствует из-за перевода часов. Выбери другое.')
     for key, stamp in done.items():
         if not isinstance(key, str) or len(key.split('|')) != 2:
             raise ValueError('Invalid completion')
@@ -94,6 +130,7 @@ def occurs(task, day):
         return False
     repeat = task['repeat']
     return (repeat == 'once' and day == start or repeat == 'daily' or
+            repeat == 'interval' and (day-start).days % task['interval'] == 0 or
             repeat == 'weekly' and day.weekday() in task['days'])
 
 def due(state, created, now):
@@ -101,12 +138,16 @@ def due(state, created, now):
         zone = ZoneInfo(task['timezone'])
         local = dt.datetime.fromtimestamp(now, zone)
         # Include yesterday when a notification is due just before midnight.
-        for day in (local.date()-dt.timedelta(days=1), local.date()):
+        shifts = task.get('shifts', {})
+        candidates = {local.date()-dt.timedelta(days=1), local.date()}
+        candidates.update(dt.date.fromisoformat(day) for day in shifts)
+        for day in sorted(candidates):
             occurrence = task['id']+'|'+day.isoformat()
             if not occurs(task, day) or occurrence in state['done']:
                 continue
-            hour, minute = map(int, task['time'].split(':'))
-            moment = dt.datetime.combine(day, dt.time(hour, minute), zone)
+            target = shifts.get(day.isoformat(), {'date': day.isoformat(), 'time': task['time']})
+            hour, minute = map(int, target['time'].split(':'))
+            moment = dt.datetime.combine(dt.date.fromisoformat(target['date']), dt.time(hour, minute), zone)
             scheduled = moment.timestamp()
             # Skip nonexistent spring-forward times; fall-back uses the first occurrence.
             if dt.datetime.fromtimestamp(scheduled, zone).replace(tzinfo=None) != moment.replace(tzinfo=None):
