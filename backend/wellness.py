@@ -1,4 +1,4 @@
-"""Versioned food/gym data and transactional inventory-to-task integration."""
+"""Versioned module data and transactional inventory-to-task integration."""
 import copy
 import datetime as dt
 import hashlib
@@ -8,6 +8,7 @@ import re
 import uuid
 from zoneinfo import ZoneInfo
 import tasks
+import watch
 
 EMPTY_FOOD = {'meals': [], 'stocks': [], 'recipes': [], 'plans': [], 'demo': False, 'movements': []}
 EMPTY_GYM = {'version': 1, 'selected': None, 'done': {}, 'days': []}
@@ -20,7 +21,7 @@ def initialize(c):
     CREATE TABLE IF NOT EXISTS module_imports(module TEXT NOT NULL, digest TEXT NOT NULL, PRIMARY KEY(module,digest));
     CREATE TABLE IF NOT EXISTS food_links(product TEXT PRIMARY KEY, task TEXT, suppressed INTEGER NOT NULL DEFAULT 0);
     ''')
-    for module, empty in [('food', EMPTY_FOOD), ('gym', EMPTY_GYM)]:
+    for module, empty in [('food', EMPTY_FOOD), ('gym', EMPTY_GYM), ('watch', watch.EMPTY)]:
         c.execute('INSERT OR IGNORE INTO module_state VALUES(?,0,?)', (module, json.dumps(empty)))
 
 
@@ -352,6 +353,8 @@ def food_command(s, body, now, c):
 
 
 def save(c, module, body, now=None):
+    if module == 'watch' and body.get('command'):
+        raise ValueError('Список сохраняется целиком; импорт локальных записей не требуется')
     now = now or dt.datetime.now(dt.timezone.utc)
     op = ident(body.get('operation'))
     digest = hashlib.sha256(json.dumps([module,body], sort_keys=True, allow_nan=False).encode()).hexdigest()
@@ -397,6 +400,7 @@ def save(c, module, body, now=None):
             apply_meals(s, incoming, now)
         s = incoming
     if module == 'food': validate_food(s,require_allocations=True)
+    elif module == 'watch': watch.validate(s)
     else: validate_gym(s)
     if module == 'food': reconcile(c, s, now)
     put(c, module, s)

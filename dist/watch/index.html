@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eeeaf3"><meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Что посмотреть · Мой день</title>
+  <link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/vovrema/icon-180.png">
+  <link rel="stylesheet" href="/hub/hub.css"><link rel="stylesheet" href="/hub/chrome.css"><link rel="stylesheet" href="/hub/sync.css"><link rel="stylesheet" href="/watch/watch.css">
+  <script src="/hub/preferences.js"></script><script src="/hub/sync.js" defer></script><script src="/watch/watch.js" defer></script><script src="/hub/chrome.js" defer></script>
+</head>
+<body><div class="shell">
+  <header id="app-header" class="app-header">
+    <div class="app-identity"><a class="app-back" href="/">← Вернуться в хаб</a></div>
+    <button type="button" class="app-settings-button" data-open-settings="settings" aria-label="Настройки">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3-.6 2.1-1.8 1L5.5 5.6 3.6 9l1.5 1.6v2.8L3.6 15l1.9 3.4 2.1-.5 1.8 1L10 21h4l.6-2.1 1.8-1 2.1.5 1.9-3.4-1.5-1.6v-2.8L20.4 9l-1.9-3.4-2.1.5-1.8-1L14 3Z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+  </header>
+  <section class="watch-intro"><p class="eyebrow">На свободный вечер</p><h1>Что<br>посмотреть.</h1><p>Сохрани то, что хочется увидеть.</p><button id="add" class="primary" disabled>＋ Добавить в список</button></section>
+  <main hidden>
+    <nav class="watch-tabs" aria-label="Список просмотра"><button data-filter="planned" aria-pressed="true">Хочу посмотреть <span id="planned-count">0</span></button><button data-filter="watched" aria-pressed="false">Просмотрено <span id="watched-count">0</span></button></nav>
+    <div id="list" aria-live="polite"></div>
+  </main>
+</div>
+<dialog id="settings" class="app-settings-dialog" aria-labelledby="settings-title"><div class="app-dialog-head"><h2 id="settings-title">Настройки</h2><button type="button" data-close-settings="settings" aria-label="Закрыть настройки">✕</button></div><p>Размер текста меняется в настройках хаба и применяется ко всем приложениям.</p><a href="/">Открыть хаб</a></dialog>
+<dialog id="editor" class="app-settings-dialog" aria-labelledby="editor-title"><form id="watch-form">
+  <div class="app-dialog-head"><h2 id="editor-title">Добавить в список</h2><button type="button" id="close-editor" aria-label="Закрыть">✕</button></div>
+  <label>Название<input id="title" required maxlength="160" autocomplete="off" placeholder="Название фильма или сериала"></label>
+  <label>Тип<select id="kind"><option value="film">Фильм</option><option value="series">Сериал</option><option value="other">Другое</option></select></label>
+  <label>Заметка <span class="optional">необязательно</span><textarea id="note" rows="3" maxlength="2000" placeholder="Кто посоветовал, почему хочется посмотреть…"></textarea></label>
+  <label>Ссылка <span class="optional">необязательно</span><input id="url" type="url" inputmode="url" maxlength="2048" placeholder="https://…" autocomplete="off"></label>
+  <p id="form-error" role="alert"></p><button type="submit" class="primary">Сохранить</button>
+</form></dialog>
+</body></html>

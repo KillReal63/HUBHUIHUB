@@ -171,7 +171,7 @@ class API(BaseHTTPRequestHandler):
             elif self.path=='/api/tasks':
                 if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
                 self.reply(200,tasks.read(c))
-            elif self.path in ('/api/food','/api/gym'):
+            elif self.path in ('/api/food','/api/gym','/api/watch'):
                 if not self.authenticated(c): return self.reply(401,{'error':'Войди в аккаунт'})
                 self.reply(200,wellness.response(c,self.path.rsplit('/',1)[1]))
             elif self.path=='/api/data/export':
@@ -226,7 +226,7 @@ class API(BaseHTTPRequestHandler):
                     if self.path=='/api/setup': (DATA/'setup-token').unlink(missing_ok=True)
                     return self.reply(200,{'ok':True},f'session={session}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=604800')
                 if not self.authenticated(c): return self.reply(401,{'error':'Сессия закончилась. Войди снова.'})
-                if self.path in ('/api/food','/api/gym'):
+                if self.path in ('/api/food','/api/gym','/api/watch'):
                     status,result=wellness.save(c,self.path.rsplit('/',1)[1],body)
                     return self.reply(status,result)
                 if self.path=='/api/data/restore':
@@ -256,7 +256,7 @@ class API(BaseHTTPRequestHandler):
                     return self.reply(200,{'version':version+1})
                 self.reply(404,{'error':'Не найдено'})
         except ValueError as error:
-            message = str(error) if self.path in ('/api/food','/api/gym','/api/data/restore') else 'Некорректные данные. Проверь поля.'
+            message = str(error) if self.path in ('/api/food','/api/gym','/api/watch','/api/data/restore') else 'Некорректные данные. Проверь поля.'
             self.reply(400,{'error':message[:240]})
         except (TypeError, KeyError, ZeroDivisionError, StopIteration, AttributeError):
             self.reply(400,{'error':'Некорректные данные. Проверь поля.'})

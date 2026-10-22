@@ -4,21 +4,24 @@ import hashlib
 import json
 import tasks
 import wellness
+import watch
 
 
 def snapshot(c):
     med_version, med_body = c.execute('SELECT version,body FROM state WHERE id=1').fetchone()
-    return {'format':'day-hub-data', 'schema':1, 'exportedAt':dt.datetime.now(dt.timezone.utc).isoformat(),
+    return {'format':'day-hub-data', 'schema':2, 'exportedAt':dt.datetime.now(dt.timezone.utc).isoformat(),
             'modules':{'medicine':{'version':med_version,'state':json.loads(med_body)},
-                       'tasks':tasks.read(c), 'food':wellness.read(c,'food'), 'gym':wellness.read(c,'gym')},
+                       'tasks':tasks.read(c), 'food':wellness.read(c,'food'), 'gym':wellness.read(c,'gym'), 'watch':wellness.read(c,'watch')},
             'links':[{'product':p,'task':t,'suppressed':bool(s)} for p,t,s in c.execute('SELECT product,task,suppressed FROM food_links')]}
 
 
 def validate(value, validate_medicine):
-    if not isinstance(value,dict) or value.get('format') != 'day-hub-data' or value.get('schema') != 1:
+    if not isinstance(value,dict) or value.get('format') != 'day-hub-data' or type(value.get('schema')) is not int or value['schema'] not in (1, 2):
         raise ValueError('Неизвестный формат копии')
     modules=value['modules']
-    if set(modules) != {'medicine','tasks','food','gym'}: raise ValueError('Неполная копия')
+    expected = {'medicine','tasks','food','gym'} | ({'watch'} if value['schema'] == 2 else set())
+    if set(modules) != expected: raise ValueError('Неполная копия')
+    if 'watch' in modules: watch.validate(modules['watch']['state'])
     for name, validator in [('medicine',validate_medicine),('tasks',tasks.validate),('food',lambda s:wellness.validate_food(s,require_allocations=True)),('gym',wellness.validate_gym)]:
         validator(modules[name]['state'])
     stocks={s['id'] for s in modules['food']['state']['stocks']}; seen=set(); linked_tasks=set()
@@ -43,7 +46,7 @@ def versions(value):
 
 def summary(value):
     m=value['modules']
-    return {'Лекарства':len(m['medicine']['state']['meds']), 'Дела':len(m['tasks']['state']['tasks']),
+    return {**({'Что посмотреть':len(m['watch']['state']['items'])} if 'watch' in m else {}), 'Лекарства':len(m['medicine']['state']['meds']), 'Дела':len(m['tasks']['state']['tasks']),
             'Записи питания':len(m['food']['state']['meals']), 'Продукты':len(m['food']['state']['stocks']),
             'Дни тренировок':len(m['gym']['state']['days'])}
 
@@ -54,7 +57,7 @@ def process(c, body, validator):
     c.execute('BEGIN IMMEDIATE')
     current=snapshot(c)
     if body.get('action') == 'preview':
-        return 200, {'digest':digest,'versions':versions(current),'current':summary(current),'incoming':summary(value)}
+        return 200, {'digest':digest,'versions':versions(current),'current':summary(current),'incoming':summary(value), 'preserved': ['Что посмотреть'] if 'watch' not in value['modules'] else []}
     if body.get('action') != 'restore' or body.get('digest') != digest: raise ValueError('Сначала проверь копию')
     operation=wellness.ident(body.get('operation'))
     old=c.execute('SELECT digest FROM module_operations WHERE id=?',(operation,)).fetchone()
@@ -69,7 +72,8 @@ def process(c, body, validator):
     modules=value['modules']
     for table,name in [('state','medicine'),('tasks_state','tasks')]:
         c.execute(f'UPDATE {table} SET version=version+1,body=? WHERE id=1',(json.dumps(modules[name]['state'],ensure_ascii=False),))
-    for name in ('food','gym'): wellness.put(c,name,modules[name]['state'])
+    for name in ('food','gym','watch'):
+        if name in modules: wellness.put(c,name,modules[name]['state'])
     c.execute('DELETE FROM food_links')
     for link in value['links']:
         c.execute('INSERT INTO food_links VALUES(?,?,?)',(link['product'],link['task'],int(link['suppressed'])))
