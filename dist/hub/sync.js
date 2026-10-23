@@ -15,16 +15,20 @@
       setInterval(() => this.refresh(), 30000);
     }
     message(value, retry = false) {
-      this.bar.replaceChildren(document.createTextNode(value));
+      const quiet = value === 'Сохранено на сервере';
+      this.bar.hidden = quiet;
+      this.bar.replaceChildren(document.createTextNode(quiet ? '' : value));
       if (retry) this.button('Повторить подключение', () => this.pending ? this.recover() : this.load());
       document.querySelectorAll('dialog[open]').forEach(dialog=>{
         let status=dialog.querySelector('.sync-dialog-status');
         if(!status){status=document.createElement('div');status.className='sync-dialog-status';status.setAttribute('role','status');dialog.append(status);}
-        status.replaceChildren(document.createTextNode(value));
+        status.hidden = quiet;
+        status.replaceChildren(document.createTextNode(quiet ? '' : value));
         if(retry){const button=document.createElement('button');button.type='button';button.textContent='Повторить подключение';button.onclick=()=>this.pending?this.recover():this.load();status.append(' ',button);}
       });
     }
     button(label, action) {
+      this.bar.hidden = false;
       const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
       button.onclick = action; this.bar.append(' ', button);
     }

@@ -120,8 +120,13 @@ def validate_gym(s):
 
 
 def validate_food(s, require_allocations=False):
-    if not isinstance(s, dict) or set(s) != set(EMPTY_FOOD) or type(s['demo']) is not bool:
+    if not isinstance(s, dict) or set(s) - {'manualShopping'} != set(EMPTY_FOOD) or type(s['demo']) is not bool:
         raise ValueError('Некорректный дневник')
+    items(s.get('manualShopping', []), 500)
+    for item in s.get('manualShopping', []):
+        if set(item) != {'id', 'name', 'done'} or type(item['done']) is not bool:
+            raise ValueError('Некорректная покупка')
+        text(item['name'], 120, True)
     stock_ids = items(s['stocks'], 1000)
     stocks = {x['id']:x for x in s['stocks']}
     for stock in s['stocks']:
@@ -322,6 +327,23 @@ def apply_meals(old, new, now):
 
 def food_command(s, body, now, c):
     command = body['command']; product = body.get('product')
+    if command in ('shopping-add', 'shopping-check', 'shopping-delete', 'shopping-clear'):
+        shopping = s.setdefault('manualShopping', [])
+        if command == 'shopping-add':
+            text(body.get('name'), 120, True)
+            if len(shopping) >= 500: raise ValueError('В списке уже 500 покупок. Удали ненужные.')
+            shopping.append({'id':str(uuid.uuid4()), 'name':body['name'].strip(), 'done':False})
+        elif command == 'shopping-clear':
+            s['manualShopping'] = [item for item in shopping if not item['done']]
+        else:
+            ident(body.get('item'))
+            item = next((item for item in shopping if item['id'] == body['item']), None)
+            if item is None: raise ValueError('Покупка уже удалена. Обнови список.')
+            if command == 'shopping-delete': shopping.remove(item)
+            else:
+                if type(body.get('done')) is not bool: raise ValueError('Некорректная отметка')
+                item['done'] = body['done']
+        return s
     stock = next((x for x in s['stocks'] if x['id'] == product), None)
     if command == 'stock':
         v = body['value']; quantity = number(v['quantity'], 0.000001)
@@ -394,6 +416,9 @@ def save(c, module, body, now=None):
     else:
         incoming = copy.deepcopy(body['state'])
         if module == 'food':
+            # Older clients do not know this optional field; preserve its records.
+            if 'manualShopping' not in incoming and 'manualShopping' in s:
+                incoming['manualShopping'] = copy.deepcopy(s['manualShopping'])
             validate_food(incoming)
             if incoming['stocks'] != s['stocks'] or incoming['movements'] != s['movements'] or incoming['demo'] != s['demo']:
                 raise ValueError('Запасы изменяются отдельной операцией')

@@ -26,7 +26,8 @@ function render(){
  $('#meals').innerHTML=meals.length?['Завтрак','Обед','Ужин','Перекус'].map(kind=>{const list=meals.filter(m=>m.kind===kind);return list.length?`<section class="meal-group"><header><h3>${kind}</h3><span class="eyebrow">${list.length} ${plural(list.length,['запись','записи','записей'])}</span></header>${list.map(m=>`<article class="meal-row"><time>${esc(m.time)}</time><div><strong>${esc(m.name)}</strong><p>${[m.note&&esc(m.note),m.kcal!==null&&`${number(m.kcal)} ккал`,m.consumed&&`${number(m.consumed.amount)} ${esc(m.consumed.unit)} из запасов`].filter(Boolean).join(' · ')}</p></div><button data-favorite-meal="${esc(m.id)}" aria-label="В любимые: ${esc(m.name)}">♡</button><button data-remove-meal="${esc(m.id)}" aria-label="Удалить запись ${esc(m.name)}">×</button></article>`).join('')}</section>`:''}).join(''):'<div class="empty"><h3>Что сегодня было вкусного?</h3><p>Запиши блюдо или перекус. Здесь соберётся твой день.</p></div>';
  $('#stocks').innerHTML=state.stocks.length?state.stocks.map(s=>{const days=Math.max(0,dayGap(forecast(s),today())),segments=Math.min(7,Math.max(3,s.days));return `<article class="stock-card"><div class="stock-head"><div><h3>${esc(s.name)}</h3><p>Учтено ${number(s.quantity)} ${esc(s.unit)} · ${dateText(s.asOf)}</p></div><strong>${days}<small>дн. по оценке</small></strong></div><div class="runway" aria-label="Осталось примерно ${days} ${plural(days,['день','дня','дней'])}">${Array.from({length:segments},(_,i)=>`<span class="${i<days?'filled':''}"></span>`).join('')}</div><p class="caption">${number(s.daily)} ${esc(s.unit)} в день · ${days?`покупка ${dateText(forecast(s))}`:'пора проверить остаток'}</p>${s.expiry?`<p class="expiry">${s.expiry<today()?'Срок годности прошёл':'Годен до'} ${dateText(s.expiry)}</p>`:''}<div class="stock-actions"><button data-rule="${esc(s.id)}">Автопокупка</button><button data-lots="${esc(s.id)}">Партии и история</button><button data-replenish="${esc(s.id)}">＋ Пополнить</button><button data-portion="${esc(s.id)}" ${s.quantity<=0?'disabled':''}>Съел порцию</button></div></article>`}).join(''):'<div class="empty"><h3>Заглянем в холодильник?</h3><p>Добавь продукт, количество и на сколько дней его обычно хватает.</p></div>';
  const shopping=shoppingLinks.filter(x=>x.task&&!x.suppressed);
- $('#shopping-count').textContent=shopping.length||'';
+ $('#shopping-count').textContent=(shopping.length+(state.manualShopping||[]).filter(item=>!item.done).length)||'';
+ renderManualShopping();
  $('#shopping').innerHTML=shoppingLinks.map(link=>{const product=state.stocks.find(s=>s.id===link.product);if(!product||!product.rule.enabled)return '';return `<article class="shopping-row"><div><h3>${esc(product.name)}</h3>${link.suppressed?'<p>Покупка закрыта или удалена. Уточни остаток или возобнови правило.</p>':link.task?`<p>${esc(link.task.note)}</p><a href="/tasks/?task=${encodeURIComponent(link.task.id)}">Открыть дело</a>`:'<p>Запаса пока достаточно.</p>'}<div class="inventory-actions"><button data-buy="${esc(product.id)}">Купил · учесть количество</button><button data-rule="${esc(product.id)}">Правило покупки</button></div></div></article>`}).join('')||'<p class="caption">Включи автопокупку в настройках продукта.</p>';
  if(typeof renderPlanner==='function')renderPlanner();
 }
@@ -54,3 +55,28 @@ window.resetAppRecords=async()=>{
  if(saved){editStock=null;document.querySelectorAll('dialog[open]:not(#settings)').forEach(dialog=>dialog.close());toast('Записи питания сброшены');}
  return saved;
 };
+
+function renderManualShopping(){
+ const items=state.manualShopping||[];
+ $('#manual-list').innerHTML=items.length?items.map(item=>`<div class="manual-row"><label><input type="checkbox" data-manual-check="${esc(item.id)}" ${item.done?'checked':''}><span>${esc(item.name)}</span></label><button type="button" data-manual-delete="${esc(item.id)}" aria-label="Удалить покупку: ${esc(item.name)}">×</button></div>`).join(''):'<p class="caption">Список пуст. Добавь покупки перед походом в магазин.</p>';
+ $('#manual-clear').hidden=!items.some(item=>item.done);
+}
+let manualSubmitted=null;
+$('#manual-form').onsubmit=async event=>{
+ event.preventDefault();if(foodStore.busy||foodStore.pending)return;
+ const input=$('#manual-name'),name=input.value.trim();if(!name)return;
+ manualSubmitted=input.value;
+ if(await foodCommand('shopping-add',{name})){if(input.value===manualSubmitted)input.value='';manualSubmitted=null;input.focus();}
+};
+window.addEventListener('hub-save-recovered',event=>{if(event.detail==='food'&&manualSubmitted!==null){if($('#manual-name').value===manualSubmitted)$('#manual-name').value='';manualSubmitted=null;}});
+$('#manual-list').onchange=async event=>{
+ const input=event.target,id=input.dataset.manualCheck;if(!id)return;
+ const done=input.checked;input.checked=!done;if(foodStore.busy||foodStore.pending)return;
+ await foodCommand('shopping-check',{item:id,done});
+};
+$('#manual-list').onclick=async event=>{
+ const id=event.target.closest('[data-manual-delete]')?.dataset.manualDelete;if(!id||foodStore.busy||foodStore.pending)return;
+ const item=(state.manualShopping||[]).find(item=>item.id===id);
+ if(item&&confirm('Удалить «'+item.name+'» из списка покупок?'))await foodCommand('shopping-delete',{item:id});
+};
+$('#manual-clear').onclick=async()=>{if(foodStore.busy||foodStore.pending)return;if(confirm('Убрать все купленные позиции? Остальные останутся в списке.'))await foodCommand('shopping-clear');};

@@ -49,6 +49,43 @@ class Wellness(unittest.TestCase):
     def active(self):
         s=tasks.read(self.c)['state'];return [t for t in s['tasks'] if t['id']+'|'+t['date'] not in s['done']]
 
+    def test_manual_shopping_persistence_retry_and_isolation(self):
+        before_tasks=tasks.read(self.c)
+        body={'operation':str(uuid.uuid4()),'version':0,'command':'shopping-add','name':' Губки '}
+        with self.c: code,result=w.save(self.c,'food',body,NOW)
+        self.assertEqual(code,200)
+        item=result['state']['manualShopping'][0]
+        self.assertEqual(item['name'],'Губки')
+        with self.c: _,retry=w.save(self.c,'food',body,NOW)
+        self.assertEqual(len(retry['state']['manualShopping']),1)
+        self.assertEqual(self.call(command='shopping-check',item=item['id'],done=True)[0],200)
+        self.call(command='shopping-add',name='Тряпки')
+        legacy=w.read(self.c,'food')['state'];del legacy['manualShopping']
+        self.assertEqual(self.call(state=legacy)[0],200)
+        self.assertEqual(len(w.read(self.c,'food')['state']['manualShopping']),2)
+        backup=portability.snapshot(self.c);portability.validate(backup,lambda s:s)
+        self.assertEqual(len(backup['modules']['food']['state']['manualShopping']),2)
+        _,result=self.call(command='shopping-clear')
+        self.assertEqual([x['name'] for x in result['state']['manualShopping']],['Тряпки'])
+        remaining=result['state']['manualShopping'][0]['id']
+        self.call(command='shopping-delete',item=remaining)
+        self.assertEqual(w.read(self.c,'food')['state']['manualShopping'],[])
+        self.assertEqual(tasks.read(self.c),before_tasks)
+        self.assertEqual(w.read(self.c,'food')['state']['stocks'],[])
+
+    def test_manual_shopping_validation_conflict_and_reset(self):
+        for name in ['', '  ', 'a'*121, None]:
+            with self.assertRaises(ValueError):self.call(command='shopping-add',name=name)
+        self.call(command='shopping-add',name='Пакеты')
+        before=w.read(self.c,'food')
+        with self.c:
+            code,_=w.save(self.c,'food',{'operation':str(uuid.uuid4()),'version':0,'command':'shopping-clear'},NOW)
+        self.assertEqual(code,409);self.assertEqual(w.read(self.c,'food'),before)
+        item=before['state']['manualShopping'][0]
+        with self.assertRaises(ValueError):self.call(command='shopping-check',item=item['id'],done='yes')
+        self.call(command='reset')
+        self.assertEqual(w.read(self.c,'food')['state'],w.EMPTY_FOOD)
+
     def test_food_reset_closes_purchase_and_preserves_other_modules(self):
         product=self.stock(quantity=1);self.enable(product)
         purchase=self.active()[0]
