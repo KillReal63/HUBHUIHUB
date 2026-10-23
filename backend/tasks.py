@@ -31,8 +31,10 @@ def validate(state):
     ids = set()
     for task in items:
         required = {'id', 'title', 'note', 'date', 'time', 'repeat', 'days', 'timezone'}
-        if not isinstance(task, dict) or not required <= set(task) or set(task) - required - {'interval', 'shifts', 'subtasks', 'subtaskDone'}:
+        if not isinstance(task, dict) or not required <= set(task) or set(task) - required - {'interval', 'shifts', 'subtasks', 'subtaskDone', 'reminderMinutes'}:
             raise ValueError('Invalid task')
+        if type(task.get('reminderMinutes', 0)) is not int or task.get('reminderMinutes', 0) not in (0, 10, 30, 60):
+            raise ValueError('Invalid reminder interval')
         if not isinstance(task['id'], str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,80}', task['id']) or task['id'] in ids:
             raise ValueError('Invalid id')
         ids.add(task['id'])
@@ -104,6 +106,12 @@ def save(c, body):
     version = body.get('version')
     if type(version) is not int or version < 0:
         raise ValueError('Invalid version')
+    previous = {task['id']:task for task in read(c)['state']['tasks']}
+    for task in state['tasks']:
+        # Older editors omit the setting; only an explicit zero disables it.
+        old = previous.get(task['id'], {})
+        if 'reminderMinutes' not in task and 'reminderMinutes' in old:
+            task['reminderMinutes'] = old['reminderMinutes']
     has_links = c.execute("SELECT 1 FROM sqlite_master WHERE name='food_links'").fetchone()
     if has_links:
         linked = {r[0] for r in c.execute('SELECT task FROM food_links WHERE task IS NOT NULL')}
@@ -152,9 +160,17 @@ def due(state, created, now):
             # Skip nonexistent spring-forward times; fall-back uses the first occurrence.
             if dt.datetime.fromtimestamp(scheduled, zone).replace(tzinfo=None) != moment.replace(tzinfo=None):
                 continue
-            if created <= scheduled and 0 <= now-scheduled < 300:
-                key = 'task|'+occurrence+'|'+str(int(scheduled))
-                yield key, scheduled, task['id']
+            if created > scheduled:
+                continue
+            base_key = 'task|'+occurrence+'|'+str(int(scheduled))
+            minutes = task.get('reminderMinutes', 0)
+            for index in range(4 if minutes else 1):
+                reminder_at = scheduled + index * minutes * 60
+                if 0 <= now-reminder_at < 300:
+                    # Keep the original delivery key. Follow-up identities do not
+                    # change when editing the interval, so sent slots stay sent.
+                    key = base_key if index == 0 else base_key+'|reminder|'+str(index)
+                    yield key, reminder_at, task['id']
 
 def deliver(c, now, sender):
     subscriptions = c.execute('SELECT id,body,created FROM push_subscriptions').fetchall()
@@ -171,7 +187,7 @@ def deliver(c, now, sender):
                 result = 'cancelled'
             else:
                 result = sender(json.loads(body), {
-                    'title': 'Мой день · Дела', 'body': 'Есть дело на это время. Открой напоминание.',
+                    'title': 'Мой день · Дела', 'body': 'Дело ещё не отмечено выполненным. Открой напоминание.' if '|reminder|' in key else 'Есть дело на это время. Открой напоминание.',
                     'tag': key, 'url': '/tasks/?task='+tid,
                 }, ttl=max(1, int(300-(now-scheduled))))
             if result == 'expired':

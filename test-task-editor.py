@@ -25,6 +25,8 @@ with sync_playwright() as p:
     page.locator('#interval').fill('3')
     page.locator('#date').fill('2099-01-01')
     page.locator('#time').fill('09:00')
+    expect(page.locator('#reminder-minutes')).to_have_value('0')
+    page.locator('#reminder-minutes').select_option('30')
     page.locator('#add-subtask').click()
     page.get_by_role('textbox', name='Подзадача 1', exact=True).fill('Паспорт')
     page.locator('#add-subtask').click()
@@ -32,12 +34,14 @@ with sync_playwright() as p:
     page.locator('#save').click()
     expect(page.locator('#editor')).not_to_be_visible()
     expect(page.locator('.task-row')).to_have_count(1)
-    expect(page.locator('.task-meta')).to_contain_text('Каждые 3 дн.')
+    expect(page.locator('.task-meta').first).to_contain_text('Каждые 3 дн.')
+    expect(page.locator('.task-row')).to_contain_text('Ещё до 3 напоминаний · каждые 30 мин')
     page.locator('.task-checklist input').first.click()
     expect(page.locator('.task-checklist legend')).to_have_text('Подзадачи · 1 из 2')
     current = context.request.get(BASE+'/api/tasks').json()
     first_subtask = current['state']['tasks'][0]['subtasks'][0]['id']
     assert current['state']['tasks'][0]['subtaskDone'] == {'2099-01-01': [first_subtask]}
+    assert current['state']['tasks'][0]['reminderMinutes'] == 30
 
     page.locator('.row-move').click()
     page.locator('#move-date').fill('2099-01-02')
@@ -54,6 +58,7 @@ with sync_playwright() as p:
     page.locator('[data-period=any]').click()
     expect(page.locator('.task-row')).to_have_count(2)
     page.locator('.task-body').first.click()
+    expect(page.locator('#reminder-minutes')).to_have_value('30')
     page.locator('#note').fill('Заметка после переноса')
     page.get_by_role('textbox', name='Подзадача 1', exact=True).fill('Загранпаспорт')
     page.get_by_role('button', name='Удалить подзадачу 2', exact=True).click()
@@ -88,6 +93,7 @@ with sync_playwright() as p:
     expect(page.locator('#move-dialog')).to_be_visible()
     current = context.request.get(BASE+'/api/tasks').json()
     assert current['state']['tasks'][0]['shifts']['2099-01-01']['date'] == '2099-01-02'
+    assert current['state']['tasks'][0]['reminderMinutes'] == 30
     page.locator('#move-save').click()
     expect(page.locator('#move-dialog')).not_to_be_visible()
     expect(page.locator('.task-row').first).to_contain_text('Изменено на другом устройстве')
@@ -128,6 +134,18 @@ with sync_playwright() as p:
                 page.locator('.task-body').first.click()
                 assert page.locator('#editor').evaluate('e=>e.scrollWidth<=e.clientWidth')
                 page.locator('#close-editor').click()
+    page.locator('.task-body').first.click()
+    page.locator('#reminder-minutes').select_option('60')
+    page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
+    assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==60
+    page.locator('.task-body').first.click()
+    page.locator('#reminder-minutes').select_option('10')
+    page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
+    assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==10
+    page.locator('.task-body').first.click()
+    page.locator('#reminder-minutes').select_option('0')
+    page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
+    assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==0
     assert not errors, errors
     browser.close()
     print('PASS: real API create/edit/move, per-date checklists, rename/remove, persistence, conflict/retry, completion/undo, four themes at 320/390px and enlarged text')
