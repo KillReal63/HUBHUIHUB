@@ -48,7 +48,8 @@ def summary(value):
     m=value['modules']
     return {**({'Что посмотреть':len(m['watch']['state']['items'])} if 'watch' in m else {}), 'Лекарства':len(m['medicine']['state']['meds']), 'Дела':len(m['tasks']['state']['tasks']),
             'Записи питания':len(m['food']['state']['meals']), 'Продукты':len(m['food']['state']['stocks']),
-            'Дни тренировок':len(m['gym']['state']['days'])}
+            'Дни тренировок':len(m['gym']['state']['days']),
+            'Тренировочные сессии':len(m['gym']['state'].get('sessions', []))}
 
 
 def process(c, body, validator):

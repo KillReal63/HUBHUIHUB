@@ -1,0 +1,22 @@
+/* Uses the existing gym palette and theme overrides. */
+nav{flex-wrap:wrap;max-width:100%}
+nav a{flex:1 1 auto}
+.panel-head:has([data-session-start]){flex-wrap:wrap}
+.session-record,.session-exercise,.rest-timer{margin-bottom:18px}
+.session-record summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;min-height:44px;align-items:center}
+.session-record summary span{color:var(--muted);font-size:.875rem}
+.session-record strong,.session-result h3,.session-exercise h2{overflow-wrap:anywhere}
+.session-result{padding:16px 0;border-top:1px solid var(--line)}
+.session-result p{font-variant-numeric:tabular-nums}
+.session-sets{margin:20px 0}
+.session-set{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 48px;gap:10px;align-items:center;margin:14px 0}
+.session-set label{font-size:.75rem;display:flex;flex-direction:column;gap:6px;color:var(--muted);min-width:0}
+.session-set input:not([type=checkbox]){padding:10px 6px;font-variant-numeric:tabular-nums}
+.set-number{color:var(--muted);font-variant-numeric:tabular-nums}
+.session-set .set-done{align-items:center}
+.set-done input{width:28px;height:28px;margin:6px 0;accent-color:var(--accent)}
+.rest-timer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px}
+.rest-timer output{display:block;font-size:1.75rem;font-variant-numeric:tabular-nums}
+#rest-status{display:block;color:var(--muted);font-size:.875rem}
+.session-controls{margin:20px 0}.session-resume{margin-bottom:28px}
+@media(max-width:640px){.session-set{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 44px;gap:6px}.session-controls>button{width:100%}}

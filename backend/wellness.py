@@ -11,7 +11,7 @@ import tasks
 import watch
 
 EMPTY_FOOD = {'meals': [], 'stocks': [], 'recipes': [], 'plans': [], 'demo': False, 'movements': []}
-EMPTY_GYM = {'version': 1, 'selected': None, 'done': {}, 'days': []}
+EMPTY_GYM = {'version': 1, 'selected': None, 'done': {}, 'days': [], 'sessions': []}
 
 
 def initialize(c):
@@ -87,7 +87,7 @@ def rule(v):
 
 
 def validate_gym(s):
-    if not isinstance(s, dict) or set(s) != {'version','selected','done','days'} or s['version'] != 1:
+    if not isinstance(s, dict) or set(s) - {'sessions'} != {'version','selected','done','days'} or s['version'] != 1:
         raise ValueError('Некорректная программа')
     days = items(s['days'], 100)
     if s['selected'] is not None and s['selected'] not in days:
@@ -116,7 +116,52 @@ def validate_gym(s):
                 if len(json.dumps(e['reference'])) > 15000: raise ValueError('Слишком большая ссылка')
     if not isinstance(s['done'], dict) or any(k not in exercise_ids or type(v) is not bool for k,v in s['done'].items()):
         raise ValueError('Некорректные отметки')
+    validate_sessions(s.get('sessions', []))
     return s
+
+
+def validate_sessions(sessions):
+    items(sessions, 1000)
+    active = 0
+    for session in sessions:
+        if set(session) != {'id','dayId','name','date','timezone','startedAt','finishedAt','exercises'}:
+            raise ValueError('Некорректная тренировка')
+        ident(session['dayId']); text(session['name'], 70, True)
+        tasks.date(session['date']); timezone = zone(session['timezone'])
+        moments = []
+        for value in [session['startedAt'], session['finishedAt']]:
+            if value is None:
+                moments.append(None); continue
+            text(value, 40, True)
+            try:
+                moment = dt.datetime.fromisoformat(value.replace('Z', '+00:00'))
+                if moment.tzinfo is None: raise ValueError()
+            except (ValueError, TypeError):
+                raise ValueError('Некорректное время тренировки')
+            moments.append(moment)
+        start, finish = moments
+        if start is None or start.astimezone(timezone).date().isoformat() != session['date'] or (finish and finish < start):
+            raise ValueError('Некорректная дата тренировки')
+        active += finish is None
+        items(session['exercises'], 500)
+        if not session['exercises']: raise ValueError('В тренировке нет упражнений')
+        for exercise in session['exercises']:
+            if set(exercise) != {'id','name','group','note','sets'}:
+                raise ValueError('Некорректный результат упражнения')
+            text(exercise['name'], 150, True); text(exercise['note'], 500)
+            if exercise['group'] not in {'chest','back','shoulders','biceps','triceps','legs','glutes','abs'}:
+                raise ValueError('Некорректная группа')
+            sets = exercise['sets']
+            if not isinstance(sets, list) or not 1 <= len(sets) <= 50:
+                raise ValueError('Допустимо от 1 до 50 подходов')
+            for result in sets:
+                if not isinstance(result, dict) or set(result) != {'reps','weight','done'} or type(result['done']) is not bool:
+                    raise ValueError('Некорректный подход')
+                if type(result['reps']) is not int: raise ValueError('Повторения должны быть целыми')
+                number(result['reps'], 0, 1000)
+                if result['weight'] != '': number(result['weight'], 0, 2000)
+                if result['done'] and result['reps'] == 0: raise ValueError('Укажи выполненные повторения')
+    if active > 1: raise ValueError('Сначала заверши текущую тренировку')
 
 
 def meal_uses(meal):
@@ -451,9 +496,11 @@ def save(c, module, body, now=None):
         if c.execute('SELECT 1 FROM module_imports WHERE module=? AND digest=?', (module,fingerprint)).fetchone():
             return 200, response(c,module)
         incoming = normalize_import(module, body['state'], body['timezone'])
-        fields = ['days'] if module == 'gym' else ['stocks','meals','recipes','plans']
+        fields = ['days','sessions'] if module == 'gym' else ['stocks','meals','recipes','plans']
         # Repeated IDs may represent divergent device copies. Never overwrite implicitly.
         for field in fields:
+            if field == 'sessions':
+                s.setdefault(field, []); incoming.setdefault(field, [])
             existing = {x['id']:x for x in s[field]}
             for item in incoming[field]:
                 if item['id'] in existing and existing[item['id']] != item:
@@ -468,10 +515,22 @@ def save(c, module, body, now=None):
         c.execute('INSERT INTO module_imports VALUES(?,?)', (module,fingerprint))
     elif module == 'food' and body.get('command') == 'reset':
         s = copy.deepcopy(EMPTY_FOOD)
+    elif module == 'gym' and body.get('command') == 'reset':
+        s = copy.deepcopy(EMPTY_GYM)
     elif module == 'food' and body.get('command'):
         s = food_command(s, body, now, c)
     else:
         incoming = copy.deepcopy(body['state'])
+        if module == 'gym':
+            # Older open clients can still edit the program without erasing history.
+            if 'sessions' not in incoming and 'sessions' in s:
+                incoming['sessions'] = copy.deepcopy(s['sessions'])
+            validate_gym(incoming)
+            previous_sessions = {x['id']: x for x in s.get('sessions', [])}
+            for session in incoming.get('sessions', []):
+                previous_session = previous_sessions.get(session.get('id')) if isinstance(session, dict) else None
+                if previous_session and previous_session['finishedAt'] and session != previous_session:
+                    raise ValueError('Завершённая тренировка не меняется вместе с программой')
         if module == 'food':
             # Older clients do not know this optional field; preserve its records.
             if 'manualShopping' not in incoming and 'manualShopping' in s:
