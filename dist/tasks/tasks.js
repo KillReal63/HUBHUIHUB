@@ -6,7 +6,7 @@ const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 function signIn(){authenticated=false;state={tasks:[],done:{}};$('#editor').close();$('#remove-dialog').close();$('#move-dialog').close();$('main').hidden=true;location.replace('/?next='+encodeURIComponent(location.pathname+location.search))}
 async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await response.json();if(!response.ok){if(response.status===401)signIn();const error=Error(data.error||'Не удалось выполнить запрос');error.status=response.status;throw error}return data}
-async function load(){const result=await api('tasks');state=result.state;version=result.version;authenticated=true;$('main').hidden=false;$('#loading').hidden=true;$('#add').disabled=false;$('#retry').hidden=true;$('#load-error').textContent='';if(!targetShown){const id=new URLSearchParams(location.search).get('task');if(id){period='any';const lists=schedule.lists(state.tasks,state.done);if(lists.missed.some(x=>x.task.id===id))filter='missed';else if(lists.done.some(x=>x.task.id===id)&&!lists.active.some(x=>x.task.id===id))filter='done';}}render();if(!targetShown&&$('.highlight')){$('.highlight').scrollIntoView({block:'center'});targetShown=true}}
+async function load(){const result=await api('tasks');state=result.state;version=result.version;authenticated=true;$('main').hidden=false;$('#loading').hidden=true;$('#add').disabled=false;$('#retry').hidden=true;$('#load-error').textContent='';if(!targetShown){const params=new URLSearchParams(location.search),id=params.get('task'),original=params.get('occurrence');if(id){period='any';const lists=viewLists();if(original){const bucket=['active','missed','done'].find(key=>lists[key].some(x=>x.task.id===id&&x.day===original));if(bucket)filter=bucket;}else if(lists.missed.some(x=>x.task.id===id))filter='missed';else if(lists.done.some(x=>x.task.id===id)&&!lists.active.some(x=>x.task.id===id))filter='done';}}render();if(!targetShown&&$('.highlight')){window.hubFocusRecord?.($('.highlight'));targetShown=true}}
 async function save(next){const result=await api('tasks',{state:next,version});state=next;version=result.version;render()}
 async function change(fn){if(busy)return false;busy=true;$('#save').disabled=true;try{await fn();return true}catch(error){if(error.status===409){await load().catch(()=>{});toast(error.message)}if($('#move-dialog').open)$('#move-error').textContent=error.message;else if($('#editor').open)$('#form-error').textContent=error.message;else toast(error.message);return false}finally{busy=false;$('#save').disabled=false}}
 function element(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
@@ -14,7 +14,7 @@ function dateLabel(day){return new Intl.DateTimeFormat('ru',{day:'numeric',month
 function repeatLabel(task){if(task.repeat==='interval')return 'Каждые '+task.interval+' дн.';return task.repeat==='once'?'Один раз':task.repeat==='daily'?'Каждый день':task.days.map(d=>weekdays[d]).join(', ')}
 function zoneLabel(zone){return new Intl.DateTimeFormat('ru',{timeZone:zone,timeZoneName:'long'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName').value}
 function row(task,day,status){
-  const occurrence=schedule.event(task,day),done=status==='done',article=element('article','task-row '+status+'-row');article.dataset.task=task.id;
+  const occurrence=schedule.event(task,day),done=status==='done',article=element('article','task-row '+status+'-row');article.dataset.task=task.id;article.dataset.occurrence=day;
   const button=element('button','complete',done?'↶ Отменить':'✓ Готово');button.type='button';button.setAttribute('aria-pressed',String(done));button.setAttribute('aria-label',(done?'Отменить выполнение: ':'Выполнить: ')+task.title+' · '+dateLabel(occurrence.date));
   button.onclick=()=>change(async()=>{const next=structuredClone(state),key=task.id+'|'+day;if(done)delete next.done[key];else next.done[key]=new Date().toISOString();await save(next);toast(done?'Отметка отменена':'Готово!')});
   const content=element('button','task-body');content.type='button';content.setAttribute('aria-label','Изменить: '+task.title);content.onclick=()=>openEditor(task.id);
@@ -25,10 +25,20 @@ function row(task,day,status){
   if(task.note)content.append(element('span','task-note',task.note));
   const actions=element('div','task-actions'),remove=element('button','row-delete','Удалить');remove.type='button';remove.setAttribute('aria-label','Удалить дело: '+task.title);remove.onclick=()=>requestDelete(task.id);actions.append(button,remove);if(!done){const move=element('button','row-move','Перенести');move.type='button';move.setAttribute('aria-label','Перенести событие: '+task.title+' · '+dateLabel(occurrence.date));move.onclick=()=>openMove(task.id,day);actions.append(move)}article.append(content,actions);
   if(task.subtasks?.length){article.classList.add('has-subtasks');article.append(checklist(task,day,done));}
-  if(new URLSearchParams(location.search).get('task')===task.id)article.classList.add('highlight');return article;
+  const target=new URLSearchParams(location.search);if(target.get('task')===task.id&&(!target.get('occurrence')||target.get('occurrence')===day))article.classList.add('highlight');return article;
+}
+function viewLists(now=new Date(),scope='any'){
+  const buckets=schedule.lists(state.tasks,state.done,now,scope),params=new URLSearchParams(location.search),day=params.get('occurrence'),task=state.tasks.find(t=>t.id===params.get('task'));
+  if(!task||!/^\d{4}-\d{2}-\d{2}$/.test(day||'')||!schedule.occurs(task,day))return buckets;
+  const item=schedule.event(task,day),today=schedule.dayAt(task.timezone,now),time=new Intl.DateTimeFormat('en-GB',{timeZone:task.timezone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);
+  if(scope==='today'&&item.date!==today)return buckets;
+  item.status=state.done[task.id+'|'+day]?'done':item.date<today||(item.date===today&&item.time<time)?'missed':'active';
+  const items=buckets[item.status];
+  if(!items.some(x=>x.task.id===task.id&&x.day===day)){if(item.status!=='active'&&items.length>=100)items.pop();items.push(item);}
+  return buckets;
 }
 function render(){
-  const list=$('#list');list.replaceChildren();const buckets=schedule.lists(state.tasks,state.done,new Date(),period);
+  const list=$('#list');list.replaceChildren();const buckets=viewLists(new Date(),period);
   document.querySelectorAll('[data-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.period===period)));
   $('#active-count').textContent=buckets.active.length;
   document.querySelectorAll('[data-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filter===filter)));

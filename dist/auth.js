@@ -1,7 +1,7 @@
 let setupRequired=false;
 function lock(){authenticated=false;state={meds:[],taken:{},notified:{}};lastSaved={meds:[],taken:{}};render();$('main').hidden=true;$('#editor').close();$('#skip-editor').close();$('#auth').hidden=false;$('#logout').hidden=true}
 function migrationAvailable(){try{return JSON.parse(localStorage.getItem(KEY))?.meds?.length>0&&localStorage.getItem('vovremya-imported')!=='yes'}catch{return false}}
-async function unlock(){await load();authenticated=true;$('#auth').hidden=true;$('main').hidden=false;$('#logout').hidden=false;$('#import-box').hidden=!migrationAvailable();window.pushRefresh?.()}
+async function unlock(){await load();authenticated=true;$('#auth').hidden=true;$('main').hidden=false;$('#logout').hidden=false;window.openHubDose?.();$('#import-box').hidden=!migrationAvailable();window.pushRefresh?.()}
 function hubLogin(){location.replace('/?next='+encodeURIComponent(location.pathname+location.search+location.hash))}
 async function boot(){try{const status=await api('session');if(status.authenticated)await unlock();else hubLogin()}catch(e){lock();$('#auth-error').textContent=e.message||'Не удалось связаться с сервером. Обнови страницу.'}}
 $('#logout').onclick=async()=>{if(busy)return;try{await api('logout',{});hubLogin()}catch{toast('Не удалось выйти. Проверь подключение.')}};

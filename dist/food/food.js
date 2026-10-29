@@ -13,7 +13,7 @@ const number=n=>new Intl.NumberFormat('ru',{maximumFractionDigits:2}).format(n);
 let state={meals:[],stocks:[],demo:false},editStock=null,toastTimer,ready=false;
 function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 let shoppingLinks=[];
-const foodStore=new HubStore('food',key,(next,result)=>{state=next;shoppingLinks=result.shopping||[];ready=true;render();document.querySelector('main').hidden=false;$('#connection').hidden=true},()=>!!document.querySelector('dialog[open]'));
+const foodStore=new HubStore('food',key,(next,result)=>{state=next;shoppingLinks=result.shopping||[];ready=true;render();document.querySelector('main').hidden=false;$('#connection').hidden=true;window.openHubFood?.()},()=>!!document.querySelector('dialog[open]'));
 async function persist(next){return !!(await foodStore.save({state:next}))}
 async function foodCommand(command,extra){return !!(await foodStore.save({command,...extra}))}
 function changeTheme(theme){if(!themes.includes(theme))return;document.documentElement.dataset.theme=theme;document.querySelector(`input[name=theme][value=${theme}]`).checked=true;document.querySelector('meta[name=theme-color]').content=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();}

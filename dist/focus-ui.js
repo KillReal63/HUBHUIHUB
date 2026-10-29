@@ -32,3 +32,14 @@ document.addEventListener('click',event=>{const button=event.target.closest('but
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authenticated)render()});
 setInterval(()=>{if(authenticated&&!busy&&!document.hidden)render()},30000);
 render();setView('today');
+
+let doseTargetOpened=false;
+window.openHubDose=()=>{
+ if(doseTargetOpened)return;
+ const params=new URLSearchParams(location.search),key=params.get('dose'),date=params.get('date');
+ if(!key)return;doseTargetOpened=true;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date||'')||!scheduleEntries(state,date).some(e=>e.key===key)){toast('Этот приём больше не находится на указанной дате. Проверь расписание.');return;}
+ $('#day').value=date;render();setView('schedule');
+ const button=[...document.querySelectorAll('#schedule [data-take],#schedule [data-unskip]')].find(b=>(b.dataset.take||b.dataset.unskip)===key);
+ window.hubFocusRecord?.(button?.closest('.dose'));
+};

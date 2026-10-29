@@ -7,15 +7,16 @@ const ex=(name,group,sets=3,reps=12,weight='')=>({id:uid(),name,group,sets,reps,
 const initial=()=>({version:1,selected:null,done:{},days:[]});
 let state=initial(),confirmed=initial(),storageError=false;
 let editing=null,showForm=false,dirty=false;
+let linkedDay=new URLSearchParams(location.search).get('day');
 const app=document.querySelector('#app');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const program=()=>location.pathname.replace(/\/$/,'').endsWith('/program'),current=()=>state.days.find(d=>d.id===state.selected)||state.days[0];
+const program=()=>location.pathname.replace(/\/$/,'').endsWith('/program'),current=()=>state.days.find(d=>d.id===linkedDay)||state.days.find(d=>d.id===state.selected)||state.days[0];
 const gymStore=new HubStore('gym',KEY,(next)=>{state=next;confirmed=structuredClone(next);render()},()=>dirty||showForm||!!document.querySelector('dialog[open]'));
 async function save(){const next=structuredClone(state);state=structuredClone(confirmed);const result=await gymStore.save({state:next});if(!result){state=structuredClone(confirmed);notify('Изменение не подтверждено сервером.');return false}return true}
 function notify(message){const n=document.querySelector('#notice');n.textContent=message;n.style.display='block';clearTimeout(notify.timer);notify.timer=setTimeout(()=>n.style.display='none',3500);}
 const badge=g=>GROUPS[g]?`<span class="badge">${GROUPS[g][0]} ${GROUPS[g][1]}</span>`:'';
 const info=e=>`${e.sets} × ${e.reps}${e.weight!==''?` · ${esc(e.weight)} кг`:''}`;
-async function selectDay(id){state.selected=id;editing=null;showForm=false;if(!await save())return;render();}
+async function selectDay(id){linkedDay=null;state.selected=id;editing=null;showForm=false;if(!await save())return;render();}
 async function setDone(ids,completed){const d=current();if(!d||ids.some(id=>!d.exercises.some(e=>e.id===id)))throw Error('Упражнение не найдено');for(const id of ids){if(completed)state.done[id]=true;else delete state.done[id];}if(!await save())return;render();return {completed:d.exercises.filter(e=>state.done[e.id]).length,total:d.exercises.length};}
 function navigate(path){document.querySelector('dialog:not([data-app-settings])')?.close();history.pushState({},'',path);editing=null;showForm=false;dirty=false;render();window.scrollTo(0,0);}
 function render(){const c=Catalog.active();app.classList.toggle('catalog-page',c);const d=current(),p=program(),done=d?d.exercises.filter(e=>state.done[e.id]).length:0;document.title=`${c?'Упражнения':p?'Программа':'Тренировка'} — Ритм`;document.querySelectorAll('nav a').forEach(a=>{a.removeAttribute('aria-current');if(a.getAttribute('href')===(c?'/gym/catalog':p?'/gym/program':'/gym'))a.setAttribute('aria-current','page');});if(c){Catalog.render();return;}

@@ -24,3 +24,20 @@ function openLots(id){
  inventoryDialog.showModal();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.rule)openRule(b.dataset.rule);if(b.dataset.lots)openLots(b.dataset.lots);if(b.dataset.buy)stockEditor(b.dataset.buy)});
+
+let foodTargetOpened=false;
+window.openHubFood=()=>{
+ if(foodTargetOpened)return;
+ const params=new URLSearchParams(location.search),stock=params.get('stock'),plan=params.get('plan');
+ if(!stock&&!plan)return;foodTargetOpened=true;
+ if(stock){
+  if(!state.stocks.some(s=>s.id===stock)){toast('Этот продукт уже удалён.');return;}
+  tab('pantry');openLots(stock);return;
+ }
+ const entry=state.plans.find(p=>p.id===plan);
+ if(!entry){toast('Это блюдо уже убрано из меню.');return;}
+ $('#week-date').value=FoodPlan.monday(entry.date);renderPlanner();tab('menu');
+ const button=[...document.querySelectorAll('[data-remove-plan]')].find(b=>b.dataset.removePlan===plan);
+ window.hubFocusRecord?.(button?.closest('.menu-entry'));
+};
+if(ready)window.openHubFood();

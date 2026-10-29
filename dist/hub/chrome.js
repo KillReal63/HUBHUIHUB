@@ -29,3 +29,8 @@
   finally{button.disabled=false;}
  });
 })();
+
+window.hubFocusRecord=node=>{
+ if(!node)return;
+ requestAnimationFrame(()=>{node.classList.add('record-target');node.tabIndex=-1;node.focus({preventScroll:true});node.scrollIntoView({block:'center'});});
+};
