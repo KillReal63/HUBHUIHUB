@@ -161,11 +161,15 @@ const Catalog = (() => {
         <div class="form-grid"><label class="field full">День<select name="day">${[...state.days].sort((a, b) => (a.weekday ?? 7) - (b.weekday ?? 7)).map(day => `<option value="${esc(day.id)}" ${day.id === current()?.id ? 'selected' : ''}>${WEEKDAYS[day.weekday] || 'Без привязки'} · ${esc(day.name)}</option>`).join('')}</select></label>
         </div><p class="helper">Подходы, повторения и вес можно изменить в выбранном дне.</p>
         <p class="helper" id="catalog-duplicate" role="status"></p><p class="helper" id="catalog-save-error" role="alert"></p><button type="submit">Добавить в программу</button>
-      </form>` : '<div class="editor"><p>Сначала создай день в программе, затем вернись к этому упражнению.</p><a class="button" href="/gym/program">Создать день</a></div>'}`);
+      </form>` : '<div class="editor"><p>Создай день, чтобы добавить в него это упражнение.</p><button data-catalog-create-day>Создать день</button></div>'}`);
     dlg.classList.add('catalog-detail');
     dlg.setAttribute('aria-labelledby', 'catalog-detail-title');
     dlg.addEventListener('close', () => { if (returnFocus?.isConnected) returnFocus.focus(); });
     dlg.querySelector('[data-catalog-action="close"]').onclick = () => dlg.close();
+    dlg.querySelector('[data-catalog-create-day]')?.addEventListener('click', () => {
+      dlg.close();
+      editDay(true, () => openDetail(entry, rev, savedName));
+    });
     dlg.querySelectorAll('[data-photo-index]').forEach(button => button.onclick = () => {
       const index = Number(button.dataset.photoIndex), url = imageURL(entry.images[index], rev);
       if (!url) return;

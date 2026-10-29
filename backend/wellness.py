@@ -11,7 +11,7 @@ import tasks
 import watch
 
 EMPTY_FOOD = {'meals': [], 'stocks': [], 'recipes': [], 'plans': [], 'demo': False, 'movements': []}
-EMPTY_GYM = {'version': 1, 'selected': None, 'done': {}, 'days': []}
+EMPTY_GYM = {'version': 1, 'selected': None, 'done': {}, 'days': [], 'sessions': []}
 
 
 def initialize(c):
@@ -87,7 +87,7 @@ def rule(v):
 
 
 def validate_gym(s):
-    if not isinstance(s, dict) or set(s) != {'version','selected','done','days'} or s['version'] != 1:
+    if not isinstance(s, dict) or set(s) - {'sessions'} != {'version','selected','done','days'} or s['version'] != 1:
         raise ValueError('Некорректная программа')
     days = items(s['days'], 100)
     if s['selected'] is not None and s['selected'] not in days:
@@ -116,7 +116,56 @@ def validate_gym(s):
                 if len(json.dumps(e['reference'])) > 15000: raise ValueError('Слишком большая ссылка')
     if not isinstance(s['done'], dict) or any(k not in exercise_ids or type(v) is not bool for k,v in s['done'].items()):
         raise ValueError('Некорректные отметки')
+    validate_sessions(s.get('sessions', []))
     return s
+
+
+def validate_sessions(sessions):
+    items(sessions, 1000)
+    active = 0
+    for session in sessions:
+        if set(session) != {'id','dayId','name','date','timezone','startedAt','finishedAt','exercises'}:
+            raise ValueError('Некорректная тренировка')
+        ident(session['dayId']); text(session['name'], 70, True)
+        tasks.date(session['date']); timezone = zone(session['timezone'])
+        moments = []
+        for value in [session['startedAt'], session['finishedAt']]:
+            if value is None:
+                moments.append(None); continue
+            text(value, 40, True)
+            try:
+                moment = dt.datetime.fromisoformat(value.replace('Z', '+00:00'))
+                if moment.tzinfo is None: raise ValueError()
+            except (ValueError, TypeError):
+                raise ValueError('Некорректное время тренировки')
+            moments.append(moment)
+        start, finish = moments
+        if start is None or start.astimezone(timezone).date().isoformat() != session['date'] or (finish and finish < start):
+            raise ValueError('Некорректная дата тренировки')
+        active += finish is None
+        items(session['exercises'], 500)
+        if not session['exercises']: raise ValueError('В тренировке нет упражнений')
+        for exercise in session['exercises']:
+            if set(exercise) != {'id','name','group','note','sets'}:
+                raise ValueError('Некорректный результат упражнения')
+            text(exercise['name'], 150, True); text(exercise['note'], 500)
+            if exercise['group'] not in {'chest','back','shoulders','biceps','triceps','legs','glutes','abs'}:
+                raise ValueError('Некорректная группа')
+            sets = exercise['sets']
+            if not isinstance(sets, list) or not 1 <= len(sets) <= 50:
+                raise ValueError('Допустимо от 1 до 50 подходов')
+            for result in sets:
+                if not isinstance(result, dict) or set(result) != {'reps','weight','done'} or type(result['done']) is not bool:
+                    raise ValueError('Некорректный подход')
+                if type(result['reps']) is not int: raise ValueError('Повторения должны быть целыми')
+                number(result['reps'], 0, 1000)
+                if result['weight'] != '': number(result['weight'], 0, 2000)
+                if result['done'] and result['reps'] == 0: raise ValueError('Укажи выполненные повторения')
+    if active > 1: raise ValueError('Сначала заверши текущую тренировку')
+
+
+def meal_uses(meal):
+    return meal.get('consumptions', []) or ([meal['consumed']] if meal['consumed'] else [])
 
 
 def validate_food(s, require_allocations=False):
@@ -151,8 +200,13 @@ def validate_food(s, require_allocations=False):
         if m['kcal'] is not None: number(m['kcal'], 0, 20000)
     for m in s['meals']:
         tasks.date(m['date']); clock(m['time'])
-        if m['consumed']:
-            used = m['consumed']
+        if 'consumptions' in m:
+            if m['consumed'] is not None or not isinstance(m['consumptions'], list) or not 1 <= len(m['consumptions']) <= 1000:
+                raise ValueError('Некорректное списание ингредиентов')
+            number(m.get('servings'), 0.5, 100)
+            if len({u['stockId'] for u in m['consumptions']}) != len(m['consumptions']):
+                raise ValueError('Повтор продукта в списании')
+        for used in meal_uses(m):
             ident(used['stockId']); number(used['amount'], 0.000001)
             if used['unit'] not in ('г','мл','шт'): raise ValueError('Некорректная единица')
             if used['stockId'] not in stock_ids or stocks[used['stockId']]['unit'] != used['unit']:
@@ -295,38 +349,86 @@ def apply_meals(old, new, now):
         if mid in incoming:
             if incoming[mid] != meal: raise ValueError('Изменение существующей порции не поддерживается')
             continue
-        used = meal['consumed']
-        if not used: continue
-        stock = stocks.get(used['stockId'])
-        if not stock: raise ValueError('Продукт для возврата отсутствует')
-        allocations = used.get('allocations', [])
-        if used.get('legacy'):
-            stock['lots'].append({'id':str(uuid.uuid4()), 'quantity':used['amount'], 'date':meal['date'], 'expiry':''})
-        else:
-            for allocation in allocations:
-                lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
-                lot['quantity'] += allocation['amount']
-        movement(new, stock, 'return', used['amount'], now)
+        for used in meal_uses(meal):
+            stock = stocks.get(used['stockId'])
+            if not stock: raise ValueError('Продукт для возврата отсутствует')
+            allocations = used.get('allocations', [])
+            if used.get('legacy'):
+                stock['lots'].append({'id':str(uuid.uuid4()), 'quantity':used['amount'], 'date':meal['date'], 'expiry':''})
+            else:
+                for allocation in allocations:
+                    lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
+                    lot['quantity'] += allocation['amount']
+            movement(new, stock, 'return', used['amount'], now)
     for mid, meal in incoming.items():
-        if mid in previous or not meal['consumed']: continue
-        used = meal['consumed']; stock = stocks.get(used['stockId'])
-        if not stock or used['unit'] != stock['unit']: raise ValueError('Продукт не найден')
-        local_day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
-        if meal['date'] != local_day: raise ValueError('Списывать можно только сегодняшнюю порцию')
-        remaining = used['amount']; allocations = []
-        for lot in sorted(stock['lots'], key=lambda l:l['expiry'] or '9999'):
-            if lot['expiry'] and lot['expiry'] < local_day: continue
-            amount = min(lot['quantity'], remaining)
-            if amount > 0:
-                lot['quantity'] = round(lot['quantity']-amount, 6); remaining = round(remaining-amount, 6)
-                allocations.append({'lot':lot['id'], 'amount':amount})
-        if remaining > 0.000001: raise ValueError('Недостаточно непросроченного продукта')
-        used.pop('legacy', None); used['allocations'] = allocations
-        movement(new, stock, 'consume', -used['amount'], now)
+        if mid in previous: continue
+        for used in meal_uses(meal):
+            stock = stocks.get(used['stockId'])
+            if not stock or used['unit'] != stock['unit']: raise ValueError('Продукт не найден')
+            local_day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
+            if meal['date'] != local_day: raise ValueError('Списывать можно только сегодняшнюю порцию')
+            remaining = used['amount']; allocations = []
+            for lot in sorted(stock['lots'], key=lambda l:l['expiry'] or '9999'):
+                if lot['expiry'] and lot['expiry'] < local_day: continue
+                amount = min(lot['quantity'], remaining)
+                if amount > 0:
+                    lot['quantity'] = round(lot['quantity']-amount, 6); remaining = round(remaining-amount, 6)
+                    allocations.append({'lot':lot['id'], 'amount':amount})
+            if remaining > 0.000001: raise ValueError('Недостаточно непросроченного продукта')
+            used.pop('legacy', None); used['allocations'] = allocations
+            movement(new, stock, 'consume', -used['amount'], now)
+
+
+def ingredient_key(name, unit):
+    return (' '.join(name.strip().lower().replace('ё', 'е').split()), unit)
+
+
+def cook(s, body, now):
+    servings = number(body.get('servings'), 0.5, 100)
+    local = now.astimezone(zone(body.get('timezone')))
+    recipe = next((r for r in s['recipes'] if r['id'] == body.get('recipe')), None)
+    if not recipe or not recipe['ingredients']:
+        raise ValueError('Добавь ингредиенты в рецепт перед приготовлением')
+    needs = {}
+    for item in recipe['ingredients']:
+        key = ingredient_key(item['name'], item['unit'])
+        if key not in needs: needs[key] = {'name':item['name'], 'amount':0}
+        needs[key]['amount'] = round(needs[key]['amount'] + item['quantity'] * servings, 6)
+    uses = {}; missing = []
+    for key, item in needs.items():
+        remaining = item['amount']
+        pool = []
+        for stock in s['stocks']:
+            if ingredient_key(stock['name'], stock['unit']) != key: continue
+            day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
+            pool.extend((stock, lot) for lot in stock['lots'] if lot['quantity'] > 0 and (not lot['expiry'] or lot['expiry'] >= day))
+        for stock, lot in sorted(pool, key=lambda pair:pair[1]['expiry'] or '9999'):
+            amount = round(min(lot['quantity'], remaining), 6)
+            if amount <= 0: continue
+            used = uses.setdefault(stock['id'], {'stockId':stock['id'], 'unit':stock['unit'], 'amount':0, 'allocations':[]})
+            used['amount'] = round(used['amount'] + amount, 6)
+            used['allocations'].append({'lot':lot['id'], 'amount':amount})
+            remaining = round(remaining - amount, 6)
+        if remaining > 0.000001: missing.append(f"{item['name']}: {remaining:g} {key[1]}")
+    if missing: raise ValueError('Не хватает: ' + '; '.join(missing))
+    for stock in s['stocks']:
+        used = uses.get(stock['id'])
+        if not used: continue
+        for allocation in used['allocations']:
+            lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
+            lot['quantity'] = round(lot['quantity'] - allocation['amount'], 6)
+        movement(s, stock, 'consume', -used['amount'], now)
+    kcal = recipe['kcal'] * servings if recipe['kcal'] is not None else None
+    if kcal is not None and kcal > 20000: raise ValueError('Слишком много калорий для одной записи; уменьши число порций')
+    s['meals'].append({'id':str(uuid.uuid4()), 'name':recipe['name'], 'kind':recipe['kind'], 'note':recipe['note'],
+                       'kcal':kcal, 'date':local.date().isoformat(), 'time':local.strftime('%H:%M'),
+                       'consumed':None, 'consumptions':list(uses.values()), 'servings':servings})
+    return s
 
 
 def food_command(s, body, now, c):
     command = body['command']; product = body.get('product')
+    if command == 'cook': return cook(s, body, now)
     if command in ('shopping-add', 'shopping-check', 'shopping-delete', 'shopping-clear'):
         shopping = s.setdefault('manualShopping', [])
         if command == 'shopping-add':
@@ -394,9 +496,11 @@ def save(c, module, body, now=None):
         if c.execute('SELECT 1 FROM module_imports WHERE module=? AND digest=?', (module,fingerprint)).fetchone():
             return 200, response(c,module)
         incoming = normalize_import(module, body['state'], body['timezone'])
-        fields = ['days'] if module == 'gym' else ['stocks','meals','recipes','plans']
+        fields = ['days','sessions'] if module == 'gym' else ['stocks','meals','recipes','plans']
         # Repeated IDs may represent divergent device copies. Never overwrite implicitly.
         for field in fields:
+            if field == 'sessions':
+                s.setdefault(field, []); incoming.setdefault(field, [])
             existing = {x['id']:x for x in s[field]}
             for item in incoming[field]:
                 if item['id'] in existing and existing[item['id']] != item:
@@ -411,10 +515,22 @@ def save(c, module, body, now=None):
         c.execute('INSERT INTO module_imports VALUES(?,?)', (module,fingerprint))
     elif module == 'food' and body.get('command') == 'reset':
         s = copy.deepcopy(EMPTY_FOOD)
+    elif module == 'gym' and body.get('command') == 'reset':
+        s = copy.deepcopy(EMPTY_GYM)
     elif module == 'food' and body.get('command'):
         s = food_command(s, body, now, c)
     else:
         incoming = copy.deepcopy(body['state'])
+        if module == 'gym':
+            # Older open clients can still edit the program without erasing history.
+            if 'sessions' not in incoming and 'sessions' in s:
+                incoming['sessions'] = copy.deepcopy(s['sessions'])
+            validate_gym(incoming)
+            previous_sessions = {x['id']: x for x in s.get('sessions', [])}
+            for session in incoming.get('sessions', []):
+                previous_session = previous_sessions.get(session.get('id')) if isinstance(session, dict) else None
+                if previous_session and previous_session['finishedAt'] and session != previous_session:
+                    raise ValueError('Завершённая тренировка не меняется вместе с программой')
         if module == 'food':
             # Older clients do not know this optional field; preserve its records.
             if 'manualShopping' not in incoming and 'manualShopping' in s:

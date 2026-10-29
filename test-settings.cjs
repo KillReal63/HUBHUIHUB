@@ -13,7 +13,7 @@ const root=__dirname;
    const endpoint=p.split('/api/')[1];let body={enabled:false};
    if(endpoint==='session')body={authenticated:true,setupRequired:false};
    if(endpoint in records){
-    if(r.request().method()==='POST'){posts++;if(fail)return r.fulfill({status:fail,json:{error:'Проверочная ошибка'}});const data=r.request().postDataJSON();assert.equal(data.version,version);records[endpoint]=data.command==='reset'?{meals:[],stocks:[],recipes:[],plans:[],movements:[],demo:false}:data.state;version++;}
+    if(r.request().method()==='POST'){posts++;if(fail)return r.fulfill({status:fail,json:{error:'Проверочная ошибка'}});const data=r.request().postDataJSON();assert.equal(data.version,version);records[endpoint]=data.command==='reset'?(endpoint==='gym'?{version:1,selected:null,days:[],done:{},sessions:[]}:{meals:[],stocks:[],recipes:[],plans:[],movements:[],demo:false}):data.state;version++;}
     body={state:records[endpoint],version};
    }
    return r.fulfill({json:body});
