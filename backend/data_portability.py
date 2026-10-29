@@ -1,4 +1,5 @@
 """User-data export and version-checked restore; excludes auth and push secrets."""
+import copy
 import datetime as dt
 import hashlib
 import json
@@ -48,6 +49,7 @@ def summary(value):
     m=value['modules']
     return {**({'Что посмотреть':len(m['watch']['state']['items'])} if 'watch' in m else {}), 'Лекарства':len(m['medicine']['state']['meds']), 'Дела':len(m['tasks']['state']['tasks']),
             'Записи питания':len(m['food']['state']['meals']), 'Продукты':len(m['food']['state']['stocks']),
+            'Текущие покупки':len(m['food']['state'].get('manualShopping', [])), 'Походы в магазин':len(m['food']['state'].get('shoppingTrips', [])),
             'Дни тренировок':len(m['gym']['state']['days']),
             'Тренировочные сессии':len(m['gym']['state'].get('sessions', []))}
 
@@ -71,6 +73,12 @@ def process(c, body, validator):
     c.execute('INSERT INTO restore_points VALUES(?,?,?)',(operation,dt.datetime.now(dt.timezone.utc).isoformat(),json.dumps(current,ensure_ascii=False)))
     c.execute('DELETE FROM restore_points WHERE id NOT IN (SELECT id FROM restore_points ORDER BY created DESC LIMIT 5)')
     modules=value['modules']
+    food_state=copy.deepcopy(modules['food']['state'])
+    current_food=current['modules']['food']['state']
+    for field in ('manualShopping','shoppingTrips'):
+        if field not in food_state and field in current_food:
+            food_state[field]=copy.deepcopy(current_food[field])
+    modules={**modules,'food':{**modules['food'],'state':food_state}}
     for table,name in [('state','medicine'),('tasks_state','tasks')]:
         c.execute(f'UPDATE {table} SET version=version+1,body=? WHERE id=1',(json.dumps(modules[name]['state'],ensure_ascii=False),))
     for name in ('food','gym','watch'):

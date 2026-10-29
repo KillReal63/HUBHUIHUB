@@ -117,13 +117,21 @@ def api(c,path,body):
 
 def due(state,zone,created,now):
     local=dt.datetime.fromtimestamp(now,ZoneInfo(zone))
-    date=local.date().isoformat()
-    for key,moment in schedule_entries(state,date):
-        if key in state['taken'] or key in state.get('skipped',{}):continue
-        hour,minute=map(int,moment[11:].split(':'))
-        scheduled=local.replace(hour=hour,minute=minute,second=0,microsecond=0).timestamp()
-        if created<=scheduled and 0<=now-scheduled<300:
-            yield key,scheduled
+    medicines={med['id']:med for med in state['meds']}
+    # Three follow-ups may extend 36 hours past the planned dose.
+    for offset in (2,1,0):
+        date=(local.date()-dt.timedelta(days=offset)).isoformat()
+        for key,moment in schedule_entries(state,date):
+            if key in state['taken'] or key in state.get('skipped',{}):continue
+            planned=dt.datetime.fromisoformat(moment).replace(tzinfo=ZoneInfo(zone))
+            scheduled=planned.timestamp()
+            if dt.datetime.fromtimestamp(scheduled,ZoneInfo(zone)).replace(tzinfo=None)!=planned.replace(tzinfo=None) or created>scheduled:continue
+            med=medicines.get(key.split('|')[1],{})
+            minutes=med.get('reminderMinutes',0)
+            for index in range(4 if minutes else 1):
+                reminder_at=scheduled+index*minutes*60
+                if 0<=now-reminder_at<300:
+                    yield key if index==0 else key+'|reminder|'+str(index),reminder_at
 
 
 def run_once(now=None,sender=dispatch):
@@ -141,9 +149,14 @@ def run_once(now=None,sender=dispatch):
         for sid,body,zone,created in subscriptions:
             state=json.loads(c.execute('SELECT body FROM state WHERE id=1').fetchone()[0])
             for key,scheduled in due(state,zone,created,now):
-                base_date,_,clock=key.split('|')
-                moment=dt.datetime.fromtimestamp(scheduled,ZoneInfo(zone)).isoformat(timespec='minutes')[:16]
-                delivery_key=key if moment==base_date+'T'+clock else key+'@'+moment
+                base_key=key.split('|reminder|',1)[0]
+                base_date,med_id,clock=base_key.split('|')
+                index=int(key.rsplit('|',1)[1]) if '|reminder|' in key else 0
+                med=next((item for item in state['meds'] if item['id']==med_id),{})
+                planned=scheduled-index*med.get('reminderMinutes',0)*60
+                moment=dt.datetime.fromtimestamp(planned,ZoneInfo(zone)).isoformat(timespec='minutes')[:16]
+                delivery_base=base_key if moment==base_date+'T'+clock else base_key+'@'+moment
+                delivery_key=delivery_base+(('|reminder|'+str(index)) if index else '')
                 c.execute('INSERT OR IGNORE INTO push_deliveries VALUES(?,?,?,0,0,?)',(sid,delivery_key,'pending',now))
                 claimed=c.execute("UPDATE push_deliveries SET attempts=attempts+1,next_try=? WHERE subscription=? AND dose=? AND status='pending' AND attempts<3 AND next_try<=?",(now+45,sid,delivery_key,now))
                 c.commit()
@@ -153,7 +166,7 @@ def run_once(now=None,sender=dispatch):
                 if dict(due(latest,zone,created,now)).get(key)!=scheduled:
                     result='cancelled'
                 else:
-                    result=sender(json.loads(body),{'title':'Время приёма','body':'Пора проверить лекарства в расписании. Открой «Вовремя».','tag':delivery_key},ttl=max(1,int(300-(now-scheduled))))
+                    result=sender(json.loads(body),{'title':'Время приёма','body':'Приём ещё не отмечен. Открой «Вовремя».' if '|reminder|' in delivery_key else 'Пора проверить лекарства в расписании. Открой «Вовремя».','tag':delivery_key},ttl=max(1,int(300-(now-scheduled))))
                 if result=='expired':c.execute('DELETE FROM push_subscriptions WHERE id=?',(sid,))
                 c.execute('UPDATE push_deliveries SET status=? WHERE subscription=? AND dose=?',('pending' if result=='retry' else result,sid,delivery_key))
                 c.commit()

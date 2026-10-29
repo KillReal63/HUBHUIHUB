@@ -1,4 +1,8 @@
 :root{--bg:#eeeaf3;--panel:#fcfaff;--ink:#322b3d;--muted:#665b74;--accent:#68467c;--line:#d7cede;--soft:#e6dfed;--danger:#9c3445;color-scheme:light}
+:root[data-common-theme=air]{--bg:#e6eef4;--panel:#f8fbfd;--ink:#203b48;--muted:#536b77;--accent:#275e73;--line:#cbdbe4;--soft:#dce8ef;--danger:#9c3445}
+:root[data-common-theme=garden]{--bg:#e7efe9;--panel:#f8fbf7;--ink:#263e30;--muted:#52675a;--accent:#315b45;--line:#b9cbbd;--soft:#dbe8dd;--danger:#93424d}
+:root[data-common-theme=tiles]{--bg:#f4e9e3;--panel:#fffaf7;--ink:#4b322b;--muted:#725a50;--accent:#8a4933;--line:#d8beb1;--soft:#ead7ce;--danger:#9c3445}
+:root[data-common-theme=night]{color-scheme:dark;--bg:#202836;--panel:#2b374a;--ink:#eef2fa;--muted:#bdc9dc;--accent:#b9cffa;--line:#596b84;--soft:#344258;--danger:#ffb8ba}
 .watch-intro{padding:28px 0 26px}.watch-intro .eyebrow{letter-spacing:.12em;margin:0 0 12px;font-size:.75rem}
 .watch-intro h1{font:400 clamp(2.6rem,9vw,4rem)/1.05 Georgia,serif;letter-spacing:-.04em;margin:0 0 20px}
 .watch-intro>p:last-of-type{font-size:.9375rem}.watch-intro .primary{width:auto;border-radius:12px;font-size:.9375rem}

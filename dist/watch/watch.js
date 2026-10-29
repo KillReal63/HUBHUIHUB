@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const $=selector=>document.querySelector(selector),kinds={film:'Фильм',series:'Сериал',other:'Другое'};
+  const loading=document.createElement('div');loading.className='app-skeleton';loading.setAttribute('role','status');loading.setAttribute('aria-label','Загружаем список');loading.innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';document.querySelector('main').before(loading);
   let state={items:[]},filter='planned',editing=null;
   const node=(tag,className,text)=>{const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;};
   class WatchStore extends HubStore {
@@ -12,7 +13,7 @@
     }
     offerImport(){} // This app has no earlier browser-only data.
   }
-  const store=new WatchStore('watch',null,result=>{state=result;$('#add').disabled=false;render()},()=>!!document.querySelector('dialog[open]'));
+  const store=new WatchStore('watch',null,result=>{state=result;loading.hidden=true;$('#add').disabled=false;render()},()=>!!document.querySelector('dialog[open]'));
   const blocked=()=>store.busy||store.pending||store.version===null;
   function safeUrl(value){try{const url=new URL(value);return ['https:','http:'].includes(url.protocol)&&!url.username&&!url.password?url.href:null}catch{return null}}
   function render(){

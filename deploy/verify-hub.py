@@ -25,7 +25,7 @@ assert request('/')[0] == 200
 assert 'Мой день'.encode() in request('/')[1]
 assert request('/api/state')[0] == 401
 assert request('/api/auth-check')[0] == 401
-for path in ['/gym/', '/gym/program']:
+for path in ['/gym/', '/gym/program', '/shopping/']:
     status, _, headers = request(path)
     assert status == 302 and headers['Location'].startswith('https://144.31.166.231/?next='), (path, status, headers)
 for path in ['/hub/hub.css', '/hub/hub.js', '/vovrema/', '/vovrema/push.js', '/sw.js']:
@@ -37,7 +37,7 @@ digest = hashlib.sha256(token.encode()).hexdigest()
 with sqlite3.connect('/var/lib/vovremya/app.sqlite3') as db:
     db.execute('INSERT INTO sessions VALUES(?,?)', (digest, int(time.time())+60))
 try:
-    for path in ['/api/auth-check', '/api/state', '/vovrema/api/state', '/gym/', '/gym/program', '/gym/style.css']:
+    for path in ['/api/auth-check', '/api/state', '/api/food', '/vovrema/api/state', '/gym/', '/gym/program', '/gym/style.css', '/shopping/', '/shopping/shopping.js']:
         assert request(path, token)[0] == 200, path
 finally:
     with sqlite3.connect('/var/lib/vovremya/app.sqlite3') as db:

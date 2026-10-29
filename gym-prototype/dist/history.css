@@ -19,4 +19,6 @@ nav a{flex:1 1 auto}
 .rest-timer output{display:block;font-size:1.75rem;font-variant-numeric:tabular-nums}
 #rest-status{display:block;color:var(--muted);font-size:.875rem}
 .session-controls{margin:20px 0}.session-resume{margin-bottom:28px}
+#app.history-page>.panel,#app.history-page .session-record{padding:18px 20px}
+#app.history-page>.heading{margin-bottom:20px}
 @media(max-width:640px){.session-set{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 44px;gap:6px}.session-controls>button{width:100%}}

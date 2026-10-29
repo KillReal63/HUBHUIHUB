@@ -75,8 +75,11 @@ def validate_state(value):
         raise ValueError('Слишком много записей')
     ids = set()
     for m in meds:
-        if not isinstance(m, dict) or set(m) - {'cycle','category','meal','durationDays','shifts'} != {'id','name','dose','start','end','days','times','note'}:
+        if not isinstance(m, dict) or set(m) - {'cycle','category','meal','durationDays','shifts','reminderMinutes'} != {'id','name','dose','start','end','days','times','note'}:
             raise ValueError('Некорректное лекарство')
+        reminder=m.get('reminderMinutes',0)
+        if type(reminder) is not int or reminder not in (0,10,30,60) and not (60<=reminder<=720 and reminder%60==0):
+            raise ValueError('Некорректный интервал повторного уведомления')
         if 'meal' in m and (not isinstance(m['meal'], str) or m['meal'] not in ('before','after','any','fasting')):
             raise ValueError('Некорректное отношение к еде')
         if 'category' in m and (not isinstance(m['category'], str) or m['category'] not in ('pill','ointment','supplement','action','spray','drops','injection')):
@@ -250,6 +253,10 @@ class API(BaseHTTPRequestHandler):
                     old_meds={m['id']:m for m in previous['meds']}
                     if any(previous.get(field) and field not in data for field in ('skipped','fixed')) or any(old_meds.get(m['id'],{}).get('shifts') and 'shifts' not in m for m in data['meds']):
                         return self.reply(409,{'error':'Обнови страницу: в расписании есть переносы, которые эта версия не поддерживает.'})
+                    for med in data['meds']:
+                        old=old_meds.get(med['id'],{})
+                        if 'reminderMinutes' not in med and 'reminderMinutes' in old:
+                            med['reminderMinutes']=old['reminderMinutes']
                     result=c.execute('UPDATE state SET body=?,version=version+1 WHERE id=1 AND version=?',(json.dumps(data,ensure_ascii=False),version))
                     if result.rowcount!=1: return self.reply(409,{'error':'Данные изменились на другом устройстве. Расписание обновлено; повтори изменение.'})
                     c.commit()

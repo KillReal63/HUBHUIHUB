@@ -28,9 +28,11 @@
       });
     }
     button(label, action) {
-      this.bar.hidden = false;
+      const target=this.module==='gym'?document.querySelector('[data-gym-migration]'):null;
+      if(!target)this.bar.hidden = false;
       const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
-      button.onclick = action; this.bar.append(' ', button);
+      button.onclick = action;
+      if(target){button.className='secondary';target.hidden=false;target.append(button)}else this.bar.append(' ', button);
     }
     async api(body) {
       const response = await fetch('/api/' + this.module, {method: body ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
@@ -86,6 +88,7 @@
       } finally { this.lock(false); if (this.pending || this.version === null) document.querySelector('main').inert = true; }
     }
     offerImport() {
+      const migration=document.querySelector('[data-gym-migration]');if(migration){migration.replaceChildren();migration.hidden=true;}
       let legacy;
       try { legacy = JSON.parse(localStorage.getItem(this.legacyKey) || 'null'); if (localStorage.getItem(this.legacyKey + '-imported') === JSON.stringify(legacy)) return; }
       catch { return; }

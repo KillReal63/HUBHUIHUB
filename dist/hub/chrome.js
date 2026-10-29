@@ -11,6 +11,7 @@
  const config=path.startsWith('/vovrema')?['[data-panel="settings"]','Все лекарства, расписания, переносы и история отметок будут удалены с сервера на всех устройствах.']:
  path.startsWith('/tasks')?['#settings','Все дела, повторы и отметки выполнения будут удалены с сервера на всех устройствах.']:
  path.startsWith('/food')?['#settings','Дневник питания, запасы, история, любимые блюда и меню будут удалены с сервера на всех устройствах. Связанные покупки будут закрыты. Исходная локальная копия сохранится.']:
+ path.startsWith('/shopping')?['#settings','Текущий список покупок и вся история походов будут удалены с сервера на всех устройствах.']:
  path.startsWith('/watch')?['#settings','Все записи «Что посмотреть», заметки и отметки просмотра будут удалены с сервера на всех устройствах.']:
  path.startsWith('/gym')?['#gym-settings','Все дни программы, упражнения, отметки и история тренировок будут удалены с сервера на всех устройствах. Каталог упражнений и исходная локальная копия сохранятся.']:null;
  if(!config)return;
@@ -34,3 +35,17 @@ window.hubFocusRecord=node=>{
  if(!node)return;
  requestAnimationFrame(()=>{node.classList.add('record-target');node.tabIndex=-1;node.focus({preventScroll:true});node.scrollIntoView({block:'center'});});
 };
+
+(() => {
+ let scrollY=0;
+ const sync=()=>{
+  const open=!!document.querySelector('dialog[open]');
+  if(open&&!document.body.classList.contains('modal-open')){
+   scrollY=window.scrollY;document.body.style.top=`-${scrollY}px`;document.body.classList.add('modal-open');
+  }else if(!open&&document.body.classList.contains('modal-open')){
+   document.body.classList.remove('modal-open');document.body.style.top='';window.scrollTo(0,scrollY);
+  }
+ };
+ new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open'],childList:true});
+ document.addEventListener('close',sync,true);sync();
+})();

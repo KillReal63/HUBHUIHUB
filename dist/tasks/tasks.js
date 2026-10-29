@@ -3,6 +3,12 @@ const schedule=TaskSchedule,deviceZone=Intl.DateTimeFormat().resolvedOptions().t
 let authenticated=false,state={tasks:[],done:{}},version=0,busy=false,filter='active',period='today',editing=null,editingZone=deviceZone,toastTimer,targetShown=false;
 let subtaskDraft=[];
 const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+$('#loading').className='app-skeleton';$('#loading').innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';
+const todayPeriod=document.querySelector('[data-period="today"]'),allPeriod=document.querySelector('[data-period="any"]');if(todayPeriod)todayPeriod.textContent='Сегодня';if(allPeriod)allPeriod.textContent='Все';
+const reminderSelect=$('#reminder-minutes'),customReminder=reminderSelect?.insertAdjacentHTML?document.createElement('label'):null;
+if(customReminder){reminderSelect.insertAdjacentHTML('beforeend','<option value="custom">Свой интервал</option>');customReminder.id='custom-reminder-field';customReminder.hidden=true;customReminder.innerHTML='Интервал в часах<input id="custom-reminder-hours" type="number" min="1" max="12" step="1" value="2" inputmode="numeric"><span class="zone-note">От 1 до 12 часов. Будет до трёх повторов.</span>';reminderSelect.closest('label').after(customReminder)}
+function reminderChanged(){if(!customReminder)return;const custom=reminderSelect.value==='custom';customReminder.hidden=!custom;$('#custom-reminder-hours').disabled=!custom}
+reminderSelect?.addEventListener('change',reminderChanged);
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 function signIn(){authenticated=false;state={tasks:[],done:{}};$('#editor').close();$('#remove-dialog').close();$('#move-dialog').close();$('main').hidden=true;location.replace('/?next='+encodeURIComponent(location.pathname+location.search))}
 async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await response.json();if(!response.ok){if(response.status===401)signIn();const error=Error(data.error||'Не удалось выполнить запрос');error.status=response.status;throw error}return data}
@@ -21,7 +27,7 @@ function row(task,day,status){
   content.append(element('span','task-time',occurrence.time),element('h2','',task.title));
   content.append(element('span','task-meta',dateLabel(occurrence.date)+' · '+repeatLabel(task)+(task.timezone!==deviceZone?' · '+zoneLabel(task.timezone):'')));
   if(task.shifts?.[day])content.append(element('span','task-meta','Перенесено с '+dateLabel(day)+' · '+task.time));
-  if(task.reminderMinutes)content.append(element('span','task-meta','Ещё до 3 напоминаний · каждые '+task.reminderMinutes+' мин'));
+  if(task.reminderMinutes)content.append(element('span','task-meta','Ещё до 3 напоминаний · каждые '+(task.reminderMinutes>=120?task.reminderMinutes/60+' ч':task.reminderMinutes+' мин')));
   if(task.note)content.append(element('span','task-note',task.note));
   const actions=element('div','task-actions'),remove=element('button','row-delete','Удалить');remove.type='button';remove.setAttribute('aria-label','Удалить дело: '+task.title);remove.onclick=()=>requestDelete(task.id);actions.append(button,remove);if(!done){const move=element('button','row-move','Перенести');move.type='button';move.setAttribute('aria-label','Перенести событие: '+task.title+' · '+dateLabel(occurrence.date));move.onclick=()=>openMove(task.id,day);actions.append(move)}article.append(content,actions);
   if(task.subtasks?.length){article.classList.add('has-subtasks');article.append(checklist(task,day,done));}
@@ -40,7 +46,7 @@ function viewLists(now=new Date(),scope='any'){
 function render(){
   const list=$('#list');list.replaceChildren();const buckets=viewLists(new Date(),period);
   document.querySelectorAll('[data-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.period===period)));
-  $('#active-count').textContent=buckets.active.length;
+  $('#active-count').textContent=buckets.active.length;$('#active-count').hidden=buckets.active.length===0;
   document.querySelectorAll('[data-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filter===filter)));
   const names={active:'Предстоящие',done:'Выполненные',missed:'Пропущенные'};let count=0;
   for(const section of [filter]){
@@ -61,13 +67,13 @@ function openEditor(id){
   $('#title').value=task?.title||'';$('#note').value=task?.note||'';$('#date').value=task?.date||schedule.dayAt(deviceZone,future);$('#time').value=task?.time||new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(future);$('#repeat').value=task?.repeat||'once';editingZone=task?.timezone||deviceZone;
   document.querySelectorAll('#weekdays input').forEach(input=>input.checked=(task?.days||[(future.getDay()+6)%7]).includes(Number(input.value)));
   $('#zone-note').textContent='Время: '+zoneLabel(editingZone)+'. При поездках напоминание останется в этом часовом поясе.';
-  $('#reminder-minutes').value=String(task?.reminderMinutes||0);
+  const reminder=task?.reminderMinutes||0,fixed=[0,10,30,60];$('#reminder-minutes').value=fixed.includes(reminder)?String(reminder):'custom';$('#custom-reminder-hours').value=fixed.includes(reminder)?2:Math.max(1,Math.min(12,reminder/60));reminderChanged();
   $('#interval').value=task?.interval||2;$('#form-title').textContent=task?'Изменить дело':'Новое дело';$('#delete').hidden=!task;repeatChanged();$('#editor').showModal();$('#title').focus();
 }
 $('#add').onclick=()=>openEditor();$('#close-editor').onclick=()=>{if(!busy)$('#editor').close()};$('#editor').addEventListener('cancel',event=>{if(busy)event.preventDefault()});$('#repeat').onchange=repeatChanged;
 $('#task-form').onsubmit=async event=>{event.preventDefault();$('#form-error').textContent='';const days=[...document.querySelectorAll('#weekdays input:checked')].map(input=>Number(input.value));if($('#repeat').value==='weekly'&&!days.length){$('#form-error').textContent='Выбери хотя бы один день недели.';return}if(!$('#title').value.trim()){$('#form-error').textContent='Напиши, что нужно сделать.';return}
   const task={id:editing||crypto.randomUUID(),title:$('#title').value.trim(),note:$('#note').value.trim(),date:$('#date').value,time:$('#time').value,repeat:$('#repeat').value,days,timezone:editingZone};
-  task.reminderMinutes=Number($('#reminder-minutes').value);
+  task.reminderMinutes=$('#reminder-minutes').value==='custom'?Number($('#custom-reminder-hours').value)*60:Number($('#reminder-minutes').value);if(!Number.isInteger(task.reminderMinutes)||task.reminderMinutes<0||task.reminderMinutes>720){$('#form-error').textContent='Укажи интервал повторного уведомления от 1 до 12 часов.';return}
   task.subtasks=subtaskDraft.map(item=>({id:item.id,title:item.title.trim()})).filter(item=>item.title);
   if(task.repeat==='interval'){task.interval=Number($('#interval').value);if(!Number.isInteger(task.interval)||task.interval<1||task.interval>365){$('#form-error').textContent='Укажи интервал от 1 до 365 дней.';return}}
   const saved=await change(async()=>{const next=structuredClone(state),index=next.tasks.findIndex(item=>item.id===task.id);if(editing&&index<0)throw Error('Дело уже удалено на другом устройстве. Закрой форму и создай новое.');if(index>=0){const previous=next.tasks[index];if(previous.subtaskDone){const ids=new Set(task.subtasks.map(item=>item.id));task.subtaskDone={};for(const [day,checked] of Object.entries(previous.subtaskDone)){const kept=checked.filter(id=>ids.has(id));if(kept.length)task.subtaskDone[day]=kept;}}if(previous.shifts){if(Object.keys(previous.shifts).some(day=>!schedule.occurs(task,day)))throw Error('Новое расписание исключает перенесённые события. Сохрани прежнюю дату начала и повтор или создай отдельное дело.');task.shifts=previous.shifts;}}if(index<0)next.tasks.push(task);else next.tasks[index]=task;await save(next)});if(saved){$('#editor').close();toast('Дело сохранено')}

@@ -1,5 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s), key='my-day-food-prototype-v1',themeKey='my-day-food-theme';
+$('#connection').className='app-skeleton';$('#connection').innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';
 const themes=['pistachio','berry','paper','evening'];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
@@ -11,13 +12,15 @@ const forecast=s=>plusDays(s.asOf,Math.ceil(s.quantity/s.daily));
 const plural=(n,forms)=>forms[new Intl.PluralRules('ru').select(n)==='one'?0:new Intl.PluralRules('ru').select(n)==='few'?1:2];
 const number=n=>new Intl.NumberFormat('ru',{maximumFractionDigits:2}).format(n);
 let state={meals:[],stocks:[],demo:false},editStock=null,toastTimer,ready=false;
+let localTheme='pistachio',commonTheme=window.MyDayPreferences?.themeFor?.('food')||null;
 function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 let shoppingLinks=[];
 const foodStore=new HubStore('food',key,(next,result)=>{state=next;shoppingLinks=result.shopping||[];ready=true;render();document.querySelector('main').hidden=false;$('#connection').hidden=true;window.openHubFood?.()},()=>!!document.querySelector('dialog[open]'));
 async function persist(next){return !!(await foodStore.save({state:next}))}
 async function foodCommand(command,extra){return !!(await foodStore.save({command,...extra}))}
-function changeTheme(theme){if(!themes.includes(theme))return;document.documentElement.dataset.theme=theme;document.querySelector(`input[name=theme][value=${theme}]`).checked=true;document.querySelector('meta[name=theme-color]').content=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();}
-try{changeTheme(localStorage.getItem(themeKey)||'pistachio')}catch{}
+function changeTheme(theme=localTheme){if(!themes.includes(theme))return;localTheme=theme;const effective=commonTheme||localTheme;document.documentElement.dataset.theme=effective;document.querySelectorAll('input[name=theme]').forEach(input=>{input.checked=input.value===effective;input.disabled=!!commonTheme});document.querySelector('meta[name=theme-color]').content=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();const status=document.querySelector('#food-theme-status');if(status)status.textContent=commonTheme?'Оформление синхронизировано с хабом.':'Выбор сохраняется на этом устройстве.';}
+try{localTheme=localStorage.getItem(themeKey)||'pistachio'}catch{}changeTheme(localTheme);
+window.addEventListener('my-day-common-theme',event=>{commonTheme=event.detail?.themeFor?.('food')||null;changeTheme(localTheme)});
 $('#diary-date').value=today();
 function render(){
  const date=$('#diary-date').value||today(),meals=state.meals.filter(m=>m.date===date).sort((a,b)=>a.time.localeCompare(b.time));
@@ -26,16 +29,15 @@ function render(){
  $('#meals').innerHTML=meals.length?['Завтрак','Обед','Ужин','Перекус'].map(kind=>{const list=meals.filter(m=>m.kind===kind);return list.length?`<section class="meal-group"><header><h3>${kind}</h3><span class="eyebrow">${list.length} ${plural(list.length,['запись','записи','записей'])}</span></header>${list.map(m=>`<article class="meal-row"><time>${esc(m.time)}</time><div><strong>${esc(m.name)}</strong><p>${[m.note&&esc(m.note),m.kcal!==null&&`${number(m.kcal)} ккал`,m.consumed&&`${number(m.consumed.amount)} ${esc(m.consumed.unit)} из запасов`,m.consumptions&&`Приготовлено: ${number(m.servings)} ${plural(m.servings,['порция','порции','порций'])} · ингредиенты списаны`].filter(Boolean).join(' · ')}</p></div><button data-favorite-meal="${esc(m.id)}" aria-label="В любимые: ${esc(m.name)}">♡</button><button data-remove-meal="${esc(m.id)}" aria-label="Удалить запись ${esc(m.name)}">×</button></article>`).join('')}</section>`:''}).join(''):'<div class="empty"><h3>Что сегодня было вкусного?</h3><p>Запиши блюдо или перекус. Здесь соберётся твой день.</p></div>';
  $('#stocks').innerHTML=state.stocks.length?state.stocks.map(s=>{const days=Math.max(0,dayGap(forecast(s),today())),segments=Math.min(7,Math.max(3,s.days));return `<article class="stock-card"><div class="stock-head"><div><h3>${esc(s.name)}</h3><p>Учтено ${number(s.quantity)} ${esc(s.unit)} · ${dateText(s.asOf)}</p></div><strong>${days}<small>дн. по оценке</small></strong></div><div class="runway" aria-label="Осталось примерно ${days} ${plural(days,['день','дня','дней'])}">${Array.from({length:segments},(_,i)=>`<span class="${i<days?'filled':''}"></span>`).join('')}</div><p class="caption">${number(s.daily)} ${esc(s.unit)} в день · ${days?`покупка ${dateText(forecast(s))}`:'пора проверить остаток'}</p>${s.expiry?`<p class="expiry">${s.expiry<today()?'Срок годности прошёл':'Годен до'} ${dateText(s.expiry)}</p>`:''}<div class="stock-actions"><button data-rule="${esc(s.id)}">Автопокупка</button><button data-lots="${esc(s.id)}">Партии и история</button><button data-replenish="${esc(s.id)}">＋ Пополнить</button><button data-portion="${esc(s.id)}" ${s.quantity<=0?'disabled':''}>Съел порцию</button></div></article>`}).join(''):'<div class="empty"><h3>Заглянем в холодильник?</h3><p>Добавь продукт, количество и на сколько дней его обычно хватает.</p></div>';
  const shopping=shoppingLinks.filter(x=>x.task&&!x.suppressed);
- $('#shopping-count').textContent=(shopping.length+(state.manualShopping||[]).filter(item=>!item.done).length)||'';
- renderManualShopping();
- $('#shopping').innerHTML=shoppingLinks.map(link=>{const product=state.stocks.find(s=>s.id===link.product);if(!product||!product.rule.enabled)return '';return `<article class="shopping-row"><div><h3>${esc(product.name)}</h3>${link.suppressed?'<p>Покупка закрыта или удалена. Уточни остаток или возобнови правило.</p>':link.task?`<p>${esc(link.task.note)}</p><a href="/tasks/?task=${encodeURIComponent(link.task.id)}">Открыть дело</a>`:'<p>Запаса пока достаточно.</p>'}<div class="inventory-actions"><button data-buy="${esc(product.id)}">Купил · учесть количество</button><button data-rule="${esc(product.id)}">Правило покупки</button></div></div></article>`}).join('')||'<p class="caption">Включи автопокупку в настройках продукта.</p>';
+ $('#shopping-count').textContent=(state.manualShopping||[]).filter(item=>!item.done).length?`· ${(state.manualShopping||[]).filter(item=>!item.done).length}`:'';
+ $('#shopping').innerHTML=shoppingLinks.map(link=>{const product=state.stocks.find(s=>s.id===link.product);if(!product||!product.rule.enabled)return '';return `<article class="shopping-row"><div><h3>${esc(product.name)}</h3>${link.suppressed?'<p>Покупка закрыта или удалена. Уточни остаток или возобнови правило.</p>':link.task?`<p>${esc(link.task.note)}</p><a href="/tasks/?task=${encodeURIComponent(link.task.id)}">Открыть дело</a>`:'<p>Запаса пока достаточно.</p>'}<div class="inventory-actions"><button data-add-shopping="${esc(product.name)}">В список покупок</button><button data-buy="${esc(product.id)}">Купил · учесть количество</button><button data-rule="${esc(product.id)}">Правило покупки</button></div></div></article>`}).join('')||'<p class="caption">Включи автопокупку в настройках продукта.</p>';
  if(typeof renderPlanner==='function')renderPlanner();
 }
 function tab(name){document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===name)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name)}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).close());
 $('#settings-open').onclick=()=>$('#settings').showModal();
-document.querySelectorAll('[name=theme]').forEach(r=>r.onchange=()=>{changeTheme(r.value);try{localStorage.setItem(themeKey,r.value)}catch{toast('Оформление изменено, но браузер не сохранил выбор.')}});
+document.querySelectorAll('[name=theme]').forEach(r=>r.onchange=()=>{if(commonTheme){changeTheme(localTheme);return}changeTheme(r.value);try{localStorage.setItem(themeKey,r.value)}catch{toast('Оформление изменено, но браузер не сохранил выбор.')}});
 $('#diary-date').onchange=render;
 function mealEditor(stockId){const f=$('#meal-form');f.reset();f.elements.date.value=$('#diary-date').value||today();f.elements.time.value=new Date().toTimeString().slice(0,5);$('#meal-error').textContent='';$('#meal-stock').innerHTML='<option value="">Не списывать</option>'+state.stocks.filter(s=>s.quantity>0).map(s=>`<option value="${esc(s.id)}">${esc(s.name)} · ${number(s.quantity)} ${esc(s.unit)}</option>`).join('');if(stockId){const s=state.stocks.find(s=>s.id===stockId);f.elements.date.value=today();f.elements.stock.value=s.id;f.elements.amount.value=Math.min(s.quantity,s.daily);f.elements.name.value=s.name;f.querySelector('details').open=true}updateUnit();$('#meal-editor').showModal()}
 function updateUnit(){const s=state.stocks.find(s=>s.id===$('#meal-stock').value);$('#consume-unit').textContent=s?s.unit:'в единицах продукта';$('#meal-form').elements.amount.required=!!s;}
@@ -56,27 +58,4 @@ window.resetAppRecords=async()=>{
  return saved;
 };
 
-function renderManualShopping(){
- const items=state.manualShopping||[];
- $('#manual-list').innerHTML=items.length?items.map(item=>`<div class="manual-row"><label><input type="checkbox" data-manual-check="${esc(item.id)}" ${item.done?'checked':''}><span>${esc(item.name)}</span></label><button type="button" data-manual-delete="${esc(item.id)}" aria-label="Удалить покупку: ${esc(item.name)}">×</button></div>`).join(''):'<p class="caption">Список пуст. Добавь покупки перед походом в магазин.</p>';
- $('#manual-clear').hidden=!items.some(item=>item.done);
-}
-let manualSubmitted=null;
-$('#manual-form').onsubmit=async event=>{
- event.preventDefault();if(foodStore.busy||foodStore.pending)return;
- const input=$('#manual-name'),name=input.value.trim();if(!name)return;
- manualSubmitted=input.value;
- if(await foodCommand('shopping-add',{name})){if(input.value===manualSubmitted)input.value='';manualSubmitted=null;input.focus();}
-};
-window.addEventListener('hub-save-recovered',event=>{if(event.detail==='food'&&manualSubmitted!==null){if($('#manual-name').value===manualSubmitted)$('#manual-name').value='';manualSubmitted=null;}});
-$('#manual-list').onchange=async event=>{
- const input=event.target,id=input.dataset.manualCheck;if(!id)return;
- const done=input.checked;input.checked=!done;if(foodStore.busy||foodStore.pending)return;
- await foodCommand('shopping-check',{item:id,done});
-};
-$('#manual-list').onclick=async event=>{
- const id=event.target.closest('[data-manual-delete]')?.dataset.manualDelete;if(!id||foodStore.busy||foodStore.pending)return;
- const item=(state.manualShopping||[]).find(item=>item.id===id);
- if(item&&confirm('Удалить «'+item.name+'» из списка покупок?'))await foodCommand('shopping-delete',{item:id});
-};
-$('#manual-clear').onclick=async()=>{if(foodStore.busy||foodStore.pending)return;if(confirm('Убрать все купленные позиции? Остальные останутся в списке.'))await foodCommand('shopping-clear');};
+document.addEventListener('click',async event=>{const name=event.target.closest('[data-add-shopping]')?.dataset.addShopping;if(!name||foodStore.busy||foodStore.pending)return;if(await foodCommand('shopping-add',{name}))toast('Добавлено в приложение «Покупки».')});

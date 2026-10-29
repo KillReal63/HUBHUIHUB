@@ -139,6 +139,11 @@ with sync_playwright() as p:
     page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
     assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==60
     page.locator('.task-body').first.click()
+    page.locator('#reminder-minutes').select_option('custom')
+    page.locator('#custom-reminder-hours').fill('12')
+    page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
+    assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==720
+    page.locator('.task-body').first.click()
     page.locator('#reminder-minutes').select_option('10')
     page.locator('#save').click();expect(page.locator('#editor')).not_to_be_visible()
     assert context.request.get(BASE+'/api/tasks').json()['state']['tasks'][0]['reminderMinutes']==10

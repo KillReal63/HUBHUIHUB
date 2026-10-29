@@ -169,13 +169,32 @@ def meal_uses(meal):
 
 
 def validate_food(s, require_allocations=False):
-    if not isinstance(s, dict) or set(s) - {'manualShopping'} != set(EMPTY_FOOD) or type(s['demo']) is not bool:
+    if not isinstance(s, dict) or set(s) - {'manualShopping', 'shoppingTrips'} != set(EMPTY_FOOD) or type(s['demo']) is not bool:
         raise ValueError('Некорректный дневник')
     items(s.get('manualShopping', []), 500)
     for item in s.get('manualShopping', []):
         if set(item) != {'id', 'name', 'done'} or type(item['done']) is not bool:
             raise ValueError('Некорректная покупка')
         text(item['name'], 120, True)
+    trips = s.get('shoppingTrips', [])
+    items(trips, 200)
+    total_trip_items = 0
+    for trip in trips:
+        if set(trip) != {'id', 'completedAt', 'items'}:
+            raise ValueError('Некорректная история покупок')
+        text(trip['completedAt'], 40, True)
+        try:
+            completed = dt.datetime.fromisoformat(trip['completedAt'].replace('Z', '+00:00'))
+            if completed.tzinfo is None: raise ValueError()
+        except (ValueError, TypeError):
+            raise ValueError('Некорректная дата похода')
+        items(trip['items'], 500); total_trip_items += len(trip['items'])
+        for item in trip['items']:
+            if set(item) != {'id', 'name', 'bought'} or type(item['bought']) is not bool:
+                raise ValueError('Некорректная покупка в истории')
+            text(item['name'], 120, True)
+    if total_trip_items > 10000:
+        raise ValueError('Слишком большая история покупок')
     stock_ids = items(s['stocks'], 1000)
     stocks = {x['id']:x for x in s['stocks']}
     for stock in s['stocks']:
@@ -429,14 +448,40 @@ def cook(s, body, now):
 def food_command(s, body, now, c):
     command = body['command']; product = body.get('product')
     if command == 'cook': return cook(s, body, now)
-    if command in ('shopping-add', 'shopping-check', 'shopping-delete', 'shopping-clear'):
+    if command in ('shopping-add', 'shopping-check', 'shopping-delete', 'shopping-clear', 'shopping-finish', 'shopping-repeat', 'shopping-history-clear', 'shopping-reset'):
         shopping = s.setdefault('manualShopping', [])
+        trips = s.setdefault('shoppingTrips', [])
         if command == 'shopping-add':
             text(body.get('name'), 120, True)
             if len(shopping) >= 500: raise ValueError('В списке уже 500 покупок. Удали ненужные.')
             shopping.append({'id':str(uuid.uuid4()), 'name':body['name'].strip(), 'done':False})
         elif command == 'shopping-clear':
             s['manualShopping'] = [item for item in shopping if not item['done']]
+        elif command == 'shopping-finish':
+            if not shopping: raise ValueError('Список покупок пуст')
+            if not any(item['done'] for item in shopping): raise ValueError('Отметь хотя бы одну покупку')
+            trips.insert(0, {'id':str(uuid.uuid4()), 'completedAt':now.isoformat(),
+                             'items':[{'id':str(uuid.uuid4()), 'name':item['name'], 'bought':item['done']} for item in shopping]})
+            s['shoppingTrips'] = trips[:200]
+            s['manualShopping'] = []
+        elif command == 'shopping-repeat':
+            ident(body.get('trip'))
+            trip = next((trip for trip in trips if trip['id'] == body['trip']), None)
+            if trip is None: raise ValueError('Поход не найден. Обнови историю.')
+            item_id = body.get('item')
+            if item_id is not None: ident(item_id)
+            source = [item for item in trip['items'] if item_id is None or item['id'] == item_id]
+            if item_id is not None and not source: raise ValueError('Покупка не найдена в истории')
+            existing = {' '.join(item['name'].lower().split()) for item in shopping}
+            for item in source:
+                normalized = ' '.join(item['name'].lower().split())
+                if normalized in existing: continue
+                if len(shopping) >= 500: raise ValueError('В списке уже 500 покупок. Удали ненужные.')
+                shopping.append({'id':str(uuid.uuid4()), 'name':item['name'], 'done':False}); existing.add(normalized)
+        elif command == 'shopping-history-clear':
+            s['shoppingTrips'] = []
+        elif command == 'shopping-reset':
+            s['manualShopping'] = []; s['shoppingTrips'] = []
         else:
             ident(body.get('item'))
             item = next((item for item in shopping if item['id'] == body['item']), None)
@@ -514,7 +559,8 @@ def save(c, module, body, now=None):
             s['demo'] = False
         c.execute('INSERT INTO module_imports VALUES(?,?)', (module,fingerprint))
     elif module == 'food' and body.get('command') == 'reset':
-        s = copy.deepcopy(EMPTY_FOOD)
+        shopping_state = {field:copy.deepcopy(s[field]) for field in ('manualShopping','shoppingTrips') if field in s}
+        s = {**copy.deepcopy(EMPTY_FOOD), **shopping_state}
     elif module == 'gym' and body.get('command') == 'reset':
         s = copy.deepcopy(EMPTY_GYM)
     elif module == 'food' and body.get('command'):
@@ -533,8 +579,9 @@ def save(c, module, body, now=None):
                     raise ValueError('Завершённая тренировка не меняется вместе с программой')
         if module == 'food':
             # Older clients do not know this optional field; preserve its records.
-            if 'manualShopping' not in incoming and 'manualShopping' in s:
-                incoming['manualShopping'] = copy.deepcopy(s['manualShopping'])
+            for field in ('manualShopping', 'shoppingTrips'):
+                if field not in incoming and field in s:
+                    incoming[field] = copy.deepcopy(s[field])
             validate_food(incoming)
             if incoming['stocks'] != s['stocks'] or incoming['movements'] != s['movements'] or incoming['demo'] != s['demo']:
                 raise ValueError('Запасы изменяются отдельной операцией')

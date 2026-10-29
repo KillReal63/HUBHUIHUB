@@ -78,7 +78,7 @@ with sync_playwright() as p:
  go('/vovrema/');page.evaluate("openSkip(today()+'|test-med|20:00')");page.locator('[name=postpone][value=hour]').check();assert page.locator('#skip-submit').inner_text()=='Перенести приём';page.locator('#skip-submit').click();page.wait_for_function("!document.querySelector('#skip-editor').open");assert state['meds'][0]['shifts'][0]['scope']=='once'
  assert page.evaluate("shiftedMoment(state.meds[0],moveMoment(today()+'T09:00',1440)).slice(11)")=='09:00'
  no_overflow()
- for path in ['/vovrema/','/tasks/','/food/','/gym/']:
+ for path in ['/vovrema/','/tasks/','/food/','/shopping/','/gym/']:
   go(path);assert page.locator('.app-back').get_attribute('href')=='/';no_overflow()
  assert not errors,errors
  print('PASS: four hub themes, 320/390px task layouts and scopes, completion/undo, empty gym and persistence, optional weekdays, add/edit exercise, photo viewer, themed close buttons, one-time medicine shift and back links')

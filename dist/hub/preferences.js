@@ -1,18 +1,14 @@
 (() => {
- const key='my-day-text-size',sizes=['normal','large','largest'];
- let size='normal';
- try { const saved=localStorage.getItem(key) ?? localStorage.getItem('vovremya-text-size'); if(sizes.includes(saved))size=saved; } catch {}
- function apply(){document.documentElement.dataset.textSize=size;document.documentElement.style.fontSize=({normal:'100%',large:'115%',largest:'130%'})[size];document.querySelectorAll('[name="hub-text-size"]').forEach(input=>input.checked=input.value===size);}
- apply();
- document.addEventListener('DOMContentLoaded',()=>{
-  const settings=document.getElementById('hub-settings');
-  if(settings){
-   const field=document.createElement('fieldset');field.className='hub-text-settings';
-   field.innerHTML='<legend>Размер текста</legend><div class="hub-text-choices"><label><input type="radio" name="hub-text-size" value="normal">Обычный</label><label><input type="radio" name="hub-text-size" value="large">Увеличенный</label><label><input type="radio" name="hub-text-size" value="largest">Крупный</label></div><p role="status">Для хаба и всех приложений на этом устройстве.</p>';
-   settings.querySelector('.app-dialog-head').after(field);
-   field.addEventListener('change',event=>{if(!sizes.includes(event.target.value))return;size=event.target.value;apply();try{localStorage.setItem(key,size);field.querySelector('[role=status]').textContent='Для хаба и всех приложений на этом устройстве.';}catch{field.querySelector('[role=status]').textContent='Размер изменён, но браузер не смог его запомнить.';}});
-  }
-  apply();
- });
- window.addEventListener('storage',event=>{if(event.key===key||event.key===null){size=sizes.includes(event.newValue)?event.newValue:'normal';apply();}});
+ const textKey='my-day-text-size',sizes=['normal','large','largest'];
+ const syncKey='my-day-theme-sync',profileKey='my-day-theme-profile',profiles=['air','garden','tiles','night'],profileColors={air:'#e6eef4',garden:'#e7efe9',tiles:'#f4e9e3',night:'#202836'};
+ const themeMaps={medicine:{air:'glass',garden:'tide',tiles:'dawn',night:'coal'},tasks:{air:'air',garden:'sage',tiles:'iris',night:'graphite'},food:{air:'paper',garden:'pistachio',tiles:'berry',night:'evening'},gym:{air:'logbook',garden:'studio',tiles:'original',night:'sport'}};
+ let size='normal',themeSync=false,profile='air';
+ try{const saved=localStorage.getItem(textKey)??localStorage.getItem('vovremya-text-size');if(sizes.includes(saved))size=saved;themeSync=localStorage.getItem(syncKey)==='1';const savedProfile=localStorage.getItem(profileKey);if(profiles.includes(savedProfile))profile=savedProfile}catch{}
+ function applyText(){document.documentElement.dataset.textSize=size;document.documentElement.style.fontSize=({normal:'100%',large:'115%',largest:'130%'})[size];document.querySelectorAll('[name="hub-text-size"]').forEach(input=>input.checked=input.value===size)}
+ function themeFor(app){return themeSync?themeMaps[app]?.[profile]||null:null}
+ function applyTheme(){if(themeSync){document.documentElement.dataset.commonTheme=profile;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',profileColors[profile])}else delete document.documentElement.dataset.commonTheme;const detail={enabled:themeSync,profile,themeFor};window.MyDayPreferences={themeFor,get themeSync(){return themeSync},get themeProfile(){return profile}};window.dispatchEvent(new CustomEvent('my-day-common-theme',{detail}));const toggle=document.querySelector('#hub-theme-sync');if(toggle)toggle.checked=themeSync;const status=document.querySelector('#hub-theme-status');if(status)status.textContent=themeSync?'Выбранное оформление применяется ко всем приложениям на этом устройстве.':'У каждого приложения остаётся собственное оформление.'}
+ function storeTheme(){localStorage.setItem(syncKey,themeSync?'1':'0');localStorage.setItem(profileKey,profile)}
+ applyText();applyTheme();
+ document.addEventListener('DOMContentLoaded',()=>{const settings=document.getElementById('hub-settings');if(settings){const field=document.createElement('fieldset');field.className='hub-text-settings';field.innerHTML='<legend>Размер текста</legend><div class="hub-text-choices"><label><input type="radio" name="hub-text-size" value="normal">Обычный</label><label><input type="radio" name="hub-text-size" value="large">Увеличенный</label><label><input type="radio" name="hub-text-size" value="largest">Крупный</label></div><p role="status">Для хаба и всех приложений на этом устройстве.</p>';settings.querySelector('.app-dialog-head').after(field);field.addEventListener('change',event=>{if(!sizes.includes(event.target.value))return;size=event.target.value;applyText();try{localStorage.setItem(textKey,size);field.querySelector('[role=status]').textContent='Для хаба и всех приложений на этом устройстве.'}catch{field.querySelector('[role=status]').textContent='Размер изменён, но браузер не смог его запомнить.'}});const sync=document.querySelector('#hub-theme-sync');sync?.addEventListener('change',()=>{themeSync=sync.checked;const selected=document.querySelector('[name="hub-theme"]:checked')?.value;if(profiles.includes(selected))profile=selected;try{storeTheme()}catch{document.querySelector('#hub-theme-status').textContent='Оформление применено, но браузер не смог его запомнить.'}applyTheme()});settings.addEventListener('change',event=>{if(event.target.name!=='hub-theme'||!themeSync||!profiles.includes(event.target.value))return;profile=event.target.value;try{storeTheme()}catch{document.querySelector('#hub-theme-status').textContent='Оформление применено, но браузер не смог его запомнить.'}applyTheme()})}applyText();applyTheme()});
+ window.addEventListener('storage',event=>{if(event.key===textKey||event.key===null){size=sizes.includes(event.newValue)?event.newValue:'normal';applyText()}if(event.key===syncKey||event.key===profileKey||event.key===null){try{themeSync=localStorage.getItem(syncKey)==='1';const next=localStorage.getItem(profileKey);profile=profiles.includes(next)?next:'air'}catch{themeSync=false;profile='air'}applyTheme()}});
 })();

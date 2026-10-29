@@ -36,7 +36,7 @@ window.openHubFood=()=>{
  }
  const entry=state.plans.find(p=>p.id===plan);
  if(!entry){toast('Это блюдо уже убрано из меню.');return;}
- $('#week-date').value=FoodPlan.monday(entry.date);renderPlanner();tab('menu');
+ chooseMenuDay(entry.date);tab('menu');
  const button=[...document.querySelectorAll('[data-remove-plan]')].find(b=>b.dataset.removePlan===plan);
  window.hubFocusRecord?.(button?.closest('.menu-entry'));
 };

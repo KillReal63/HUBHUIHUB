@@ -62,3 +62,12 @@
 :root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) #notice{color:var(--button-ink)}
 
 :root:is([data-theme=logbook],[data-theme=studio],[data-theme=sport]) nav a[aria-current=page]{color:var(--button-ink)}
+
+.group-icon{display:inline-block;width:20px;height:20px;vertical-align:-5px;flex:none}
+.badge .group-icon{width:17px;height:17px;vertical-align:-4px}
+.day-form{display:grid;gap:18px}.day-form .field,.day-form fieldset{margin:0}.day-name-preview{margin:0;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:1.125rem;font-weight:700}
+.day-form .group-choice{min-height:44px}.exercise-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.exercise-choice :is(.button,button){display:grid;place-items:center;text-align:center;min-height:48px}
+.gym-migration{display:grid;gap:10px;margin:20px 0;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}.gym-migration h3,.gym-migration p{margin:0}.gym-migration button{width:100%}
+.panel-head>.danger{margin-left:auto}.day-actions{margin-left:auto}
+@media(max-width:640px){.exercise-choice{grid-template-columns:1fr}.panel-head>.danger{width:100%;margin-left:0}.day-actions{width:100%;margin-left:0}.day-actions button{flex:1}}
+.style-option:disabled{opacity:.62;cursor:default}.style-sync-note{width:100%;margin:0;color:var(--muted);font-size:.8125rem}

@@ -16,7 +16,7 @@ self.addEventListener('notificationclick',event=>{
   event.waitUntil((async()=>{
     const target=notificationTarget(event.notification.data?.url);
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-    const appWindows=windows.filter(client=>{const url=new URL(client.url);return url.origin===self.location.origin&&(url.pathname.startsWith('/vovrema/')||url.pathname.startsWith('/tasks/')||url.pathname.startsWith('/gym/')||url.pathname==='/')});
+    const appWindows=windows.filter(client=>{const url=new URL(client.url);return url.origin===self.location.origin&&(url.pathname.startsWith('/vovrema/')||url.pathname.startsWith('/tasks/')||url.pathname.startsWith('/gym/')||url.pathname.startsWith('/shopping/')||url.pathname==='/')});
     const client=appWindows.find(client=>new URL(client.url).pathname===new URL(target,self.location.origin).pathname)||appWindows[0];
     if(client){if(client.url!==self.location.origin+target)await client.navigate(target);await client.focus();return}
     await self.clients.openWindow(target);

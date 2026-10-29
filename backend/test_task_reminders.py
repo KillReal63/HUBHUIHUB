@@ -30,7 +30,7 @@ class ReminderTests(unittest.TestCase):
         self.c.commit()
 
     def test_validation_defaults_and_old_client(self):
-        for invalid in [True,False,10.0,1,20,-1,120,'30',None]:
+        for invalid in [True,False,10.0,1,20,-1,90,721,'30',None]:
             value=copy.deepcopy(self.state);value['tasks'][0]['reminderMinutes']=invalid
             with self.subTest(value=invalid),self.assertRaises(ValueError):tasks.validate(value)
         legacy=copy.deepcopy(self.state);del legacy['tasks'][0]['reminderMinutes']
@@ -120,6 +120,13 @@ class ReminderTests(unittest.TestCase):
         self.state['done']['test-task|2026-09-30']='2026-09-30T05:00:00Z'
         self.assertEqual(list(tasks.due(self.state,0,NOW+1800)),[])
         self.assertEqual(len(list(tasks.due(self.state,0,NOW+86400+1800))),1)
+
+    def test_custom_twelve_hour_interval(self):
+        self.state['tasks'][0]['reminderMinutes']=720
+        for index in range(4):
+            due=list(tasks.due(self.state,0,NOW+index*720*60))
+            self.assertEqual(len(due),1)
+            self.assertEqual('|reminder|' in due[0][0],index>0)
 
 
 if __name__=='__main__':unittest.main()

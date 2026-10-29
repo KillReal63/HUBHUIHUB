@@ -36,3 +36,4 @@ input,select,textarea{background:var(--field);color:var(--ink);border-color:var(
 :root[data-tasks-theme=air] .task-body h2{font-size:1.25rem;font-weight:500}
 :root[data-tasks-theme=air] .group-title{padding-bottom:10px;border-bottom:2px solid var(--accent)}
 :root[data-tasks-theme=air] .tabs{border:0;background:var(--panel);border-radius:12px;padding:4px}
+.theme-card:has(input:disabled){opacity:.62;cursor:default}

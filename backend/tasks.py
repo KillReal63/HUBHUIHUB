@@ -33,7 +33,8 @@ def validate(state):
         required = {'id', 'title', 'note', 'date', 'time', 'repeat', 'days', 'timezone'}
         if not isinstance(task, dict) or not required <= set(task) or set(task) - required - {'interval', 'shifts', 'subtasks', 'subtaskDone', 'reminderMinutes'}:
             raise ValueError('Invalid task')
-        if type(task.get('reminderMinutes', 0)) is not int or task.get('reminderMinutes', 0) not in (0, 10, 30, 60):
+        reminder = task.get('reminderMinutes', 0)
+        if type(reminder) is not int or reminder not in (0, 10, 30, 60) and not (60 <= reminder <= 720 and reminder % 60 == 0):
             raise ValueError('Invalid reminder interval')
         if not isinstance(task['id'], str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,80}', task['id']) or task['id'] in ids:
             raise ValueError('Invalid id')
@@ -145,9 +146,9 @@ def due(state, created, now):
     for task in state['tasks']:
         zone = ZoneInfo(task['timezone'])
         local = dt.datetime.fromtimestamp(now, zone)
-        # Include yesterday when a notification is due just before midnight.
+        # A custom interval may place the third follow-up up to 36 hours later.
         shifts = task.get('shifts', {})
-        candidates = {local.date()-dt.timedelta(days=1), local.date()}
+        candidates = {local.date()-dt.timedelta(days=2), local.date()-dt.timedelta(days=1), local.date()}
         candidates.update(dt.date.fromisoformat(day) for day in shifts)
         for day in sorted(candidates):
             occurrence = task['id']+'|'+day.isoformat()

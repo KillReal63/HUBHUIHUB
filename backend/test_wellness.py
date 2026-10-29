@@ -65,11 +65,19 @@ class Wellness(unittest.TestCase):
         self.assertEqual(len(w.read(self.c,'food')['state']['manualShopping']),2)
         backup=portability.snapshot(self.c);portability.validate(backup,lambda s:s)
         self.assertEqual(len(backup['modules']['food']['state']['manualShopping']),2)
-        _,result=self.call(command='shopping-clear')
-        self.assertEqual([x['name'] for x in result['state']['manualShopping']],['Тряпки'])
-        remaining=result['state']['manualShopping'][0]['id']
-        self.call(command='shopping-delete',item=remaining)
+        _,result=self.call(command='shopping-finish')
+        self.assertEqual(result['state']['manualShopping'],[])
+        trip=result['state']['shoppingTrips'][0]
+        self.assertEqual([(x['name'],x['bought']) for x in trip['items']],[('Губки',True),('Тряпки',False)])
+        self.call(command='shopping-repeat',trip=trip['id'],item=trip['items'][0]['id'])
+        _,result=self.call(command='shopping-repeat',trip=trip['id'])
+        self.assertEqual([x['name'] for x in result['state']['manualShopping']],['Губки','Тряпки'])
+        self.assertEqual(len(result['state']['shoppingTrips']),1)
+        self.call(command='shopping-history-clear')
+        for item in list(w.read(self.c,'food')['state']['manualShopping']):
+            self.call(command='shopping-delete',item=item['id'])
         self.assertEqual(w.read(self.c,'food')['state']['manualShopping'],[])
+        self.assertEqual(w.read(self.c,'food')['state']['shoppingTrips'],[])
         self.assertEqual(tasks.read(self.c),before_tasks)
         self.assertEqual(w.read(self.c,'food')['state']['stocks'],[])
 
@@ -84,7 +92,10 @@ class Wellness(unittest.TestCase):
         item=before['state']['manualShopping'][0]
         with self.assertRaises(ValueError):self.call(command='shopping-check',item=item['id'],done='yes')
         self.call(command='reset')
-        self.assertEqual(w.read(self.c,'food')['state'],w.EMPTY_FOOD)
+        self.assertEqual([x['name'] for x in w.read(self.c,'food')['state']['manualShopping']],['Пакеты'])
+        self.call(command='shopping-reset')
+        self.assertEqual(w.read(self.c,'food')['state']['manualShopping'],[])
+        self.assertEqual(w.read(self.c,'food')['state']['shoppingTrips'],[])
 
     def test_food_reset_closes_purchase_and_preserves_other_modules(self):
         product=self.stock(quantity=1);self.enable(product)
