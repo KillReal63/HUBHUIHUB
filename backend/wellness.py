@@ -119,6 +119,10 @@ def validate_gym(s):
     return s
 
 
+def meal_uses(meal):
+    return meal.get('consumptions', []) or ([meal['consumed']] if meal['consumed'] else [])
+
+
 def validate_food(s, require_allocations=False):
     if not isinstance(s, dict) or set(s) - {'manualShopping'} != set(EMPTY_FOOD) or type(s['demo']) is not bool:
         raise ValueError('Некорректный дневник')
@@ -151,8 +155,13 @@ def validate_food(s, require_allocations=False):
         if m['kcal'] is not None: number(m['kcal'], 0, 20000)
     for m in s['meals']:
         tasks.date(m['date']); clock(m['time'])
-        if m['consumed']:
-            used = m['consumed']
+        if 'consumptions' in m:
+            if m['consumed'] is not None or not isinstance(m['consumptions'], list) or not 1 <= len(m['consumptions']) <= 1000:
+                raise ValueError('Некорректное списание ингредиентов')
+            number(m.get('servings'), 0.5, 100)
+            if len({u['stockId'] for u in m['consumptions']}) != len(m['consumptions']):
+                raise ValueError('Повтор продукта в списании')
+        for used in meal_uses(m):
             ident(used['stockId']); number(used['amount'], 0.000001)
             if used['unit'] not in ('г','мл','шт'): raise ValueError('Некорректная единица')
             if used['stockId'] not in stock_ids or stocks[used['stockId']]['unit'] != used['unit']:
@@ -295,38 +304,86 @@ def apply_meals(old, new, now):
         if mid in incoming:
             if incoming[mid] != meal: raise ValueError('Изменение существующей порции не поддерживается')
             continue
-        used = meal['consumed']
-        if not used: continue
-        stock = stocks.get(used['stockId'])
-        if not stock: raise ValueError('Продукт для возврата отсутствует')
-        allocations = used.get('allocations', [])
-        if used.get('legacy'):
-            stock['lots'].append({'id':str(uuid.uuid4()), 'quantity':used['amount'], 'date':meal['date'], 'expiry':''})
-        else:
-            for allocation in allocations:
-                lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
-                lot['quantity'] += allocation['amount']
-        movement(new, stock, 'return', used['amount'], now)
+        for used in meal_uses(meal):
+            stock = stocks.get(used['stockId'])
+            if not stock: raise ValueError('Продукт для возврата отсутствует')
+            allocations = used.get('allocations', [])
+            if used.get('legacy'):
+                stock['lots'].append({'id':str(uuid.uuid4()), 'quantity':used['amount'], 'date':meal['date'], 'expiry':''})
+            else:
+                for allocation in allocations:
+                    lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
+                    lot['quantity'] += allocation['amount']
+            movement(new, stock, 'return', used['amount'], now)
     for mid, meal in incoming.items():
-        if mid in previous or not meal['consumed']: continue
-        used = meal['consumed']; stock = stocks.get(used['stockId'])
-        if not stock or used['unit'] != stock['unit']: raise ValueError('Продукт не найден')
-        local_day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
-        if meal['date'] != local_day: raise ValueError('Списывать можно только сегодняшнюю порцию')
-        remaining = used['amount']; allocations = []
-        for lot in sorted(stock['lots'], key=lambda l:l['expiry'] or '9999'):
-            if lot['expiry'] and lot['expiry'] < local_day: continue
-            amount = min(lot['quantity'], remaining)
-            if amount > 0:
-                lot['quantity'] = round(lot['quantity']-amount, 6); remaining = round(remaining-amount, 6)
-                allocations.append({'lot':lot['id'], 'amount':amount})
-        if remaining > 0.000001: raise ValueError('Недостаточно непросроченного продукта')
-        used.pop('legacy', None); used['allocations'] = allocations
-        movement(new, stock, 'consume', -used['amount'], now)
+        if mid in previous: continue
+        for used in meal_uses(meal):
+            stock = stocks.get(used['stockId'])
+            if not stock or used['unit'] != stock['unit']: raise ValueError('Продукт не найден')
+            local_day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
+            if meal['date'] != local_day: raise ValueError('Списывать можно только сегодняшнюю порцию')
+            remaining = used['amount']; allocations = []
+            for lot in sorted(stock['lots'], key=lambda l:l['expiry'] or '9999'):
+                if lot['expiry'] and lot['expiry'] < local_day: continue
+                amount = min(lot['quantity'], remaining)
+                if amount > 0:
+                    lot['quantity'] = round(lot['quantity']-amount, 6); remaining = round(remaining-amount, 6)
+                    allocations.append({'lot':lot['id'], 'amount':amount})
+            if remaining > 0.000001: raise ValueError('Недостаточно непросроченного продукта')
+            used.pop('legacy', None); used['allocations'] = allocations
+            movement(new, stock, 'consume', -used['amount'], now)
+
+
+def ingredient_key(name, unit):
+    return (' '.join(name.strip().lower().replace('ё', 'е').split()), unit)
+
+
+def cook(s, body, now):
+    servings = number(body.get('servings'), 0.5, 100)
+    local = now.astimezone(zone(body.get('timezone')))
+    recipe = next((r for r in s['recipes'] if r['id'] == body.get('recipe')), None)
+    if not recipe or not recipe['ingredients']:
+        raise ValueError('Добавь ингредиенты в рецепт перед приготовлением')
+    needs = {}
+    for item in recipe['ingredients']:
+        key = ingredient_key(item['name'], item['unit'])
+        if key not in needs: needs[key] = {'name':item['name'], 'amount':0}
+        needs[key]['amount'] = round(needs[key]['amount'] + item['quantity'] * servings, 6)
+    uses = {}; missing = []
+    for key, item in needs.items():
+        remaining = item['amount']
+        pool = []
+        for stock in s['stocks']:
+            if ingredient_key(stock['name'], stock['unit']) != key: continue
+            day = now.astimezone(zone(stock['rule']['timezone'])).date().isoformat()
+            pool.extend((stock, lot) for lot in stock['lots'] if lot['quantity'] > 0 and (not lot['expiry'] or lot['expiry'] >= day))
+        for stock, lot in sorted(pool, key=lambda pair:pair[1]['expiry'] or '9999'):
+            amount = round(min(lot['quantity'], remaining), 6)
+            if amount <= 0: continue
+            used = uses.setdefault(stock['id'], {'stockId':stock['id'], 'unit':stock['unit'], 'amount':0, 'allocations':[]})
+            used['amount'] = round(used['amount'] + amount, 6)
+            used['allocations'].append({'lot':lot['id'], 'amount':amount})
+            remaining = round(remaining - amount, 6)
+        if remaining > 0.000001: missing.append(f"{item['name']}: {remaining:g} {key[1]}")
+    if missing: raise ValueError('Не хватает: ' + '; '.join(missing))
+    for stock in s['stocks']:
+        used = uses.get(stock['id'])
+        if not used: continue
+        for allocation in used['allocations']:
+            lot = next(l for l in stock['lots'] if l['id'] == allocation['lot'])
+            lot['quantity'] = round(lot['quantity'] - allocation['amount'], 6)
+        movement(s, stock, 'consume', -used['amount'], now)
+    kcal = recipe['kcal'] * servings if recipe['kcal'] is not None else None
+    if kcal is not None and kcal > 20000: raise ValueError('Слишком много калорий для одной записи; уменьши число порций')
+    s['meals'].append({'id':str(uuid.uuid4()), 'name':recipe['name'], 'kind':recipe['kind'], 'note':recipe['note'],
+                       'kcal':kcal, 'date':local.date().isoformat(), 'time':local.strftime('%H:%M'),
+                       'consumed':None, 'consumptions':list(uses.values()), 'servings':servings})
+    return s
 
 
 def food_command(s, body, now, c):
     command = body['command']; product = body.get('product')
+    if command == 'cook': return cook(s, body, now)
     if command in ('shopping-add', 'shopping-check', 'shopping-delete', 'shopping-clear'):
         shopping = s.setdefault('manualShopping', [])
         if command == 'shopping-add':
