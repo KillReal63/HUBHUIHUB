@@ -13,7 +13,7 @@
 .catalog-summary { display: flex; flex-direction: column; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
 .catalog-summary strong { font-size: 1rem; line-height: 1.35; }
 .catalog-summary > span { font-size: 0.8125rem; font-weight: 400; color: var(--muted); line-height: 1.4; }
-.catalog-pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; }
+.catalog-pagination { display: flex; flex-wrap:wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; }
 .catalog-pagination > span { color: var(--muted); font-size: 0.875rem; text-align: center; }
 .catalog-source { margin-top: 24px; }
 .catalog-source a { text-decoration: underline; text-underline-offset: 3px; }

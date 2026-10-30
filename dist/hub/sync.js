@@ -42,7 +42,7 @@
       return result;
     }
     accept(result) { this.version = result.version; this.onState(result.state, result); document.querySelector('main').hidden=false; }
-    lock(value) { this.busy = value; document.querySelector('main').inert = value; document.querySelectorAll('dialog form').forEach(f => f.inert = value); }
+    lock(value) { if(value)this.requestEpoch=(this.requestEpoch||0)+1; this.busy = value; document.querySelector('main').inert = value; document.querySelectorAll('dialog form').forEach(f => f.inert = value); }
     async load() {
       if (this.busy) return;
       if (this.pending) return this.recover();
@@ -51,7 +51,23 @@
       catch (error) { this.version=null; this.message(error.status === 401 ? 'Войди в хаб, чтобы открыть данные.' : 'Нет связи. Записи не загружены.', true); if(error.status===401)document.querySelector('main').hidden=true; }
       finally { this.lock(false); if (this.version === null) document.querySelector('main').inert = true; }
     }
-    refresh() { if (!this.busy && !this.pending && !this.isEditing() && !document.hidden) this.load(); }
+    async refresh() {
+      if(this.busy || this.pending || this.refreshing || this.isEditing() || document.hidden)return;
+      if(this.version===null)return this.load();
+      this.refreshing=true;
+      const epoch=this.requestEpoch,version=this.version;
+      const current=()=>epoch===this.requestEpoch && version===this.version && !this.busy && !this.pending && !this.isEditing();
+      try {
+        const result=await this.api();
+        if(!current())return;
+        if(result.version!==this.version)this.accept(result);
+        this.message('Сохранено на сервере');this.offerImport();
+      } catch(error) {
+        if(!current())return;
+        if(error.status===401){this.version=null;document.querySelector('main').hidden=true;}
+        this.message(error.status===401?'Войди в хаб, чтобы открыть данные.':'Не удалось обновить записи. Показана последняя загруженная версия.',true);
+      } finally {this.refreshing=false;}
+    }
     async save(payload) {
       if (this.busy || this.pending || this.version === null) return null;
       const body = {...payload, version:this.version, operation:crypto.randomUUID()};
