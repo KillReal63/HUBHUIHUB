@@ -19,6 +19,7 @@ for(const selector of ['#menu-shopping-title','#menu-shopping','.connection-card
 shoppingPanel.after(restockPanel);restockTab.onclick=()=>tab('restock');
 if(!ready)restockPanel.insertAdjacentHTML('afterbegin',HubSkeleton.html('food-restock'));
 shoppingPanel.querySelector('.section-heading')?.remove();
+restoreFoodTab(); // All five panels exist; later links to a stock or plan take precedence.
 
 const planAction=document.createElement('dialog');
 planAction.id='plan-action';planAction.innerHTML='<form id="plan-action-form"><div class="dialog-head"><h2 id="plan-action-title">Дни блюда</h2><button type="button" data-close-plan-action aria-label="Закрыть">✕</button></div><fieldset><legend>Что сделать?</legend><div class="plan-action-modes"><label><input type="radio" name="mode" value="copy" checked>Повторить по дням</label><label><input type="radio" name="mode" value="move">Перенести</label></div></fieldset><div id="plan-copy-fields"><div class="plan-weekdays"></div><button type="button" class="secondary" id="plan-workdays">Пн–Пт</button></div><label id="plan-move-field" hidden>Новая дата<input name="target" type="date" min="2000-01-01" max="2100-12-31"></label><p id="plan-action-error" role="alert"></p><button class="primary full" type="submit">Сохранить</button></form>';

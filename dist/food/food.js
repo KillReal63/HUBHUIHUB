@@ -35,7 +35,9 @@ function render(){
  if(typeof renderPlanner==='function')renderPlanner();
 }
 function revealFoodTab(){const nav=document.querySelector('.tabs'),selected=nav.querySelector('[aria-pressed=true]');if(!selected)return;const a=nav.getBoundingClientRect(),b=selected.getBoundingClientRect();if(b.left<a.left+5)nav.scrollLeft+=b.left-a.left-5;else if(b.right>a.right-5)nav.scrollLeft+=b.right-a.right+5;}
-function tab(name){document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===name)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name);revealFoodTab();}
+const foodTabKey='my-day-food-tab',foodTabs=['diary','pantry','menu','shopping','restock'];
+function tab(name){if(!foodTabs.includes(name))return;document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===name)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name);revealFoodTab();try{localStorage.setItem(foodTabKey,name)}catch{}}
+function restoreFoodTab(){let name='diary';try{const saved=localStorage.getItem(foodTabKey);if(foodTabs.includes(saved))name=saved}catch{}tab(name);}
 document.addEventListener('DOMContentLoaded',()=>{
  const nav=document.querySelector('.tabs'),wrap=document.createElement('div');wrap.className='food-section-nav';nav.before(wrap);
  const arrow=(label,text,direction)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-label',label);b.onclick=()=>{nav.scrollLeft+=direction*nav.clientWidth*.75};return b;};
