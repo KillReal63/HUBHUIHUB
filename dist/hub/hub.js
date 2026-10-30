@@ -1,3 +1,4 @@
+document.querySelector('#hub-loading').className='';document.querySelector('#hub-loading').innerHTML=HubSkeleton.html('hub');
 const $=selector=>document.querySelector(selector);
 let authenticated=false,setupRequired=false,checking=false,toastTimer;
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}

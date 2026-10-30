@@ -389,7 +389,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   min-width:0; padding:0;
 }
 
-#focus-styles .auth-card.is-loading>:not(.app-skeleton){display:none}
+#focus-styles .auth-card.is-loading>:not(.screen-skeleton){display:none}
 #focus-styles dialog .section-head{align-items:flex-start;margin-top:4px}
 #focus-styles dialog .section-head>.icon{position:relative;top:-9px;right:-8px}
 #focus-styles .schedule-date{display:block;margin:0 0 22px}

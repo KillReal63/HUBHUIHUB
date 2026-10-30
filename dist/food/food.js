@@ -1,6 +1,7 @@
 'use strict';
 const $=s=>document.querySelector(s), key='my-day-food-prototype-v1',themeKey='my-day-food-theme';
-$('#connection').className='app-skeleton';$('#connection').innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';
+$('#connection').hidden=true;document.querySelector('main').hidden=false;
+document.querySelectorAll('[data-panel]').forEach(panel=>panel.insertAdjacentHTML('afterbegin',HubSkeleton.html('food-'+panel.dataset.panel)));
 const themes=['pistachio','berry','paper','evening'];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
@@ -15,7 +16,7 @@ let state={meals:[],stocks:[],demo:false},editStock=null,toastTimer,ready=false;
 let localTheme='pistachio',commonTheme=window.MyDayPreferences?.themeFor?.('food')||null;
 function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,6000)}
 let shoppingLinks=[];
-const foodStore=new HubStore('food',key,(next,result)=>{state=next;shoppingLinks=result.shopping||[];ready=true;render();document.querySelector('main').hidden=false;$('#connection').hidden=true;window.openHubFood?.()},()=>!!document.querySelector('dialog[open]'));
+const foodStore=new HubStore('food',key,(next,result)=>{state=next;shoppingLinks=result.shopping||[];ready=true;document.querySelectorAll('[data-panel]>.screen-skeleton').forEach(el=>el.remove());render();document.querySelector('main').hidden=false;$('#connection').hidden=true;window.openHubFood?.()},()=>!!document.querySelector('dialog[open]'));
 async function persist(next){return !!(await foodStore.save({state:next}))}
 async function foodCommand(command,extra){return !!(await foodStore.save({command,...extra}))}
 function changeTheme(theme=localTheme){if(!themes.includes(theme))return;localTheme=theme;const effective=commonTheme||localTheme;document.documentElement.dataset.theme=effective;document.querySelectorAll('input[name=theme]').forEach(input=>{input.checked=input.value===effective;input.disabled=!!commonTheme});document.querySelector('meta[name=theme-color]').content=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();const status=document.querySelector('#food-theme-status');if(status)status.textContent=commonTheme?'Оформление синхронизировано с хабом.':'Выбор сохраняется на этом устройстве.';}

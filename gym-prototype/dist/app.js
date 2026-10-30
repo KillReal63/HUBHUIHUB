@@ -10,7 +10,7 @@ let state=initial(),confirmed=initial(),storageError=false;
 let editing=null,showForm=false,dirty=false;
 let linkedDay=new URLSearchParams(location.search).get('day');
 const app=document.querySelector('#app');
-app.innerHTML='<div class="app-skeleton" role="status" aria-label="Загружаем программу"><span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span></div>';
+app.innerHTML=HubSkeleton.html(location.hash==='#history'?'gym-history':location.pathname.includes('/catalog')?'gym-catalog':location.pathname.includes('/program')?'gym-program':'gym');
 const migration=document.createElement('section');migration.className='gym-migration';migration.dataset.gymMigration='';migration.hidden=true;migration.innerHTML='<h3>Записи этого браузера</h3><p class="helper">Перенос и локальная копия доступны здесь, не под шапкой приложения.</p>';document.querySelector('#gym-settings [data-device-notifications]').before(migration);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const program=()=>location.pathname.replace(/\/$/,'').endsWith('/program'),current=()=>state.days.find(d=>d.id===linkedDay)||state.days.find(d=>d.id===state.selected)||state.days[0];

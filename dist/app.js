@@ -28,7 +28,7 @@ const doseAmount=m=>m.category!=='ointment'&&m.dose?`<strong class="dose-amount"
 const details=m=>[esc(categoryLabel(m)),doseAmount(m),m.category!=='ointment'&&m.meal&&esc(mealLabels[m.meal]),m.note&&esc(m.note)].filter(Boolean).join(' · ');
 const weekdays=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const authSkeleton=document.createElement('div');authSkeleton.className='app-skeleton';authSkeleton.setAttribute('role','status');authSkeleton.setAttribute('aria-label','Загружаем расписание');authSkeleton.innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';$('#auth').prepend(authSkeleton);$('#auth').classList.add('is-loading');
+const authSkeleton=document.createElement('div');authSkeleton.className='screen-skeleton';authSkeleton.setAttribute('role','status');authSkeleton.setAttribute('aria-label','Загружаем расписание');authSkeleton.innerHTML=HubSkeleton.html('medicine');$('#auth').prepend(authSkeleton);$('#auth').classList.add('is-loading');
 $('#logout')?.remove();
 function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,7000)}
 async function api(path,body){const r=await fetch('/vovrema/api/'+path,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined,cache:'no-store'});let data;try{data=await r.json()}catch{throw Error('Сервер недоступен. Попробуй позже.')}if(!r.ok){const e=Error(data.error||'Ошибка сервера');e.status=r.status;throw e}return data}

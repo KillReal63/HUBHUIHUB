@@ -126,7 +126,7 @@ const Catalog = (() => {
       </div><p class="helper">Поиск понимает русские и английские названия. В карточке есть перевод техники и английский оригинал.</p><div id="catalog-results">${results()}</div>` : status === 'auth' ?
         '<div class="empty" role="alert"><h2>Нужно войти в хаб</h2><p>Сессия завершилась. После входа ты вернёшься в каталог; программа остаётся в этом браузере.</p><a class="button" href="/?next=%2Fgym%2Fcatalog">Войти в «Мой день»</a></div>' : status === 'error' ?
         '<div class="empty" role="alert"><h2>Каталог не загрузился</h2><p>Проверь соединение и попробуй ещё раз. Твоя программа сохранена отдельно.</p><button data-catalog-action="retry">Повторить загрузку</button></div>' :
-        '<p role="status" class="empty">Загружаем каталог…</p>'}
+        HubSkeleton.html('catalog-results')}
       </section><p class="helper catalog-source">Источник: <a href="${sourceURL}" target="_blank" rel="noopener noreferrer">free-exercise-db</a> · <a href="/gym/catalog/NOTICE.txt" target="_blank" rel="noopener">О данных и фотографиях</a>. Фотографии загружаются с внешнего сайта.</p>`;
     if (status === 'idle') load();
   }

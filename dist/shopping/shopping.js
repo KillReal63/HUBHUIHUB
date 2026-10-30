@@ -1,3 +1,4 @@
+document.querySelector('#shopping-loading').className='';document.querySelector('#shopping-loading').innerHTML=HubSkeleton.html('shopping');
 (() => {
  'use strict';
  const $=selector=>document.querySelector(selector),esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));

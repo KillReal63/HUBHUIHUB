@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const $=selector=>document.querySelector(selector),kinds={film:'Фильм',series:'Сериал',other:'Другое'};
-  const loading=document.createElement('div');loading.className='app-skeleton';loading.setAttribute('role','status');loading.setAttribute('aria-label','Загружаем список');loading.innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';document.querySelector('main').before(loading);
+  const loading=document.createElement('div');loading.setAttribute('role','status');loading.setAttribute('aria-label','Загружаем список');loading.innerHTML=HubSkeleton.html('watch');document.querySelector('main').before(loading);
   let state={items:[]},filter='planned',editing=null;
   const node=(tag,className,text)=>{const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;};
   class WatchStore extends HubStore {

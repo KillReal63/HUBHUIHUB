@@ -17,6 +17,7 @@ restockPanel.dataset.panel='restock';restockPanel.hidden=true;
 restockPanel.innerHTML='<div class="section-heading"><div><h2>Пора пополнить</h2><p class="caption">Покупки из запасов и выбранного меню</p></div></div>';
 for(const selector of ['#menu-shopping-title','#menu-shopping','.connection-card','#shopping']){const node=shoppingPanel.querySelector(selector);if(node)restockPanel.append(node)}
 shoppingPanel.after(restockPanel);restockTab.onclick=()=>tab('restock');
+if(!ready)restockPanel.insertAdjacentHTML('afterbegin',HubSkeleton.html('food-restock'));
 shoppingPanel.querySelector('.section-heading')?.remove();
 
 const planAction=document.createElement('dialog');

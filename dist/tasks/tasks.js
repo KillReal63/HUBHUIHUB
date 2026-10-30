@@ -3,7 +3,7 @@ const schedule=TaskSchedule,deviceZone=Intl.DateTimeFormat().resolvedOptions().t
 let authenticated=false,state={tasks:[],done:{}},version=0,busy=false,filter='active',period='today',editing=null,editingZone=deviceZone,toastTimer,targetShown=false;
 let subtaskDraft=[];
 const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-$('#loading').className='app-skeleton';$('#loading').innerHTML='<span class="app-skeleton-line short"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span><span class="app-skeleton-card"></span>';
+$('#loading').innerHTML=HubSkeleton.html('tasks');
 const todayPeriod=document.querySelector('[data-period="today"]'),allPeriod=document.querySelector('[data-period="any"]');if(todayPeriod)todayPeriod.textContent='Сегодня';if(allPeriod)allPeriod.textContent='Все';
 const reminderSelect=$('#reminder-minutes'),customReminder=reminderSelect?.insertAdjacentHTML?document.createElement('label'):null;
 if(customReminder){reminderSelect.insertAdjacentHTML('beforeend','<option value="custom">Свой интервал</option>');customReminder.id='custom-reminder-field';customReminder.hidden=true;customReminder.innerHTML='Интервал в часах<input id="custom-reminder-hours" type="number" min="1" max="12" step="1" value="2" inputmode="numeric"><span class="zone-note">От 1 до 12 часов. Будет до трёх повторов.</span>';reminderSelect.closest('label').after(customReminder)}
