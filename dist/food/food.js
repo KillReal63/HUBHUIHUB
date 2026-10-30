@@ -34,7 +34,16 @@ function render(){
  $('#shopping').innerHTML=shoppingLinks.map(link=>{const product=state.stocks.find(s=>s.id===link.product);if(!product||!product.rule.enabled)return '';return `<article class="shopping-row"><div><h3>${esc(product.name)}</h3>${link.suppressed?'<p>Покупка закрыта или удалена. Уточни остаток или возобнови правило.</p>':link.task?`<p>${esc(link.task.note)}</p><a href="/tasks/?task=${encodeURIComponent(link.task.id)}">Открыть дело</a>`:'<p>Запаса пока достаточно.</p>'}<div class="inventory-actions"><button data-add-shopping="${esc(product.name)}">В список покупок</button><button data-buy="${esc(product.id)}">Купил · учесть количество</button><button data-rule="${esc(product.id)}">Правило покупки</button></div></div></article>`}).join('')||'<p class="caption">Включи автопокупку в настройках продукта.</p>';
  if(typeof renderPlanner==='function')renderPlanner();
 }
-function tab(name){document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===name)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name)}
+function revealFoodTab(){const nav=document.querySelector('.tabs'),selected=nav.querySelector('[aria-pressed=true]');if(!selected)return;const a=nav.getBoundingClientRect(),b=selected.getBoundingClientRect();if(b.left<a.left+5)nav.scrollLeft+=b.left-a.left-5;else if(b.right>a.right-5)nav.scrollLeft+=b.right-a.right+5;}
+function tab(name){document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===name)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name);revealFoodTab();}
+document.addEventListener('DOMContentLoaded',()=>{
+ const nav=document.querySelector('.tabs'),wrap=document.createElement('div');wrap.className='food-section-nav';nav.before(wrap);
+ const arrow=(label,text,direction)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-label',label);b.onclick=()=>{nav.scrollLeft+=direction*nav.clientWidth*.75};return b;};
+ const back=arrow('Прокрутить разделы влево','←',-1),forward=arrow('Прокрутить разделы вправо','→',1);wrap.append(back,nav,forward);
+ const update=()=>{back.disabled=nav.scrollLeft<=1;forward.disabled=nav.scrollLeft+nav.clientWidth>=nav.scrollWidth-1;};
+ nav.addEventListener('scroll',update,{passive:true});nav.addEventListener('focusin',event=>{const b=event.target.closest('button');if(b){const a=nav.getBoundingClientRect(),r=b.getBoundingClientRect();if(r.left<a.left)nav.scrollLeft+=r.left-a.left-5;else if(r.right>a.right)nav.scrollLeft+=r.right-a.right+5;}});
+ new ResizeObserver(()=>{revealFoodTab();update()}).observe(nav);update();
+});
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).close());
 $('#settings-open').onclick=()=>$('#settings').showModal();

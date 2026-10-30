@@ -1,6 +1,6 @@
 /* Uses the existing gym palette and theme overrides. */
-nav{flex-wrap:wrap;max-width:100%}
-nav a{flex:1 1 auto}
+html:root main>nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:100%;gap:6px;padding:5px;border-bottom:0;margin-bottom:24px}
+html:root main>nav>a{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;padding:10px 6px;font:650 .875rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center;overflow-wrap:anywhere}
 .panel-head:has([data-session-start]){flex-wrap:wrap}
 .session-record,.session-exercise,.rest-timer{margin-bottom:18px}
 .session-record summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;min-height:44px;align-items:center}
