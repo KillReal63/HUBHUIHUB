@@ -2,7 +2,7 @@
 .today-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
 .today-heading h2{margin:0;font-size:1.5rem}
 .today-intro{font-size:.875rem;margin-bottom:24px}
-.today-group{margin-top:24px;min-width:0}
+.today-group{margin-top:16px;min-width:0;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
 .today-group h3{font-size:1rem;margin:0 0 8px;font-weight:650}
 .today-list{list-style:none;padding:0;margin:0}
 .today-list li+li{border-top:1px solid var(--line)}

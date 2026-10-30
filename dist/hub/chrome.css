@@ -35,4 +35,9 @@ dialog[open]{overscroll-behavior:contain}
 /* Stable first paint while server state is loading. */
 .app-skeleton{display:grid;gap:14px;max-width:720px;margin:18px auto 32px;padding:0 2px;pointer-events:none}
 .app-skeleton-card,.app-skeleton-line{position:relative;overflow:hidden;background:color-mix(in srgb,var(--panel,#fff) 72%,var(--line,#cad5da));border:1px solid var(--line,#cad5da);border-radius:18px}
-.app-skeleton-card{height:88px}.app-skeleton-line{height:16px;border-radius:999px}.app-skeleton-line.short{width:42%}.app-skeleton-line.medium{width:68%}
+.app-skeleton-card{height:88px;background:var(--panel,#f5f7f9);border:0}
+.app-skeleton-card::before{content:"";position:absolute;inset:20px;background:linear-gradient(var(--line,#cad5da),var(--line,#cad5da)) left center/44px 44px no-repeat,linear-gradient(var(--line,#cad5da),var(--line,#cad5da)) 64px 4px/52% 14px no-repeat,linear-gradient(var(--line,#cad5da),var(--line,#cad5da)) 64px 30px/34% 10px no-repeat;border-radius:8px}
+.app-skeleton-line{height:16px;border:0;border-radius:999px;background:var(--line,#cad5da)}.app-skeleton-line.short{width:42%}.app-skeleton-line.medium{width:68%}
+.app-skeleton-card::after,.app-skeleton-line::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,#ffffff50 50%,transparent 80%);transform:translateX(-100%);animation:skeleton-sweep 1.8s ease-in-out infinite}
+@keyframes skeleton-sweep{to{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.app-skeleton-card::after,.app-skeleton-line::after{animation:none;display:none}}
